@@ -8,3 +8,11 @@
   overflow: auto;
   background-color: white;
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    box-shadow: none;
+    border-radius: 0;
+    padding: 10px;
+  }
+}

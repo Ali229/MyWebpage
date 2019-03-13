@@ -1,23 +1,22 @@
-@media only screen and (max-width: 600px) {
-  body {
-
-  }
-}
-
 img {
-  width: 500px;
+  width: 45%;
   height: auto;
-}
-
-@media screen and (max-width: 992px) {
-  img {
-    width: 200px;
-    height: auto;
-  }
+  float: left;
 }
 
 .content {
-  margin-left: 30px;
-  max-width: 50%;
+  text-align: left;
   margin-top: 20px;
+  width: 50%;
+  float: right;
+}
+
+@media screen and (max-width: 600px) {
+  img, .content {
+    float: none;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+  }
 }

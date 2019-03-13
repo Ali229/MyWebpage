@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 body {
   margin: 0;
+  background-color: #f4f4f4;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -11,8 +13,4 @@ body {
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: #404040;
-}
-
-body {
-  overflow: hidden;
 }
