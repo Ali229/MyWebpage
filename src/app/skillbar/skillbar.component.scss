@@ -1,0 +1,14 @@
+.skill {
+  margin-top: 5px;
+}
+
+.lang {
+  width: 20%;
+  float: left;
+}
+
+@media screen and (max-width: 1024px) {
+  .lang {
+    width: 30%;
+  }
+}

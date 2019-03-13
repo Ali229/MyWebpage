@@ -10,6 +10,7 @@ import {EducationComponent} from './education/education.component';
 import {EmploymentComponent} from './employment/employment.component';
 import {ContactComponent} from './contact/contact.component';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
+import { SkillbarComponent } from './skillbar/skillbar.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
     ProjectsComponent,
     EducationComponent,
     EmploymentComponent,
-    ContactComponent
+    ContactComponent,
+    SkillbarComponent
   ],
   imports: [
     BrowserModule,

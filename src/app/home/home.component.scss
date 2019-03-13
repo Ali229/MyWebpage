@@ -6,13 +6,13 @@ img {
 
 .content {
   text-align: left;
-  margin-top: 20px;
   width: 50%;
   float: right;
 }
 
 @media screen and (max-width: 600px) {
   img, .content {
+    margin-top: 20px;
     float: none;
     width: 100%;
   }
