@@ -26,7 +26,9 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
     AppRoutingModule,
     MDBBootstrapModule.forRoot()
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
+  providers: [
+    // {provide: LocationStrategy, useClass: HashLocationStrategy}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
