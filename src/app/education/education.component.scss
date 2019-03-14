@@ -1,0 +1,50 @@
+.degree2, .degree1 {
+  overflow: hidden;
+}
+
+.degree2 {
+  margin-top: 20px;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+.edgroup {
+  margin-top: 15px;
+}
+
+.degreename {
+  text-align: left;
+  width: 80%;
+  font-size: x-large;
+  float: left;
+}
+
+.timeline {
+  width: 20%;
+  float: right;
+  font-size: large;
+}
+
+.school {
+  text-align: left;
+  width: 100%;
+  float: left;
+  font-size: larger;
+}
+
+.GPA {
+  text-align: left;
+  width: 100%;
+  float: left;
+  font-size: large;
+}
+
+@media screen and (max-width: 1024px) {
+  .degreename, .school, .GPA, .timeline {
+    text-align: left;
+    float: none;
+    width: 100%;
+  }
+}
