@@ -26,7 +26,7 @@ body {
 }
 
 .text {
-  color: #fbae17;
+  color: #2E2E2E;
   display: inline-block;
   margin-left: 5px;
 }
@@ -45,7 +45,7 @@ body {
     width: $width;
     height: $height;
     border-radius: 50%;
-    background-color: #fbae17;
+    background-color: #2E2E2E;
     transform-origin: 50%;
     animation: bounce 500ms alternate infinite ease;
   }
