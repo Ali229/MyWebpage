@@ -1,0 +1,50 @@
+.work1, .work2, .work3 {
+  overflow: hidden;
+}
+
+.work2, .work3 {
+  margin-top: 20px;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+.emgroup {
+  margin-top: 15px;
+}
+
+.employer {
+  text-align: left;
+  width: 80%;
+  font-size: x-large;
+  float: left;
+}
+
+.timeline {
+  width: 20%;
+  float: right;
+  font-size: large;
+}
+
+.job {
+  text-align: left;
+  width: 100%;
+  float: left;
+  font-size: larger;
+}
+
+.info {
+  text-align: left;
+  width: 100%;
+  float: left;
+  font-size: large;
+}
+
+@media screen and (max-width: 1024px) {
+  .employer, .job, .info, .timeline {
+    text-align: left;
+    float: none;
+    width: 100%;
+  }
+}
