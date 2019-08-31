@@ -1,0 +1,22 @@
+<div class="mvgroup">
+  <h1>Movies</h1>
+  <form>
+    <div class="row">
+      <div class="col-sm">
+        <div class="md-form mt-0">
+          <input mdbInput type="text" id="mname" class="form-control">
+          <label for="mname" class="">Title</label>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div class="md-form mt-0">
+          <input mdbInput type="text" id="myear" class="form-control">
+          <label for="myear" class="">Year</label>
+        </div>
+      </div>
+      <div class="col-sm">
+        <button type="button" (click)="search()" mdbBtn color="dark" mdbWavesEffect>Search</button>
+      </div>
+    </div>
+  </form>
+</div>

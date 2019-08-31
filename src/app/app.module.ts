@@ -11,6 +11,7 @@ import {EmploymentComponent} from './employment/employment.component';
 import {ContactComponent} from './contact/contact.component';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 import { SkillbarComponent } from './skillbar/skillbar.component';
+import { MoviesComponent } from './movies/movies.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { SkillbarComponent } from './skillbar/skillbar.component';
     EducationComponent,
     EmploymentComponent,
     ContactComponent,
-    SkillbarComponent
+    SkillbarComponent,
+    MoviesComponent
   ],
   imports: [
     BrowserModule,
