@@ -2,13 +2,44 @@ h1 {
   margin-bottom: 30px;
 }
 
-.mvgroup {
-  margin-top: 15px;
+.poster {
+  float: left;
+  margin-right: 20px;
 }
-@media screen and (max-width: 1024px) {
-  .h1 {
-    text-align: left;
+
+.dataAll {
+  margin-top: 20px;
+}
+
+.dataBody {
+  margin-top: 20px;
+}
+
+.bodyText {
+  text-align: left;
+}
+
+.icons {
+  width: 100px;
+  height: 100px;
+}
+
+.badge {
+  border-radius: 15px;
+  margin-left: 50px;
+  font-size: 55px;
+  padding-top: 20px;
+  width: 100px;
+  height: 100px;
+}
+
+@media screen and (max-width: 600px) {
+  img {
     float: none;
     width: 100%;
   }
+  img {
+    margin-right: 0;
+  }
 }
+
