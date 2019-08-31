@@ -12,6 +12,8 @@ import {ContactComponent} from './contact/contact.component';
 import {SkillbarComponent} from './skillbar/skillbar.component';
 import {MoviesComponent} from './movies/movies.component';
 import {HttpClientModule} from '@angular/common/http';
+import {HttpService} from './services/http.service';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -29,9 +31,11 @@ import {HttpClientModule} from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    FormsModule
   ],
   providers: [
+    HttpService
   ],
   bootstrap: [AppComponent]
 })
