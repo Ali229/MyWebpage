@@ -9,9 +9,9 @@ import {ProjectsComponent} from './projects/projects.component';
 import {EducationComponent} from './education/education.component';
 import {EmploymentComponent} from './employment/employment.component';
 import {ContactComponent} from './contact/contact.component';
-import {HashLocationStrategy, LocationStrategy} from '@angular/common';
-import { SkillbarComponent } from './skillbar/skillbar.component';
-import { MoviesComponent } from './movies/movies.component';
+import {SkillbarComponent} from './skillbar/skillbar.component';
+import {MoviesComponent} from './movies/movies.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -28,10 +28,10 @@ import { MoviesComponent } from './movies/movies.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     MDBBootstrapModule.forRoot()
   ],
   providers: [
-    // {provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent]
 })
