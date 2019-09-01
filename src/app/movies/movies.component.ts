@@ -7,8 +7,8 @@ import {HttpService} from '../services/http.service';
   styleUrls: ['./movies.component.scss']
 })
 export class MoviesComponent implements OnInit {
-  moviename = 'aladdin';
-  movieyear = '1992';
+  moviename = '';
+  movieyear = '';
   data = null;
   metaColor = null;
   imdbColor = null;
@@ -19,6 +19,7 @@ export class MoviesComponent implements OnInit {
   scoreCount = 0;
   overallScore = 0;
   totalColor = null;
+  loading = false;
 
   constructor(private httpService: HttpService) {
   }
@@ -27,6 +28,7 @@ export class MoviesComponent implements OnInit {
   }
 
   search() {
+    this.loading = true;
     this.httpService.getData('http://www.omdbapi.com/?t=' + this.moviename + '&y=' + this.movieyear + '&apikey=faec32e6')
       .subscribe((info) => {
         this.rottenScore = null;
@@ -39,12 +41,11 @@ export class MoviesComponent implements OnInit {
             this.metaColor = 'success';
           } else if (this.data.Metascore > 49) {
             this.metaColor = 'warning';
-          } else if (this.data.Metascore < 49) {
+          } else if (this.data.Metascore <= 49) {
             this.metaColor = 'danger';
           }
           this.totalScore += Number(this.data.Metascore);
           this.scoreCount++;
-          console.log(this.totalScore);
         }
         if (this.data.imdbRating !== 'N/A') {
           this.data.imdbRating = this.data.imdbRating * 10;
@@ -52,12 +53,11 @@ export class MoviesComponent implements OnInit {
             this.imdbColor = 'success';
           } else if (this.data.imdbRating > 49) {
             this.imdbColor = 'warning';
-          } else if (this.data.imdbRating < 49) {
+          } else if (this.data.imdbRating <= 49) {
             this.imdbColor = 'danger';
           }
           this.totalScore += Number(this.data.imdbRating);
           this.scoreCount++;
-          console.log(this.totalScore);
         }
         if (this.data.Ratings.length > 0) {
           // tslint:disable-next-line:prefer-for-of
@@ -70,13 +70,12 @@ export class MoviesComponent implements OnInit {
               } else if (this.rottenScore > 49) {
                 this.rottenImage = 'tomato_full.png';
                 this.rottenColor = 'warning';
-              } else if (this.rottenScore < 49) {
+              } else if (this.rottenScore <= 49) {
                 this.rottenImage = 'tomato_rotten.png';
                 this.rottenColor = 'danger';
               }
               this.totalScore += Number(this.rottenScore);
               this.scoreCount++;
-              console.log(this.totalScore);
             }
           }
         }
@@ -86,10 +85,10 @@ export class MoviesComponent implements OnInit {
           this.totalColor = 'success';
         } else if (this.overallScore > 49) {
           this.totalColor = 'warning';
-        } else if (this.overallScore < 49) {
+        } else if (this.overallScore <= 49) {
           this.totalColor = 'danger';
         }
-        console.log(this.totalColor);
+        this.loading = false;
       });
   }
 }

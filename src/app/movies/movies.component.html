@@ -23,7 +23,7 @@
     <div *ngIf="data.Response != 'False' else elseBlock" class="dataAll">
 
       <h2><b>{{data.Title}} ({{data.Year}})</b></h2>
-
+      <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
       <div class="dataHeader">
         <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
         <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
@@ -33,7 +33,7 @@
       </div>
 
       <div class="dataBody">
-        <img class="poster" src="{{data.Poster}}" alt="Can't load image">
+        <img class="poster animated slideInLeft slow" src="{{data.Poster}}" alt="Can't load image">
         <div class="bodyText">
 
           <h3><b>Plot</b></h3>
@@ -43,7 +43,6 @@
             <h3 style="margin-top: 20px"><b>Awards</b></h3>
             <div>{{data.Awards}}</div>
           </div>
-
           <h3 style="margin-top: 20px"><b>Ratings</b></h3>
           <span style="display: inline-table;">
           <table mdbTable borderless="true">
@@ -58,17 +57,18 @@
                 </tr>
                 <tr>
                 <tr *ngIf="rottenScore !=  null">
-                  <td><img class="icons" src="assets/{{rottenImage}}" alt="Can't load image" style="border-radius: 15px;"></td>
+                  <td><img class="icons" src="assets/{{rottenImage}}" alt="Can't load image"
+                           style="border-radius: 15px;"></td>
                   <td><span class="badge badge-{{rottenColor}}">{{rottenScore}}</span></td>
                 </tr>
                 <tr *ngIf="totalScore !=  0">
-                  <td><img class="icons" src="assets/calculator_icon.png" alt="Can't load image" style="border-radius: 15px;"></td>
+                  <td><img class="icons" src="assets/calculator_icon.png" alt="Can't load image"
+                           style="border-radius: 15px;"></td>
                   <td><span class="badge badge-{{totalColor}}">{{overallScore}}</span></td>
                 </tr>
             </tbody>
           </table>
         </span>
-
         </div>
       </div>
     </div>
