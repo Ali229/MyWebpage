@@ -15,7 +15,14 @@
         </div>
       </div>
       <div class="col-sm">
-        <button type="button" (click)="search()" mdbBtn color="dark" mdbWavesEffect>Search</button>
+        <select class="browser-default custom-select">
+          <option selected>Movie</option>
+          <option value="1">TV</option>
+          <option value="2">Episode</option>
+        </select>
+      </div>
+      <div class="col-sm">
+        <button type="submit" (click)="search()" mdbBtn color="dark" mdbWavesEffect>Search</button>
       </div>
     </div>
   </form>
@@ -31,7 +38,8 @@
         <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
       </div>
       <div class="dataBody">
-        <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft" src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
+        <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft" src="{{data.Poster}}" [hidden]="loading"
+             alt="Can't load image">
         <div class="bodyText">
           <div *ngIf="data.Plot != 'N/A'">
             <h3><b>Plot</b></h3>
@@ -47,22 +55,26 @@
             <tbody>
                 <tr *ngIf="data.Metascore != 'N/A'">
                   <td><img class="icons" src="assets/meta.png" alt="Can't load image"></td>
-                  <td><span class="badge badge-{{metaColor}} animated zoomIn" [hidden]="loading">{{data.Metascore}}</span></td>
+                  <td><span class="badge badge-{{metaColor}} animated zoomIn"
+                            [hidden]="loading">{{data.Metascore}}</span></td>
                 </tr>
                 <tr *ngIf="data.imdbRating != 'N/A'">
                   <td><img class="icons" src="assets/imdb.jpg" alt="Can't load image" style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{imdbColor}} animated zoomIn" [hidden]="loading">{{data.imdbRating}}</span></td>
+                  <td><span class="badge badge-{{imdbColor}} animated zoomIn"
+                            [hidden]="loading">{{data.imdbRating}}</span></td>
                 </tr>
                 <tr>
                 <tr *ngIf="rottenScore !=  null">
                   <td><img class="icons" src="assets/{{rottenImage}}" alt="Can't load image"
                            style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{rottenColor}} animated zoomIn" [hidden]="loading">{{rottenScore}}</span></td>
+                  <td><span class="badge badge-{{rottenColor}} animated zoomIn"
+                            [hidden]="loading">{{rottenScore}}</span></td>
                 </tr>
                 <tr *ngIf="totalScore !=  0">
                   <td><img class="icons" src="assets/calculator_icon.png" alt="Can't load image"
                            style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{totalColor}} animated zoomIn" [hidden]="loading">{{overallScore}}</span></td>
+                  <td><span class="badge badge-{{totalColor}} animated zoomIn"
+                            [hidden]="loading">{{overallScore}}</span></td>
                 </tr>
             </tbody>
           </table>
@@ -70,6 +82,10 @@
         </div>
       </div>
     </div>
-    <ng-template #elseBlock>Movie not found!</ng-template>
+    <ng-template #elseBlock>
+      <div class="alert alert-danger mnf" role="alert">
+        Movie not found!
+      </div>
+    </ng-template>
   </div>
 </div>

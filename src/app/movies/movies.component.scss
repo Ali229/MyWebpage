@@ -34,13 +34,21 @@ h1 {
   color: #f4f4f4;
 }
 
+.mnf {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
 @media screen and (max-width: 600px) {
-  img, .poster {
+  img, button, .poster {
     float: none;
     width: 100%;
   }
   .bodyText {
     margin-top: 20px;
   }
+  button {
+    margin-left: 0;
+    margin-top: 20px;
+  }
 }
-
