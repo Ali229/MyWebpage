@@ -31,6 +31,7 @@ export class MoviesComponent implements OnInit {
     this.loading = true;
     this.httpService.getData('https://www.omdbapi.com/?t=' + this.moviename + '&y=' + this.movieyear + '&apikey=faec32e6')
       .subscribe((info) => {
+        this.data = null;
         this.rottenScore = null;
         this.totalScore = 0;
         this.scoreCount = 0;
