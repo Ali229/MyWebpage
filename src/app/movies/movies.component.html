@@ -15,10 +15,9 @@
         </div>
       </div>
       <div class="col-sm">
-        <select class="browser-default custom-select">
-          <option selected>Movie</option>
-          <option value="1">TV</option>
-          <option value="2">Episode</option>
+        <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
+          <option value="movie">Movie</option>
+          <option value="series">TV</option>
         </select>
       </div>
       <div class="col-sm">
@@ -83,8 +82,8 @@
       </div>
     </div>
     <ng-template #elseBlock>
-      <div class="alert alert-danger mnf" role="alert">
-        Movie not found!
+      <div class="alert alert-danger mnf" role="alert" [hidden]="loading">
+        Search not found!
       </div>
     </ng-template>
   </div>

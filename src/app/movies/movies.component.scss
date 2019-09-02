@@ -29,7 +29,7 @@ h1 {
   margin-left: 50px;
   font-size: 55px;
   padding-top: 20px;
-  width: 100px;
+  width: 140px;
   height: 100px;
   color: #f4f4f4;
 }
@@ -37,6 +37,10 @@ h1 {
 .mnf {
   font-size: 20px;
   margin-top: 20px;
+}
+
+button {
+  margin-top: 0;
 }
 
 @media screen and (max-width: 600px) {
