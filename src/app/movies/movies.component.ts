@@ -20,7 +20,7 @@ export class MoviesComponent implements OnInit {
   overallScore = 0;
   totalColor = null;
   loading = false;
-  selectedOption = 'movie';
+  selectedOption = '';
 
   constructor(private httpService: HttpService) {
   }
