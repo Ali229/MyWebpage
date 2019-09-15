@@ -26,12 +26,9 @@ h1 {
 
 .badge {
   border-radius: 15px;
-  margin-left: 50px;
-  font-size: 55px;
-  padding-top: 20px;
-  width: 140px;
-  height: 100px;
-  color: #f4f4f4;
+  font-size: 45px;
+  padding: 30px;
+  margin-left: 60px;
 }
 
 .mnf {
@@ -43,8 +40,14 @@ button {
   margin-top: 0;
 }
 
+tr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media screen and (max-width: 600px) {
-  img, button, .poster {
+  img, button, .poster, table {
     float: none;
     width: 100%;
   }

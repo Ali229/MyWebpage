@@ -14,6 +14,7 @@ import {MoviesComponent} from './movies/movies.component';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpService} from './services/http.service';
 import {FormsModule} from '@angular/forms';
+import { PopularComponent } from './popular/popular.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {FormsModule} from '@angular/forms';
     EmploymentComponent,
     ContactComponent,
     SkillbarComponent,
-    MoviesComponent
+    MoviesComponent,
+    PopularComponent
   ],
   imports: [
     BrowserModule,

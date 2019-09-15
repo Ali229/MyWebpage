@@ -21,11 +21,20 @@ export class MoviesComponent implements OnInit {
   totalColor = null;
   loading = false;
   selectedOption = '';
+  popList = null;
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit() {
+    this.mostPopular();
+  }
+
+  mostPopular() {
+    this.httpService.getData('https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=e84ac8af3c49ad3253e0369ec64dfbff')
+      .subscribe((response) => {
+        this.popList = response;
+      });
   }
 
   search() {
@@ -40,11 +49,11 @@ export class MoviesComponent implements OnInit {
         this.data = info;
         if (this.data.Response !== 'False') {
           if (this.data.Metascore !== 'N/A') {
-            if (this.data.Metascore > 79) {
+            if (this.data.Metascore > 70) {
               this.metaColor = 'success';
-            } else if (this.data.Metascore > 49) {
+            } else if (this.data.Metascore >= 50) {
               this.metaColor = 'warning';
-            } else if (this.data.Metascore <= 49) {
+            } else if (this.data.Metascore < 50) {
               this.metaColor = 'danger';
             }
             this.totalScore += Number(this.data.Metascore);
@@ -52,11 +61,11 @@ export class MoviesComponent implements OnInit {
           }
           if (this.data.imdbRating !== 'N/A') {
             this.data.imdbRating = this.data.imdbRating * 10;
-            if (this.data.imdbRating > 79) {
+            if (this.data.imdbRating > 70) {
               this.imdbColor = 'success';
-            } else if (this.data.imdbRating > 49) {
+            } else if (this.data.imdbRating >= 50) {
               this.imdbColor = 'warning';
-            } else if (this.data.imdbRating <= 49) {
+            } else if (this.data.imdbRating < 50) {
               this.imdbColor = 'danger';
             }
             this.totalScore += Number(this.data.imdbRating);
@@ -67,13 +76,13 @@ export class MoviesComponent implements OnInit {
             for (let x = 0; x < this.data.Ratings.length; x++) {
               if (this.data.Ratings[x].Source === 'Rotten Tomatoes') {
                 this.rottenScore = Number(this.data.Ratings[x].Value.replace('%', ''));
-                if (this.rottenScore > 79) {
+                if (this.rottenScore > 70) {
                   this.rottenImage = 'tomato_full.png';
                   this.rottenColor = 'success';
-                } else if (this.rottenScore > 49) {
+                } else if (this.rottenScore >= 50) {
                   this.rottenImage = 'tomato_full.png';
                   this.rottenColor = 'warning';
-                } else if (this.rottenScore <= 49) {
+                } else if (this.rottenScore < 50) {
                   this.rottenImage = 'tomato_rotten.png';
                   this.rottenColor = 'danger';
                 }
@@ -84,11 +93,11 @@ export class MoviesComponent implements OnInit {
           }
           // tslint:disable-next-line:radix
           this.overallScore = parseInt((this.totalScore / this.scoreCount).toFixed(2));
-          if (this.overallScore > 79) {
+          if (this.overallScore > 70) {
             this.totalColor = 'success';
-          } else if (this.overallScore > 49) {
+          } else if (this.overallScore >= 50) {
             this.totalColor = 'warning';
-          } else if (this.overallScore <= 49) {
+          } else if (this.overallScore < 50) {
             this.totalColor = 'danger';
           }
         }
