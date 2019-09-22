@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {HttpService} from '../services/http.service';
 
 @Component({
@@ -8,7 +8,7 @@ import {HttpService} from '../services/http.service';
 })
 export class PopularComponent implements OnInit {
   popList = null;
-
+  @Input() url: string;
   constructor(private httpService: HttpService) {
   }
 
@@ -17,7 +17,7 @@ export class PopularComponent implements OnInit {
   }
 
   mostPopular() {
-    this.httpService.getData('https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=e84ac8af3c49ad3253e0369ec64dfbff')
+    this.httpService.getData(this.url)
       .subscribe((response) => {
         this.popList = response;
       });

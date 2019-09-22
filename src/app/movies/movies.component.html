@@ -93,5 +93,18 @@
       </div>
     </ng-template>
   </div>
-  <app-popular></app-popular>
+  <h3><b>Popular Movies</b></h3>
+  <nav class="nav nav-pills nav-justified unique-color">
+    <!--    <a class="nav-item" (click)="toggleYear(year.key)" id="pills-home-tab" data-toggle="pill" aria-controls="pills-home" aria-selected="true" [href]="'/movies#'+year.key" *ngFor="let year of popularYears | keyvalue">{{year.key}}</a>-->
+    <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
+       [ngClass]="{'unique-color-dark':year.value}">
+      {{year.key.substring(1)}}
+    </a>
+  </nav>
+</div>
+<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" >
+  <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
+    <app-popular
+      [url]="'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&primary_release_year=' + year.key.substring(1) + '&api_key=e84ac8af3c49ad3253e0369ec64dfbff'"></app-popular>
+  </div>
 </div>

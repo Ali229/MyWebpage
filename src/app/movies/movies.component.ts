@@ -22,6 +22,11 @@ export class MoviesComponent implements OnInit {
   loading = false;
   selectedOption = '';
   popList = null;
+  currentYear = new Date().getFullYear();
+  popularYears: Map<string, boolean> = new Map([['0' + this.currentYear.toString(), true],
+    ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
+    ['3' + (this.currentYear - 3).toString(), false], ['4' + (this.currentYear - 4).toString(), false],
+  ]);
 
   constructor(private httpService: HttpService) {
   }
@@ -103,5 +108,15 @@ export class MoviesComponent implements OnInit {
         }
         this.loading = false;
       });
+  }
+
+  toggleYear(Key) {
+    this.popularYears.forEach((value: boolean, key: string) => {
+      if (key === Key) {
+        this.popularYears.set(key, true);
+      } else {
+        this.popularYears.set(key, false);
+      }
+    });
   }
 }
