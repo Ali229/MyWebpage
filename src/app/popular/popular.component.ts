@@ -7,19 +7,9 @@ import {HttpService} from '../services/http.service';
   styleUrls: ['./popular.component.scss']
 })
 export class PopularComponent implements OnInit {
-  popList = null;
-  @Input() url: string;
+  @Input() popList: string;
   constructor(private httpService: HttpService) {
   }
 
-  ngOnInit() {
-    this.mostPopular();
-  }
-
-  mostPopular() {
-    this.httpService.getData(this.url)
-      .subscribe((response) => {
-        this.popList = response;
-      });
-  }
+  ngOnInit() {}
 }

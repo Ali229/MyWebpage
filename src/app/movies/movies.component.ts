@@ -21,24 +21,28 @@ export class MoviesComponent implements OnInit {
   totalColor = null;
   loading = false;
   selectedOption = '';
-  popList = null;
   currentYear = new Date().getFullYear();
   popularYears: Map<string, boolean> = new Map([['0' + this.currentYear.toString(), true],
     ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
     ['3' + (this.currentYear - 3).toString(), false], ['4' + (this.currentYear - 4).toString(), false],
   ]);
+  popularMovies = [];
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit() {
-    this.mostPopular();
+    this.mostPopular(this.currentYear);
   }
 
-  mostPopular() {
-    this.httpService.getData('https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=e84ac8af3c49ad3253e0369ec64dfbff')
+  mostPopular(year) {
+    this.httpService.getData('https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc' + '' +
+      '&api_key=e84ac8af3c49ad3253e0369ec64dfbff&primary_release_year=' + year.toString())
       .subscribe((response) => {
-        this.popList = response;
+        this.popularMovies.push(response);
+        if (year.toString() !== (this.currentYear - 4).toString()) {
+          this.mostPopular(year - 1);
+        }
       });
   }
 
