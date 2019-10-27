@@ -2,7 +2,7 @@
   <tbody>
   <tr>
     <td *ngFor="let movie of popList.results | slice:0:2; let i = index">
-      <div class="row">
+      <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
         <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
         <div class="col mInfo">
           <p class="title"><b>{{i+1}}. {{movie.title}}</b></p>
@@ -16,7 +16,7 @@
   </tr>
   <tr>
     <td *ngFor="let movie of popList.results | slice:2:4; let i = index">
-      <div class="row">
+      <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
         <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
         <div class="col mInfo">
           <p class="title"><b>{{i+3}}. {{movie.title}}</b></p>
@@ -30,7 +30,7 @@
   </tr>
   <tr>
     <td *ngFor="let movie of popList.results | slice:4:6; let i = index">
-      <div class="row">
+      <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
         <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
         <div class="col mInfo">
           <p class="title"><b>{{i+5}}. {{movie.title}}</b></p>
@@ -44,7 +44,7 @@
   </tr>
   <tr>
     <td *ngFor="let movie of popList.results | slice:6:8; let i = index">
-      <div class="row">
+      <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
         <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
         <div class="col mInfo">
           <p class="title"><b>{{i+7}}. {{movie.title}}</b></p>
@@ -58,7 +58,7 @@
   </tr>
   <tr>
     <td *ngFor="let movie of popList.results | slice:8:10; let i = index">
-      <div class="row">
+      <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
         <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
         <div class="col mInfo">
           <p class="title"><b>{{i+9}}. {{movie.title}}</b></p>

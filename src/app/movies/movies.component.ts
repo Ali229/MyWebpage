@@ -6,6 +6,7 @@ import {HttpService} from '../services/http.service';
   templateUrl: './movies.component.html',
   styleUrls: ['./movies.component.scss']
 })
+
 export class MoviesComponent implements OnInit {
   moviename = '';
   movieyear = '';
@@ -46,9 +47,9 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search() {
+  search(title, year) {
     this.loading = true;
-    this.httpService.getData('https://www.omdbapi.com/?t=' + this.moviename + '&y=' + this.movieyear + '&type=' + this.selectedOption + '&apikey=faec32e6')
+    this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + this.selectedOption + '&apikey=faec32e6')
       .subscribe((info) => {
         this.data = null;
         this.rottenScore = null;
@@ -124,3 +125,8 @@ export class MoviesComponent implements OnInit {
     });
   }
 }
+
+// export function extSearch() {
+//   console.log('hello');
+//   search();
+// }
