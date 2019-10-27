@@ -29,10 +29,10 @@ export class MoviesComponent implements OnInit {
   popularMovies = [];
 
   constructor(private httpService: HttpService) {
+    this.mostPopular(this.currentYear);
   }
 
   ngOnInit() {
-    this.mostPopular(this.currentYear);
   }
 
   mostPopular(year) {

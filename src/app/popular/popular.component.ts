@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, AfterViewInit} from '@angular/core';
 import {HttpService} from '../services/http.service';
 
 @Component({
@@ -6,10 +6,6 @@ import {HttpService} from '../services/http.service';
   templateUrl: './popular.component.html',
   styleUrls: ['./popular.component.scss']
 })
-export class PopularComponent implements OnInit {
+export class PopularComponent  {
   @Input() popList: string;
-  constructor(private httpService: HttpService) {
-  }
-
-  ngOnInit() {}
 }

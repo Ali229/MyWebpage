@@ -1,7 +1,7 @@
 .badge {
-  border-radius: 15px;
+  border-radius: 10px;
   font-size: 35px;
-  padding: 30px
+  padding: 30px;
 }
 
 img {
@@ -12,11 +12,9 @@ img {
 .mInfo {
   text-align: left;
 }
-
-.mt-3 {
-  display: inline-table;
+td {
+  max-width: 10vw;
 }
-
 .title {
-  font-size: 1.2em;
+  font-size: 1.1em;
 }
