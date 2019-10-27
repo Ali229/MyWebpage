@@ -3,29 +3,29 @@
   <form>
     <div class="row">
       <div class="col-sm">
-        <div class="md-form mt-0">
+        <div class="md-form">
           <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
           <label for="mname" class="">Title</label>
         </div>
       </div>
       <div class="col-sm">
-        <div class="md-form mt-0">
+        <div class="md-form">
           <input mdbInput type="text" id="myear" class="form-control" [(ngModel)]="movieyear" name="movyear">
           <label for="myear" class="">Year</label>
         </div>
       </div>
       <div class="col-sm">
-        <div class="md-form mt-0">
-        <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
-          <option value="">All</option>
-          <option value="movie">Movie</option>
-          <option value="series">TV</option>
-        </select>
+        <div class="md-form">
+          <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
+            <option value="">All</option>
+            <option value="movie">Movie</option>
+            <option value="series">TV</option>
+          </select>
         </div>
       </div>
       <div class="col-sm">
-        <div class="md-form mt-0">
-        <button type="submit" (click)="search()" mdbBtn color="dark" mdbWavesEffect>Search</button>
+        <div class="md-form">
+          <button type="submit" (click)="search()" mdbBtn color="dark" mdbWavesEffect>Search</button>
         </div>
       </div>
     </div>
@@ -93,18 +93,17 @@
       </div>
     </ng-template>
   </div>
-  <h3><b>Popular Movies</b></h3>
+  <h3 class="mb-3"><b>Popular Movies</b></h3>
   <nav class="nav nav-pills nav-justified unique-color">
     <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
        [ngClass]="{'unique-color-dark':year.value}">
       {{year.key.substring(1)}}
     </a>
   </nav>
-
-<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" >
-  <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
-    <app-popular
-      [popList] = popularMovies[year.key.substring(0,1)]></app-popular>
+  <div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" >
+    <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
+      <app-popular
+        [popList] = popularMovies[year.key.substring(0,1)]></app-popular>
+    </div>
   </div>
-</div>
 </div>

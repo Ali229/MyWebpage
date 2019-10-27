@@ -37,10 +37,10 @@ h1 {
 }
 
 .nav-item {
-  padding: 15px;
+  padding: 8px;
 }
 
-.unique-color-dark{
+.unique-color-dark {
   border-radius: 15px;
 }
 
@@ -49,11 +49,13 @@ h1 {
   margin-top: 20px;
 }
 
-button {
-  margin-top: 0;
+tr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-tr {
+.row {
   display: flex;
   align-items: center;
   justify-content: center;

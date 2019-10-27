@@ -1,76 +1,74 @@
-<div class="mt-3" *ngIf="popList">
-  <table mdbTable>
-    <tbody>
-    <tr>
-      <td *ngFor="let movie of popList.results | slice:0:2; let i = index">
-        <div class="row">
-          <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
-          <div class="col mInfo">
-            <p class="title"><b>{{i+1}}. {{movie.title}}</b></p>
-            <p>{{movie.release_date | date}}</p>
-            <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          </div>
+<table mdbTable *ngIf="popList">
+  <tbody>
+  <tr>
+    <td *ngFor="let movie of popList.results | slice:0:2; let i = index">
+      <div class="row">
+        <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
+        <div class="col mInfo">
+          <p class="title"><b>{{i+1}}. {{movie.title}}</b></p>
+          <p>{{movie.release_date | date}}</p>
+          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td *ngFor="let movie of popList.results | slice:2:4; let i = index">
-        <div class="row">
-          <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
-          <div class="col mInfo">
-            <p class="title"><b>{{i+3}}. {{movie.title}}</b></p>
-            <p>{{movie.release_date | date}}</p>
-            <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let movie of popList.results | slice:2:4; let i = index">
+      <div class="row">
+        <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
+        <div class="col mInfo">
+          <p class="title"><b>{{i+3}}. {{movie.title}}</b></p>
+          <p>{{movie.release_date | date}}</p>
+          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td *ngFor="let movie of popList.results | slice:4:6; let i = index">
-        <div class="row">
-          <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
-          <div class="col mInfo">
-            <p class="title"><b>{{i+5}}. {{movie.title}}</b></p>
-            <p>{{movie.release_date | date}}</p>
-            <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let movie of popList.results | slice:4:6; let i = index">
+      <div class="row">
+        <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
+        <div class="col mInfo">
+          <p class="title"><b>{{i+5}}. {{movie.title}}</b></p>
+          <p>{{movie.release_date | date}}</p>
+          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td *ngFor="let movie of popList.results | slice:6:8; let i = index">
-        <div class="row">
-          <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
-          <div class="col mInfo">
-            <p class="title"><b>{{i+7}}. {{movie.title}}</b></p>
-            <p>{{movie.release_date | date}}</p>
-            <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let movie of popList.results | slice:6:8; let i = index">
+      <div class="row">
+        <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
+        <div class="col mInfo">
+          <p class="title"><b>{{i+7}}. {{movie.title}}</b></p>
+          <p>{{movie.release_date | date}}</p>
+          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td *ngFor="let movie of popList.results | slice:8:10; let i = index">
-        <div class="row">
-          <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
-          <div class="col mInfo">
-            <p class="title"><b>{{i+9}}. {{movie.title}}</b></p>
-            <p>{{movie.release_date | date}}</p>
-            <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-            <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td *ngFor="let movie of popList.results | slice:8:10; let i = index">
+      <div class="row">
+        <div class="col"><img class="icons" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path" alt="Can't load image"></div>
+        <div class="col mInfo">
+          <p class="title"><b>{{i+9}}. {{movie.title}}</b></p>
+          <p>{{movie.release_date | date}}</p>
+          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 5 && movie.vote_average < 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p *ngIf="movie.vote_average >= 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
