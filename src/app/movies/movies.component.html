@@ -1,50 +1,53 @@
-<div class="mvgroup">
-  <h1>Movies</h1>
-  <form>
-    <div class="row">
-      <div class="col-sm">
-        <div class="md-form">
-          <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
-          <label for="mname" class="">Title</label>
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="md-form">
-          <input mdbInput type="text" id="myear" class="form-control" [(ngModel)]="movieyear" name="movyear">
-          <label for="myear" class="">Year</label>
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="md-form">
-          <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
-            <option value="">All</option>
-            <option value="movie">Movie</option>
-            <option value="series">TV</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="md-form">
-          <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="dark" mdbWavesEffect>Search</button>
-        </div>
+<h1>Movies</h1>
+<form>
+  <div class="row">
+    <div class="col-sm">
+      <div class="md-form">
+        <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
+        <label for="mname" class="">Title</label>
       </div>
     </div>
-  </form>
-  <div *ngIf="data">
-    <div *ngIf="data.Response != 'False' else elseBlock" class="dataAll">
-      <h2><b>{{data.Title}} ({{data.Year}})</b></h2>
-      <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
-      <div class="dataHeader">
-        <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
-        <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
-        <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}} | </span>
-        <span *ngIf="data.Genre != 'N/A'">{{data.Genre}} | </span>
-        <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
+    <div class="col-sm">
+      <div class="md-form">
+        <input mdbInput type="text" id="myear" class="form-control" [(ngModel)]="movieyear" name="movyear">
+        <label for="myear" class="">Year</label>
       </div>
-      <div class="dataBody">
-        <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3" src="{{data.Poster}}"
-             [hidden]="loading"
-             alt="Can't load image">
+    </div>
+    <div class="col-sm">
+      <div class="md-form">
+        <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
+          <option value="">All</option>
+          <option value="movie">Movie</option>
+          <option value="series">TV</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-sm">
+      <div class="md-form">
+        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="dark" mdbWavesEffect>Search</button>
+      </div>
+    </div>
+  </div>
+</form>
+<div *ngIf="data">
+  <div *ngIf="data.Response != 'False' else elseBlock" class="dataAll">
+    <h2><b>{{data.Title}} ({{data.Year}})</b></h2>
+    <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
+    <div class="dataHeader">
+      <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
+      <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
+      <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}} | </span>
+      <span *ngIf="data.Genre != 'N/A'">{{data.Genre}} | </span>
+      <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
+    </div>
+    <div class="dataBody">
+      <div class="row">
+        <div class="col">
+          <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3" src="{{data.Poster}}"
+               [hidden]="loading"
+               alt="Can't load image">
+        </div>
+        <div class="col">
         <div class="bodyText">
           <div *ngIf="data.Plot != 'N/A'">
             <h3><b>Plot</b></h3>
@@ -86,24 +89,25 @@
         </span>
         </div>
       </div>
-    </div>
-    <ng-template #elseBlock>
-      <div class="alert alert-danger mnf" role="alert" [hidden]="loading">
-        Search not found!
       </div>
-    </ng-template>
-  </div>
-  <h3 class="mb-3"><b>Popular Movies</b></h3>
-  <nav class="nav nav-pills nav-justified unique-color">
-    <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
-       [ngClass]="{'unique-color-dark':year.value}">
-      {{year.key.substring(1)}}
-    </a>
-  </nav>
-  <div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" >
-    <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
-      <app-popular
-        [popList] = popularMovies[year.key.substring(0,1)]></app-popular>
     </div>
+  </div>
+  <ng-template #elseBlock>
+    <div class="alert alert-danger mnf" role="alert" [hidden]="loading">
+      Search not found!
+    </div>
+  </ng-template>
+</div>
+<h3 class="mb-3"><b>Popular Movies</b></h3>
+<nav class="nav nav-pills nav-justified unique-color">
+  <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
+     [ngClass]="{'unique-color-dark':year.value}">
+    {{year.key.substring(1)}}
+  </a>
+</nav>
+<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue">
+  <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
+    <app-popular
+      [popList]=popularMovies[year.key.substring(0,1)]></app-popular>
   </div>
 </div>

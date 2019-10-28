@@ -2,17 +2,12 @@ h1 {
   margin-bottom: 30px;
 }
 
-.poster {
-  float: left;
-  margin-right: 20px;
-}
-
 .dataAll {
   margin-top: 20px;
 }
 
 .dataBody {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .bodyText {
@@ -25,7 +20,7 @@ h1 {
 }
 
 .badge {
-  border-radius: 15px;
+  border-radius: 10px;
   font-size: 45px;
   padding: 30px;
   margin-left: 60px;
@@ -49,16 +44,8 @@ h1 {
   margin-top: 20px;
 }
 
-tr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+button {
+  margin-top: 0;
 }
 
 @media screen and (max-width: 600px) {
