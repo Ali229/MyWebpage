@@ -24,7 +24,7 @@
     </div>
     <div class="col-sm">
       <div class="md-form">
-        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="dark" mdbWavesEffect>Search</button>
+        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="dark" mdbWavesEffect  id="target">Search</button>
       </div>
     </div>
   </div>
@@ -48,17 +48,17 @@
                alt="Can't load image">
         </div>
         <div class="col">
-        <div class="bodyText">
-          <div *ngIf="data.Plot != 'N/A'">
-            <h3><b>Plot</b></h3>
-            <div>{{data.Plot}}</div>
-          </div>
-          <div *ngIf="data.Awards != 'N/A'">
-            <h3 style="margin-top: 20px"><b>Awards</b></h3>
-            <div>{{data.Awards}}</div>
-          </div>
-          <h3 *ngIf="data.Ratings.length !== 0" style="margin-top: 20px"><b>Ratings</b></h3>
-          <span style="display: inline-table;">
+          <div class="bodyText">
+            <div *ngIf="data.Plot != 'N/A'">
+              <h3><b>Plot</b></h3>
+              <div>{{data.Plot}}</div>
+            </div>
+            <div *ngIf="data.Awards != 'N/A'">
+              <h3 style="margin-top: 20px"><b>Awards</b></h3>
+              <div>{{data.Awards}}</div>
+            </div>
+            <h3 *ngIf="data.Ratings.length !== 0" style="margin-top: 20px"><b>Ratings</b></h3>
+            <span style="display: inline-table;">
           <table mdbTable borderless="true">
             <tbody>
                 <tr *ngIf="data.Metascore != 'N/A'">
@@ -87,8 +87,8 @@
             </tbody>
           </table>
         </span>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   </div>
@@ -105,7 +105,7 @@
     {{year.key.substring(1)}}
   </a>
 </nav>
-<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue">
+<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" (click)="scrollToElement()">
   <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
     <app-popular
       [popList]=popularMovies[year.key.substring(0,1)]></app-popular>

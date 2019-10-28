@@ -124,9 +124,8 @@ export class MoviesComponent implements OnInit {
       }
     });
   }
+  scrollToElement(): void {
+    const x = document.getElementById('target');
+    x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
+  }
 }
-
-// export function extSearch() {
-//   console.log('hello');
-//   search();
-// }
