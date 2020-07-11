@@ -14,7 +14,6 @@ export class PopularComponent {
   ) {}
 
   pSearch(title, year) {
-    console.log(title, year);
     this.mc.search(title, year);
   }
 }
