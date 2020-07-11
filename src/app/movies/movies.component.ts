@@ -14,11 +14,13 @@ export class MoviesComponent implements OnInit {
   metaColor = null;
   imdbColor = null;
   rottenColor = null;
+  tmdbColor = null;
   rottenScore = null;
   rottenImage = null;
   totalScore = 0;
   scoreCount = 0;
   overallScore = 0;
+  tmdbScore = 0;
   totalColor = null;
   loading = false;
   selectedOption = '';
@@ -47,7 +49,7 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search(title, year) {
+  search(title, year, tmdbScore) {
     this.loading = true;
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + this.selectedOption + '&apikey=faec32e6')
       .subscribe((info) => {
@@ -101,6 +103,18 @@ export class MoviesComponent implements OnInit {
               }
             }
           }
+          this.tmdbScore = tmdbScore * 10;
+          if (this.tmdbScore > 0) {
+            if (this.tmdbScore > 70) {
+              this.tmdbColor = 'success';
+            } else if (this.tmdbScore >= 50) {
+              this.tmdbColor = 'warning';
+            } else if (this.tmdbScore < 50) {
+              this.tmdbColor = 'danger';
+            }
+            this.totalScore += Number(this.tmdbScore);
+            this.scoreCount++;
+          }
           // tslint:disable-next-line:radix
           this.overallScore = parseInt((this.totalScore / this.scoreCount).toFixed(2));
           if (this.overallScore > 70) {
@@ -124,6 +138,7 @@ export class MoviesComponent implements OnInit {
       }
     });
   }
+
   scrollToElement(): void {
     const x = document.getElementById('target');
     x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});

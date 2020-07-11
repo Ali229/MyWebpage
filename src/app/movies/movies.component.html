@@ -24,7 +24,7 @@
     </div>
     <div class="col-sm">
       <div class="md-form">
-        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="dark" mdbWavesEffect id="target">
+        <button type="submit" (click)="search(moviename,movieyear,null)" mdbBtn color="dark" mdbWavesEffect id="target">
           Search
         </button>
       </div>
@@ -63,6 +63,11 @@
             <span style="display: inline-table;">
               <table mdbTable borderless="true">
                 <tbody>
+                <tr *ngIf="tmdbScore > 0">
+                      <td><img class="icons" src="assets/tmdb.png" alt="Can't load image"></td>
+                      <td><span class="badge badge-{{tmdbColor}} animated zoomIn z-depth-3"
+                                [hidden]="loading">{{tmdbScore}}</span></td>
+                    </tr>
                     <tr *ngIf="data.Metascore != 'N/A'">
                       <td><img class="icons" src="assets/meta.png" alt="Can't load image"></td>
                       <td><span class="badge badge-{{metaColor}} animated zoomIn z-depth-3"
