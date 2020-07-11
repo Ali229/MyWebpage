@@ -59,7 +59,7 @@
               <h3 style="margin-top: 20px"><b>Awards</b></h3>
               <div>{{data.Awards}}</div>
             </div>
-            <h3 *ngIf="data.Ratings.length !== 0" style="margin-top: 20px"><b>Ratings</b></h3>
+            <h3 *ngIf="data.Ratings.length !== 0 || tmdbScore > 0" style="margin-top: 20px"><b>Ratings</b></h3>
             <span style="display: inline-table;">
               <table mdbTable borderless="true">
                 <tbody>
@@ -85,7 +85,7 @@
                       <td><span class="badge badge-{{rottenColor}} animated zoomIn z-depth-3"
                                 [hidden]="loading">{{rottenScore}}</span></td>
                     </tr>
-                    <tr *ngIf="totalScore !=  0">
+                    <tr *ngIf="totalScore !=  0 && scoreCount > 1">
                       <td><img class="icons" src="assets/calculator_icon.png" alt="Can't load image"
                                style="border-radius: 15px;"></td>
                       <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3"
