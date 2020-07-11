@@ -49,7 +49,7 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search(title, year, tmdbScore) {
+  search(title, year, tmdbScore?) {
     this.loading = true;
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + this.selectedOption + '&apikey=faec32e6')
       .subscribe((info) => {
