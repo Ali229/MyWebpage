@@ -24,7 +24,7 @@
     </div>
     <div class="col-sm-2">
       <div class="md-form">
-        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="elegant" mdbWavesEffect id="target">
+        <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="elegant" mdbWavesEffect id="target" [disabled]="moviename.length == 0">
           Search
         </button>
       </div>
