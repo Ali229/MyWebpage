@@ -14,6 +14,6 @@ export class PopularComponent {
   ) {}
 
   pSearch(title, year, tmdbScore) {
-    this.mc.search(title, year, tmdbScore);
+    this.mc.search(title, year, tmdbScore, 'movie');
   }
 }

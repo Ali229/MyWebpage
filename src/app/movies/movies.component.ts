@@ -24,6 +24,7 @@ export class MoviesComponent implements OnInit {
   totalColor = null;
   loading = false;
   selectedOption = '';
+  type = '';
   currentYear = new Date().getFullYear();
   popularYears: Map<string, boolean> = new Map([['0' + this.currentYear.toString(), true],
     ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
@@ -49,8 +50,11 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search(title, year, tmdbScore?) {
+  search(title, year, tmdbScore?, type?) {
     this.loading = true;
+    if (type) {
+      this.selectedOption = type;
+    }
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + this.selectedOption + '&apikey=faec32e6')
       .subscribe((info) => {
         this.data = null;
