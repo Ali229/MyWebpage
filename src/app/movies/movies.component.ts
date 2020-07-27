@@ -52,10 +52,10 @@ export class MoviesComponent implements OnInit {
 
   search(title, year, tmdbScore?, type?) {
     this.loading = true;
-    if (type) {
-      this.selectedOption = type;
+    if (!type) {
+      type = this.selectedOption;
     }
-    this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + this.selectedOption + '&apikey=faec32e6')
+    this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + type + '&apikey=faec32e6')
       .subscribe((info) => {
         this.data = null;
         this.rottenScore = null;
