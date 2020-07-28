@@ -51,7 +51,7 @@
     <div class="dataBody">
       <div class="row">
         <div class="col">
-          <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3" src="{{data.Poster}}"
+          <img class="poster animated slideInLeft z-depth-3" src="{{data.Poster}}"
                [hidden]="loading" alt="Can't load image" onerror="this.src='assets/404PosterNotFound.jpg';">
           <button class="poster-buttons animated slideInLeft z-depth-3" [hidden]="loading" mdbBtn type="button"
                   gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to
