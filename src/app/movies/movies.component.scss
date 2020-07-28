@@ -48,8 +48,13 @@ button {
   margin: 0;
 }
 
+.poster-buttons {
+  margin-top: 10px;
+  width: 300px;
+}
+
 @media screen and (max-width: 600px) {
-  img, button, .poster, table {
+  img, button, .poster, table, .poster-buttons {
     float: none;
     width: 100%;
   }

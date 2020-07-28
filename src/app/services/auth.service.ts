@@ -1,14 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {User} from './user.model'; // optional
-
+import {User} from '../models/user.model';
 import {auth} from 'firebase/app';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-
 import {Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
-import {WatchList} from './watchlist.model';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {

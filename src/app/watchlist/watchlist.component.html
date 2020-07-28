@@ -1,4 +1,33 @@
 <h1>Watchlist</h1>
-<div *ngFor="let item of watchlist| keyvalue">
-  {{ item.key }} - {{ item.value | json}}
+<div class="container">
+  <table mdbTable #tableEl="mdbTable" class="z-depth-1">
+    <thead>
+    <tr>
+      <th *ngFor="let head of headElements; let i = index" scope="col">{{head}}
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let el of watchlist; let i = index">
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex"><img
+        class="poster animated slideInLeft z-depth-3" src="{{el.Poster}}"
+        alt="Can't load image" onerror="this.src='assets/404PosterNotFound.jpg';">
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Title}}</td>
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Type | titlecase}}</td>
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Released}}</td>
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex
+          && el.Ratings.length !== 0">{{el.Ratings[0].Value}}</td>
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex
+          && el.Ratings.length == 0">{{'N/A'}}</td>
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Comments}}</td>
+    </tr>
+    </tbody>
+    <tfoot class="grey lighten-5 w-100">
+    <tr>
+      <td colspan="4">
+        <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="watchlist"></mdb-table-pagination>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
 </div>

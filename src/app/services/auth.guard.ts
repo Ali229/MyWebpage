@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.auth.user$.pipe(
       take(1),
-      map(user => !!user), // <-- map to boolean
+      map(user => !!user),
       tap(loggedIn => {
         if (!loggedIn) {
           this.router.navigate(['/movies']);

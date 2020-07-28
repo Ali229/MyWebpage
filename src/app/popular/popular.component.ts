@@ -9,9 +9,8 @@ import {MoviesComponent} from '../movies/movies.component';
 export class PopularComponent {
   @Input() popList: string;
 
-  constructor(
-    private mc: MoviesComponent
-  ) {}
+  constructor(private mc: MoviesComponent) {
+  }
 
   pSearch(title, year, tmdbScore) {
     this.mc.search(title, year, tmdbScore, 'movie');

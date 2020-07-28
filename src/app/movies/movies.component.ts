@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpService} from '../services/http.service';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-movies',
@@ -32,7 +34,7 @@ export class MoviesComponent implements OnInit {
   ]);
   popularMovies = [];
 
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService, private afs: AngularFirestore, public auth: AuthService) {
     this.mostPopular(this.currentYear);
   }
 
@@ -146,5 +148,9 @@ export class MoviesComponent implements OnInit {
   scrollToElement(): void {
     const x = document.getElementById('target');
     x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
+  }
+
+  addToWatchlist() {
+    return this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.data);
   }
 }
