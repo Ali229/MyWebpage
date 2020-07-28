@@ -24,7 +24,7 @@
     </tbody>
     <tfoot class="grey lighten-5 w-100">
     <tr>
-      <td colspan="4">
+      <td [attr.colspan]="headElements.length">
         <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="watchlist"></mdb-table-pagination>
       </td>
     </tr>
