@@ -130,6 +130,7 @@ export class MoviesComponent implements OnInit {
           } else if (this.overallScore < 50) {
             this.totalColor = 'danger';
           }
+          this.data.overallScore = this.overallScore;
         }
         this.loading = false;
       });
