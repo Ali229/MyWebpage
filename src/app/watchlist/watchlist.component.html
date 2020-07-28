@@ -1,1 +1,4 @@
-<p>watchlist works!</p>
+<h1>Watchlist</h1>
+<div *ngFor="let item of watchlist| keyvalue">
+  {{ item.key }} - {{ item.value | json}}
+</div>
