@@ -6,6 +6,8 @@ import {EmploymentComponent} from './employment/employment.component';
 import {EducationComponent} from './education/education.component';
 import {ContactComponent} from './contact/contact.component';
 import {MoviesComponent} from './movies/movies.component';
+import {WatchlistComponent} from './watchlist/watchlist.component';
+import {AuthGuard} from './services/auth.guard';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent},
@@ -14,6 +16,7 @@ const routes: Routes = [
   {path: 'education', component: EducationComponent},
   {path: 'contact', component: ContactComponent},
   {path: 'movies', component: MoviesComponent},
+  {path: 'watchlist', component: WatchlistComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'home'}
 ];
 

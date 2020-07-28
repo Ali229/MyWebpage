@@ -14,11 +14,13 @@ import {MoviesComponent} from './movies/movies.component';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpService} from './services/http.service';
 import {FormsModule} from '@angular/forms';
-import { PopularComponent } from './popular/popular.component';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import {PopularComponent} from './popular/popular.component';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {UserProfileComponent} from './user-profile/user-profile.component';
+import {WatchlistComponent} from './watchlist/watchlist.component';
+import {AuthService} from './services/auth.service';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -43,7 +45,8 @@ const config = {
     SkillbarComponent,
     MoviesComponent,
     PopularComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    WatchlistComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +59,8 @@ const config = {
     AngularFireAuthModule,
   ],
   providers: [
-    HttpService
+    HttpService,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

@@ -8,17 +8,20 @@ import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestor
 
 import {Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
+import {WatchList} from './watchlist.model';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
   user$: Observable<User>;
+  uid: string;
 
   constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
     this.user$ = this.afAuth.authState.pipe(
       switchMap(user => {
         // Logged in
         if (user) {
+          this.uid = user.uid;
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           // Logged out
@@ -43,9 +46,8 @@ export class AuthService {
       email: user.email,
       displayName: user.displayName,
       photoURL: user.photoURL
-    }
-
-    return userRef.set(data, { merge: true });
+    };
+    return userRef.set(data, {merge: true});
 
   }
 
@@ -53,6 +55,4 @@ export class AuthService {
     await this.afAuth.signOut();
     // this.router.navigate(['/movies']);
   }
-
-
 }
