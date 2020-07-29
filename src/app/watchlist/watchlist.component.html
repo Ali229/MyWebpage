@@ -9,9 +9,12 @@
     </thead>
     <tbody>
     <tr *ngFor="let el of watchlist; let i = index">
-      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex"><img
-        class="poster animated slideInLeft z-depth-3" src="{{el.Poster}}"
-        alt="Can't load image" onerror="this.src='assets/404PosterNotFound.jpg';">
+      <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+        <img *ngIf="el.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3" src="{{el.Poster}}"
+        alt="Can't load image">
+        <img *ngIf="el.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3" src="assets/404PosterNotFound.jpg"
+          alt="Can't load image">
+      </td>
       <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Title}}</td>
       <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Type | titlecase}}</td>
       <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Released}}</td>

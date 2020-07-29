@@ -51,8 +51,10 @@
     <div class="dataBody">
       <div class="row">
         <div class="col">
-          <img class="poster animated slideInLeft z-depth-3" src="{{data.Poster}}"
-               [hidden]="loading" alt="Can't load image" onerror="this.src='assets/404PosterNotFound.jpg';">
+          <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3"
+               src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
+          <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
+               src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
           <button class="poster-buttons animated slideInLeft z-depth-3" [hidden]="loading" mdbBtn type="button"
                   gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to
             Watchlist
