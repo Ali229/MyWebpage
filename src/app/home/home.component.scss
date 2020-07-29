@@ -1,20 +1,15 @@
 img {
-  width: 45%;
+  width: 100%;
   height: auto;
-  float: left;
 }
 
 .content {
   text-align: left;
-  width: 50%;
-  float: right;
 }
 
 @media screen and (max-width: 600px) {
-  img, .content {
-    margin-top: 20px;
-    float: none;
-    width: 100%;
+  img {
+    margin-bottom: 10px;
   }
   h1 {
     text-align: center;
