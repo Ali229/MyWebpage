@@ -6,12 +6,13 @@ img {
   width: 50px;
   height: auto;
 }
+
 .dropdown-toggle::after {
   content: none;
 }
 
 @media screen and (max-width: 600px) {
-  button{
+  button {
     float: none;
     width: 100%;
   }
