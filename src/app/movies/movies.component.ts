@@ -56,33 +56,18 @@ export class MoviesComponent implements OnInit {
     this.loading = true;
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + type + '&apikey=faec32e6')
       .subscribe((info) => {
-        this.data = null;
-        this.rottenScore = null;
-        this.totalScore = 0;
-        this.scoreCount = 0;
-        this.overallScore = 0;
+        this.data = null, this.rottenScore = null;
+        this.totalScore = 0, this.scoreCount = 0, this.overallScore = 0;
         this.data = info;
         if (this.data.Response !== 'False') {
           if (this.data.Metascore !== 'N/A') {
-            if (this.data.Metascore > 70) {
-              this.metaColor = 'success';
-            } else if (this.data.Metascore >= 50) {
-              this.metaColor = 'warning';
-            } else if (this.data.Metascore < 50) {
-              this.metaColor = 'danger';
-            }
+            this.metaColor = this.getRatingColor(this.data.Metascore);
             this.totalScore += Number(this.data.Metascore);
             this.scoreCount++;
           }
           if (this.data.imdbRating !== 'N/A') {
             this.data.imdbRating = this.data.imdbRating * 10;
-            if (this.data.imdbRating > 70) {
-              this.imdbColor = 'success';
-            } else if (this.data.imdbRating >= 50) {
-              this.imdbColor = 'warning';
-            } else if (this.data.imdbRating < 50) {
-              this.imdbColor = 'danger';
-            }
+            this.imdbColor = this.getRatingColor(this.data.imdbRating);
             this.totalScore += Number(this.data.imdbRating);
             this.scoreCount++;
           }
@@ -91,15 +76,13 @@ export class MoviesComponent implements OnInit {
             for (let x = 0; x < this.data.Ratings.length; x++) {
               if (this.data.Ratings[x].Source === 'Rotten Tomatoes') {
                 this.rottenScore = Number(this.data.Ratings[x].Value.replace('%', ''));
+                this.rottenColor = this.getRatingColor(this.rottenScore);
                 if (this.rottenScore > 70) {
                   this.rottenImage = 'tomato_full.png';
-                  this.rottenColor = 'success';
                 } else if (this.rottenScore >= 50) {
                   this.rottenImage = 'tomato_full.png';
-                  this.rottenColor = 'warning';
                 } else if (this.rottenScore < 50) {
                   this.rottenImage = 'tomato_rotten.png';
-                  this.rottenColor = 'danger';
                 }
                 this.totalScore += Number(this.rottenScore);
                 this.scoreCount++;
@@ -108,25 +91,13 @@ export class MoviesComponent implements OnInit {
           }
           this.tmdbScore = tmdbScore * 10;
           if (this.tmdbScore > 0) {
-            if (this.tmdbScore > 70) {
-              this.tmdbColor = 'success';
-            } else if (this.tmdbScore >= 50) {
-              this.tmdbColor = 'warning';
-            } else if (this.tmdbScore < 50) {
-              this.tmdbColor = 'danger';
-            }
+            this.tmdbColor = this.getRatingColor(this.tmdbScore);
             this.totalScore += Number(this.tmdbScore);
             this.scoreCount++;
           }
           // tslint:disable-next-line:radix
           this.overallScore = parseInt((this.totalScore / this.scoreCount).toFixed(2));
-          if (this.overallScore > 70) {
-            this.totalColor = 'success';
-          } else if (this.overallScore >= 50) {
-            this.totalColor = 'warning';
-          } else if (this.overallScore < 50) {
-            this.totalColor = 'danger';
-          }
+          this.totalColor = this.getRatingColor(this.overallScore);
           this.data.overallScore = this.overallScore;
         }
         this.loading = false;
@@ -150,5 +121,15 @@ export class MoviesComponent implements OnInit {
 
   addToWatchlist() {
     return this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.data);
+  }
+
+  getRatingColor(rating) {
+    if (rating > 70) {
+      return 'success';
+    } else if (rating >= 50) {
+      return 'warning';
+    } else if (rating < 50) {
+      return 'danger';
+    }
   }
 }
