@@ -1,4 +1,4 @@
-<table mdbTable *ngIf="popList">
+<table mdbTable striped="true" *ngIf="popList">
   <tbody>
   <tr>
     <td *ngFor="let movie of popList.results | slice:0:2; let i = index">
