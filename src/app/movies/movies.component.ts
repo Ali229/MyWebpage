@@ -52,11 +52,8 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search(title, year, tmdbScore?, type?) {
+  search(title, year, type, tmdbScore?) {
     this.loading = true;
-    if (!type) {
-      type = this.selectedOption;
-    }
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + type + '&apikey=faec32e6')
       .subscribe((info) => {
         this.data = null;
