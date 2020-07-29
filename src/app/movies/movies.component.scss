@@ -53,6 +53,10 @@ button {
   width: 300px;
 }
 
+.topbar {
+  align-items: center;
+}
+
 @media screen and (max-width: 600px) {
   img, button, .poster, table, .poster-buttons {
     float: none;
