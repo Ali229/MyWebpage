@@ -14,7 +14,7 @@
 <ng-template #authenticated>
   <div *ngIf="auth.user$ | async as user">
     <div class="dropdown" mdbDropdown>
-      <a mdbDropdownToggle type="button" class="dropdown-toggle">
+      <a mdbDropdownToggle type="button" class="dropdown-toggle hoverable">
         <img [src]="user.photoURL" alt=""
              class="rounded-circle"></a>
       <div class="dropdown-menu dropdown-primary">
