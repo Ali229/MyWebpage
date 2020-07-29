@@ -1,19 +1,19 @@
 <h1>Movies</h1>
 <form>
   <div class="row topbar">
-    <div class="col-sm">
+    <div class="col-auto">
       <div class="md-form">
         <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
         <label for="mname">Title</label>
       </div>
     </div>
-    <div class="col-sm">
+    <div class="col-auto">
       <div class="md-form">
         <input mdbInput type="text" id="myear" class="form-control" [(ngModel)]="movieyear" name="movyear">
         <label for="myear">Year</label>
       </div>
     </div>
-    <div class="col-sm">
+    <div class="col-auto">
       <div class="md-form">
         <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedOption">
           <option value="">All</option>
@@ -22,7 +22,7 @@
         </select>
       </div>
     </div>
-    <div class="col-sm-2">
+    <div class="col-auto">
       <div class="md-form">
         <button type="submit" (click)="search(moviename,movieyear)" mdbBtn color="elegant" mdbWavesEffect id="target"
                 [disabled]="moviename.length == 0" size="md">
@@ -30,7 +30,7 @@
         </button>
       </div>
     </div>
-    <div class="col-sm-2">
+    <div class="col-auto ml-auto">
       <div class="md-form">
         <app-user-profile></app-user-profile>
       </div>
