@@ -14,7 +14,7 @@
 <ng-template #authenticated>
   <div *ngIf="auth.user$ | async as user">
     <div class="dropdown" mdbDropdown>
-      <a mdbDropdownToggle mdbWavesEffect type="button" class="dropdown-toggle waves-light"
+      <a mdbDropdownToggle type="button" class="dropdown-toggle"
          style="height: auto; width: 80px">
         <img [src]="user.photoURL" alt=""
              class="rounded-circle"></a>
