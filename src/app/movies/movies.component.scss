@@ -57,7 +57,11 @@ button {
   align-items: center;
 }
 
-@media screen and (max-width: 600px) {
+.poster {
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 768px) {
   img, button, .poster, table, .poster-buttons, .col-auto {
     float: none;
     width: 100%;

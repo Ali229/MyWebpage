@@ -24,9 +24,8 @@
     </div>
     <div class="col-auto">
       <div class="md-form">
-        <button type="submit" (click)="search(moviename,movieyear,selectedOption)" mdbBtn color="elegant" mdbWavesEffect id="target"
-                [disabled]="moviename.length == 0" size="md">
-          Search
+        <button type="submit" (click)="search(moviename,movieyear,selectedOption)" mdbBtn color="elegant" mdbWavesEffect
+                id="target" [disabled]="moviename.length == 0" size="md"> Search
         </button>
       </div>
     </div>
@@ -60,8 +59,7 @@
             Watchlist
           </button>
           <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"
-                  gradient="purple" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-heart"></i> &nbsp;Add to
-            Love list
+                  gradient="purple" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-heart"></i> Love
           </button>
           <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"
                   color="red" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-play"></i> &nbsp;Play
