@@ -49,16 +49,22 @@ button {
 }
 
 .poster-buttons {
-  margin-top: 10px;
   width: 300px;
-}
-
-.topbar {
-  align-items: center;
+  background: black;
+  border-radius: 0 0 5px 5px;
+  padding: 5px;
 }
 
 .poster {
-  border-radius: 5px;
+  border-radius: 5px 5px 0 0;
+}
+
+.poster-col {
+  text-align: initial;
+}
+
+.custom-select {
+  background-color: #f4f4f4;
 }
 
 @media screen and (max-width: 768px) {

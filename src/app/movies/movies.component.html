@@ -1,6 +1,6 @@
 <h1>Movies</h1>
 <form>
-  <div class="row topbar">
+  <div class="row">
     <div class="col-auto">
       <div class="md-form">
         <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
@@ -49,22 +49,25 @@
     </div>
     <div class="dataBody">
       <div class="row">
-        <div class="col">
+        <div class="col poster-col">
           <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3"
                src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
           <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
                src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
-          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"
-                  gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to
-            Watchlist
-          </button>
-          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"
-                  gradient="purple" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-heart"></i> Love
-          </button>
-          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"
-                  color="red" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-play"></i> &nbsp;Play
-            Trailer
-          </button>
+          <div class="poster-buttons animated slideInLeft z-depth-3">
+            <div><i class="fas fa-bookmark"></i> Watchlist</div>
+          </div>
+          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
+          <!--                  gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to-->
+          <!--            Watchlist-->
+          <!--          </button>-->
+          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
+          <!--                  gradient="purple" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-heart"></i> Love-->
+          <!--          </button>-->
+          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
+          <!--                  color="red" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-play"></i> &nbsp;Play-->
+          <!--            Trailer-->
+          <!--          </button>-->
         </div>
         <div class="col col-xl-8 col-lg-7">
           <div class="bodyText">
