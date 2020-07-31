@@ -116,7 +116,7 @@ export class MoviesComponent implements OnInit {
 
   scrollToElement(): void {
     const x = document.getElementById('target');
-    x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
+    x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'end'});
   }
 
   addToWatchlist() {

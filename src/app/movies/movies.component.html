@@ -25,7 +25,7 @@
     <div class="col-auto">
       <div class="md-form">
         <button type="submit" (click)="search(moviename,movieyear,selectedOption)" mdbBtn color="elegant" mdbWavesEffect
-                id="target" [disabled]="moviename.length == 0" size="md"> Search
+                id="sub" [disabled]="moviename.length == 0" size="md"> Search
         </button>
       </div>
     </div>
@@ -36,17 +36,10 @@
     </div>
   </div>
 </form>
+<div id="target"></div>
 <div *ngIf="data">
   <div *ngIf="data.Response != 'False' else elseBlock" class="dataAll">
-    <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
     <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
-    <div class="dataHeader">
-      <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
-      <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
-      <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}} | </span>
-      <span *ngIf="data.Genre != 'N/A'">{{data.Genre}} | </span>
-      <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
-    </div>
     <div class="dataBody">
       <div class="row">
         <div class="col poster-col">
@@ -76,8 +69,16 @@
         </div>
         <div class="col col-xl-8 col-lg-7">
           <div class="bodyText">
+            <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
+            <div class="dataHeader">
+              <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
+              <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
+              <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}} | </span>
+              <span *ngIf="data.Genre != 'N/A'">{{data.Genre}} | </span>
+              <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
+            </div>
             <div *ngIf="data.Plot != 'N/A'">
-              <h3><b>Plot</b></h3>
+              <h3 style="margin-top: 20px"><b>Plot</b></h3>
               <div>{{data.Plot}}</div>
             </div>
             <div *ngIf="data.Awards != 'N/A'">
