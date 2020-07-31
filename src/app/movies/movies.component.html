@@ -71,10 +71,14 @@
           <div class="bodyText">
             <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
             <div class="dataHeader">
-              <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
-              <span *ngIf="data.Released != 'N/A'">{{data.Released}} | </span>
-              <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}} | </span>
-              <span *ngIf="data.Genre != 'N/A'">{{data.Genre}} | </span>
+              <span *ngIf="data.Rated != 'N/A'">{{data.Rated}}
+                <span class="text-muted">| </span></span>
+              <span *ngIf="data.Released != 'N/A'">{{data.Released}}
+                <span class="text-muted">| </span></span>
+              <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}}
+                <span class="text-muted">| </span></span>
+              <span *ngIf="data.Genre != 'N/A'">{{data.Genre}}
+                <span class="text-muted">| </span></span>
               <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
             </div>
             <div *ngIf="data.Plot != 'N/A'">
