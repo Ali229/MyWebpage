@@ -7,9 +7,7 @@
         <div class="col mInfo">
           <p class="title"><b>{{i+1}}. {{movie.title}}</b></p>
           <p>{{movie.release_date | date}}</p>
-          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average >= 5 && movie.vote_average <= 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average > 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p><span class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
       </div>
     </td>
@@ -21,9 +19,7 @@
         <div class="col mInfo">
           <p class="title"><b>{{i+3}}. {{movie.title}}</b></p>
           <p>{{movie.release_date | date}}</p>
-          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average >= 5 && movie.vote_average <= 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average > 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p><span class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
       </div>
     </td>
@@ -35,9 +31,7 @@
         <div class="col mInfo">
           <p class="title"><b>{{i+5}}. {{movie.title}}</b></p>
           <p>{{movie.release_date | date}}</p>
-          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average >= 5 && movie.vote_average <= 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average > 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p><span class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
       </div>
     </td>
@@ -49,9 +43,7 @@
         <div class="col mInfo">
           <p class="title"><b>{{i+7}}. {{movie.title}}</b></p>
           <p>{{movie.release_date | date}}</p>
-          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average >= 5 && movie.vote_average <= 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average > 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p><span class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
       </div>
     </td>
@@ -63,9 +55,7 @@
         <div class="col mInfo">
           <p class="title"><b>{{i+9}}. {{movie.title}}</b></p>
           <p>{{movie.release_date | date}}</p>
-          <p *ngIf="movie.vote_average < 5"><span class="badge badge-danger animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average >= 5 && movie.vote_average <= 7"><span class="badge badge-warning animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
-          <p *ngIf="movie.vote_average > 7"><span class="badge badge-success animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
+          <p><span class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span></p>
         </div>
       </div>
     </td>

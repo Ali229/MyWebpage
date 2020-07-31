@@ -7,7 +7,7 @@ import {MoviesComponent} from '../movies/movies.component';
   styleUrls: ['./popular.component.scss']
 })
 export class PopularComponent {
-  @Input() popList: string;
+  @Input() popList: string[];
 
   constructor(private mc: MoviesComponent) {
   }
