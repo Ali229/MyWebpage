@@ -79,9 +79,12 @@ button {
   background-color: #467eab;
 }
 
+.year {
+  font-size: 1.3rem;
+}
 
 @media screen and (max-width: 768px) {
-  img, button, .poster, table, .poster-buttons, .toprow>.col-auto {
+  img, button, .poster, table, .poster-buttons, .toprow > .col-auto {
     float: none;
     width: 100%;
   }

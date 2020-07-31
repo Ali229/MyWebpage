@@ -38,7 +38,7 @@
 </form>
 <div *ngIf="data">
   <div *ngIf="data.Response != 'False' else elseBlock" class="dataAll">
-    <h2><b>{{data.Title}} ({{data.Year}})</b></h2>
+    <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
     <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
     <div class="dataHeader">
       <span *ngIf="data.Rated != 'N/A'">{{data.Rated}} | </span>
