@@ -9,8 +9,14 @@
           <div class="col mInfo">
             <p class="title"><b>{{i + 1}}. {{movie.title}}</b></p>
             <p>{{movie.release_date | date}}</p>
-            <p><span
-              class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">{{movie.vote_average * 10}}</span>
+            <p>
+              <span *ngIf="movie.vote_average != 0"
+                    class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">
+              {{movie.vote_average * 10}}</span>
+              <span *ngIf="movie.vote_average == 0"
+                    class="badge badge-secondary animated zoomIn z-depth-3">
+                NR</span>
+
             </p>
           </div>
         </div>
@@ -25,8 +31,14 @@
           <div class="col mInfo">
             <p class="title"><b>{{i + 2}}. {{popList.results[i + 1].title}}</b></p>
             <p>{{popList.results[i + 1].release_date | date}}</p>
-            <p><span
-              class="badge badge-{{mc.getRatingColor(popList.results[i+1].vote_average*10)}} animated zoomIn z-depth-3">{{popList.results[i + 1].vote_average * 10}}</span>
+            <p>
+              <span *ngIf="popList.results[i + 1].vote_average != 0"
+                    class="badge badge-{{mc.getRatingColor(popList.results[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
+              {{popList.results[i + 1].vote_average * 10}}</span>
+              <span *ngIf="popList.results[i + 1].vote_average == 0"
+                    class="badge badge-secondary animated zoomIn z-depth-3">
+                NR</span>
+
             </p>
           </div>
         </div>
