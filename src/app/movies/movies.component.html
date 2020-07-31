@@ -1,6 +1,6 @@
 <h1>Movies</h1>
 <form>
-  <div class="row">
+  <div class="row toprow">
     <div class="col-auto">
       <div class="md-form">
         <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="moviename" name="movname">
@@ -54,8 +54,24 @@
                src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
           <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
                src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
-          <div class="poster-buttons animated slideInLeft z-depth-3">
-            <div><i class="fas fa-bookmark"></i> Watchlist</div>
+          <div class="poster-buttons animated slideInLeft z-depth-3 text-light" [hidden]="loading">
+            <div class="row">
+              <div class="col-auto">
+                <div class="watchlist">
+                  <i class="fas fa-bookmark"></i> Watchlist
+                </div>
+              </div>
+              <div class="col-auto ml-auto" style="padding-right: 0">
+                <div class="love">
+                  <i class="fas fa-heart"></i>
+                </div>
+              </div>
+              <div class="col-auto" style="padding-left: 0">
+                <div class="trailer">
+                  <i class="fas fa-play"></i>
+                </div>
+              </div>
+            </div>
           </div>
           <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
           <!--                  gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to-->

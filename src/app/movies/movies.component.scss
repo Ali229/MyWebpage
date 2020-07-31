@@ -50,9 +50,9 @@ button {
 
 .poster-buttons {
   width: 300px;
-  background: black;
+  background-color: #3F729B;
   border-radius: 0 0 5px 5px;
-  padding: 5px;
+  color: white;
 }
 
 .poster {
@@ -67,8 +67,21 @@ button {
   background-color: #f4f4f4;
 }
 
+.watchlist, .love, .trailer {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.watchlist:hover, .love:hover, .trailer:hover {
+  transition: all 0.1s linear;
+  transition-delay: 0s;
+  background-color: #467eab;
+}
+
+
 @media screen and (max-width: 768px) {
-  img, button, .poster, table, .poster-buttons, .col-auto {
+  img, button, .poster, table, .poster-buttons, .toprow>.col-auto {
     float: none;
     width: 100%;
   }
