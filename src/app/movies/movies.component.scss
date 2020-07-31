@@ -83,14 +83,10 @@ button {
   font-size: 1.3rem;
 }
 
-@media (max-width: 768px) {
-  img, button, .poster, table, .poster-buttons {
+@media (max-width: 995px) {
+  button, table {
     float: none;
     width: 100%;
-  }
-
-  .bodyText {
-    margin-top: 20px;
   }
 }
 

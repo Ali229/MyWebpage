@@ -47,7 +47,7 @@
                src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
           <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
                src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
-          <div class="poster-buttons animated slideInLeft z-depth-3 text-light" [hidden]="loading">
+          <div class="poster-buttons animated slideInLeft z-depth-3 text-light mb-2" [hidden]="loading">
             <div class="row">
               <div class="col-auto">
                 <div class="watchlist" (click)="addToWatchlist()">

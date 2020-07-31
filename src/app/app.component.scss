@@ -6,11 +6,16 @@
   border-radius: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .container {
     box-shadow: none;
     border-radius: 0;
+    max-width: 1140px;
+  }
+}
+
+@media (max-width: 800px) {
+  .container {
     padding: 20px;
-    max-width: 740px;
   }
 }
