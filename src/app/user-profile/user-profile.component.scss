@@ -11,7 +11,7 @@ img {
   content: none;
 }
 
-@media screen and (max-width: 600px) {
+@media (max-width: 768px) {
   button {
     float: none;
     width: 100%;

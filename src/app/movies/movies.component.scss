@@ -83,13 +83,19 @@ button {
   font-size: 1.3rem;
 }
 
-@media screen and (max-width: 768px) {
-  img, button, .poster, table, .poster-buttons, .toprow > .col-auto {
+@media (max-width: 768px) {
+  img, button, .poster, table, .poster-buttons {
     float: none;
     width: 100%;
   }
 
   .bodyText {
     margin-top: 20px;
+  }
+}
+
+@media (max-width: 990px) {
+  .toprow > .col-auto {
+    width: 100%;
   }
 }
