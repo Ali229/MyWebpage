@@ -94,8 +94,8 @@ button {
   }
 }
 
-@media (max-width: 990px) {
-  .toprow > .col-auto {
+@media (max-width: 920px) {
+  .toprow > .col-auto, #sub {
     width: 100%;
   }
 }
