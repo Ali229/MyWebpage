@@ -26,3 +26,9 @@ td {
 .row {
   cursor:pointer;
 }
+
+@media screen and (max-width: 768px) {
+  .col {
+   text-align: initial;
+  }
+}
