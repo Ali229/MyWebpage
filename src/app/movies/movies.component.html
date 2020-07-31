@@ -57,7 +57,7 @@
           <div class="poster-buttons animated slideInLeft z-depth-3 text-light" [hidden]="loading">
             <div class="row">
               <div class="col-auto">
-                <div class="watchlist">
+                <div class="watchlist" (click)="addToWatchlist()">
                   <i class="fas fa-bookmark"></i> Watchlist
                 </div>
               </div>
@@ -73,17 +73,6 @@
               </div>
             </div>
           </div>
-          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
-          <!--                  gradient="blue" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-plus"></i> &nbsp;Add to-->
-          <!--            Watchlist-->
-          <!--          </button>-->
-          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
-          <!--                  gradient="purple" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-heart"></i> Love-->
-          <!--          </button>-->
-          <!--          <button class="poster-buttons animated slideInLeft hoverable" [hidden]="loading" mdbBtn type="button"-->
-          <!--                  color="red" mdbWavesEffect (click)="addToWatchlist()"><i class="fas fa-play"></i> &nbsp;Play-->
-          <!--            Trailer-->
-          <!--          </button>-->
         </div>
         <div class="col col-xl-8 col-lg-7">
           <div class="bodyText">
