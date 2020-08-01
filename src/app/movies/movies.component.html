@@ -43,28 +43,31 @@
     <div class="dataBody">
       <div class="row">
         <div class="col poster-col">
-          <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3"
-               src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
-          <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
-               src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
-          <div class="poster-buttons animated slideInLeft z-depth-3 text-light mb-2" [hidden]="loading">
-            <div class="row">
-              <div class="col-auto">
-                <div class="watchlist" (click)="addToWatchlist()">
-                  <i class="fas fa-bookmark"></i> Watchlist
-                </div>
-              </div>
-              <div class="col-auto ml-auto" style="padding-right: 0">
-                <div class="love">
-                  <i class="fas fa-heart"></i>
-                </div>
-              </div>
-              <div class="col-auto" style="padding-left: 0">
-                <div class="trailer">
-                  <i class="fas fa-play"></i>
-                </div>
+          <div class="row">
+            <img *ngIf="data.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3"
+                 src="{{data.Poster}}" [hidden]="loading" alt="Can't load image">
+            <img *ngIf="data.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3"
+                 src="assets/404PosterNotFound.jpg" [hidden]="loading" alt="Can't load image">
+          </div>
+          <div class="row poster-buttons animated slideInLeft z-depth-3 text-light mb-2" [hidden]="loading">
+            <div class="col-auto p-0">
+              <div class="watchlist" (click)="addToWatchlist()">
+                <i class="fas fa-bookmark"></i> Watchlist
               </div>
             </div>
+            <div class="col-auto ml-auto" style="padding-right: 0">
+              <div class="love">
+                <i class="fas fa-heart"></i>
+              </div>
+            </div>
+            <div class="col-auto p-0">
+              <div class="trailer">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <app-stream></app-stream>
           </div>
         </div>
         <div class="col col-xl-8 col-lg-7">

@@ -21,6 +21,7 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WatchlistComponent} from './watchlist/watchlist.component';
 import {AuthService} from './services/auth.service';
+import { StreamComponent } from './stream/stream.component';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -46,7 +47,8 @@ const config = {
     MoviesComponent,
     PopularComponent,
     UserProfileComponent,
-    WatchlistComponent
+    WatchlistComponent,
+    StreamComponent
   ],
   imports: [
     BrowserModule,
