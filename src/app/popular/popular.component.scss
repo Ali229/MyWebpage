@@ -28,8 +28,8 @@ td {
 }
 
 @media (max-width: 768px) {
-  .col {
-   text-align: initial;
+  html, .mInfo {
+   text-align: center;
   }
   .mInfo {
     margin-top: 5px;
