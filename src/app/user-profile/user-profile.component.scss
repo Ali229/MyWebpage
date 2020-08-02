@@ -11,15 +11,12 @@ img {
   content: none;
 }
 
-@media (max-width: 768px) {
-  button {
-    float: none;
-    width: 100%;
-  }
+.hoverable {
+  transition-delay: 0s;
 }
 
-@media (max-width: 995px) {
-  #target {
+@media (max-width: 992px) {
+  button {
     width: 100%;
   }
 }
