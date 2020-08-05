@@ -40,15 +40,15 @@
 <span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
 <div *ngIf="data" [hidden]="loading" class="mt-2">
   <div *ngIf="data.Response != 'False' else elseBlock">
-    <div class="row pl-3">
+    <div class="row pl-2">
       <div class="col-12 col-md-4 animated zoomIn text-light">
-        <div class="row ml-0">
+        <div class="row">
           <img *ngIf="data.Poster != 'N/A'" class="poster"
                src="{{data.Poster}}" alt="Can't load image">
           <img *ngIf="data.Poster == 'N/A'" class="poster"
                src="assets/404PosterNotFound.jpg" alt="Can't load image">
         </div>
-        <div class="row poster-buttons z-depth-5 ml-0">
+        <div class="row poster-buttons z-depth-5">
           <div class="col-auto p-0">
             <div class="watchlist" (click)="addToWatchlist()">
               <i class="fas fa-bookmark"></i> Watchlist
@@ -65,66 +65,76 @@
             </div>
           </div>
         </div>
-        <div class="row mt-2 ml-0">
+        <div class="row mt-2">
           <app-stream></app-stream>
         </div>
       </div>
       <div class="col-12 col-md-8 bodyText">
-        <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
-        <span *ngIf="data.Rated != 'N/A'">{{data.Rated}}
-          <span class="text-muted">| </span></span>
-        <span *ngIf="data.Released != 'N/A'">{{data.Released}}
-          <span class="text-muted">| </span></span>
-        <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}}
-          <span class="text-muted">| </span></span>
-        <span *ngIf="data.Genre != 'N/A'">{{data.Genre}}
-          <span class="text-muted">| </span></span>
-        <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
-        <div *ngIf="data.Plot != 'N/A'">
-          <h3 class="mt-4"><b>Plot</b></h3>
-          <div>{{data.Plot}}</div>
+        <div class="ml-md-3">
+        <div class="row">
+          <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
         </div>
-        <div *ngIf="data.Awards != 'N/A'">
-          <h3 class="mt-4"><b>Awards</b></h3>
-          <div>{{data.Awards}}</div>
+        <div class="row">
+          <span *ngIf="data.Rated != 'N/A'">{{data.Rated}}
+            <span class="text-muted">|&nbsp;</span></span>
+          <span *ngIf="data.Released != 'N/A'">{{data.Released}}
+            <span class="text-muted">|&nbsp;</span></span>
+          <span *ngIf="data.Runtime != 'N/A'">{{data.Runtime}}
+            <span class="text-muted">|&nbsp;</span></span>
+          <span *ngIf="data.Genre != 'N/A'">{{data.Genre}}
+            <span class="text-muted">|&nbsp;</span></span>
+          <span *ngIf="data.Language != 'N/A'">{{data.Language}}</span>
         </div>
-        <h3 *ngIf="data.Ratings.length !== 0 || tmdbScore > 0" class="mt-4"><b>Ratings</b></h3>
-        <span style="display: inline-table;">
-              <table mdbTable borderless="true">
-                <tbody>
-                <tr *ngIf="tmdbScore > 0">
-                      <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                      <td><span class="badge badge-{{tmdbColor}} animated zoomIn z-depth-3"
-                      >{{tmdbScore}}</span></td>
-                </tr>
-                <tr *ngIf="data.Metascore != 'N/A'">
-                  <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
-                  <td><span class="badge badge-{{metaColor}} animated zoomIn z-depth-3"
-                  >{{data.Metascore}}</span></td>
-                </tr>
-                <tr *ngIf="data.imdbRating != 'N/A'">
-                  <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"
-                           style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{imdbColor}} animated zoomIn z-depth-3"
-                  >{{data.imdbRating}}</span></td>
-                </tr>
-                <tr>
-                <tr *ngIf="rottenScore !=  null">
-                  <td><img class="icon" src="assets/{{rottenImage}}" alt="Can't load image"
-                           style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{rottenColor}} animated zoomIn z-depth-3"
-                  >{{rottenScore}}</span></td>
-                </tr>
-                <tr *ngIf="totalScore !=  0 && scoreCount > 1">
-                  <td><img class="icon" src="assets/avg.png" alt="Can't load image"
-                           style="border-radius: 15px;"></td>
-                  <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3"
-                  >{{overallScore}}</span></td>
-                </tr>
-                </tbody>
-              </table>
-            </span>
+        <div class="row">
+          <div *ngIf="data.Plot != 'N/A'">
+            <h3 class="mt-4"><b>Plot</b></h3>
+            <div>{{data.Plot}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="data.Awards != 'N/A'">
+            <h3 class="mt-4"><b>Awards</b></h3>
+            <div>{{data.Awards}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <h3 *ngIf="data.Ratings.length !== 0 || tmdbScore > 0" class="mt-4"><b>Ratings</b></h3>
+          <table mdbTable borderless="true">
+            <tbody>
+            <tr *ngIf="tmdbScore > 0">
+              <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
+              <td><span class="badge badge-{{tmdbColor}} animated zoomIn z-depth-3"
+              >{{tmdbScore}}</span></td>
+            </tr>
+            <tr *ngIf="data.Metascore != 'N/A'">
+              <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
+              <td><span class="badge badge-{{metaColor}} animated zoomIn z-depth-3"
+              >{{data.Metascore}}</span></td>
+            </tr>
+            <tr *ngIf="data.imdbRating != 'N/A'">
+              <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"
+                       style="border-radius: 15px;"></td>
+              <td><span class="badge badge-{{imdbColor}} animated zoomIn z-depth-3"
+              >{{data.imdbRating}}</span></td>
+            </tr>
+            <tr>
+            <tr *ngIf="rottenScore !=  null">
+              <td><img class="icon" src="assets/{{rottenImage}}" alt="Can't load image"
+                       style="border-radius: 15px;"></td>
+              <td><span class="badge badge-{{rottenColor}} animated zoomIn z-depth-3"
+              >{{rottenScore}}</span></td>
+            </tr>
+            <tr *ngIf="totalScore !=  0 && scoreCount > 1">
+              <td><img class="icon" src="assets/avg.png" alt="Can't load image"
+                       style="border-radius: 15px;"></td>
+              <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3"
+              >{{overallScore}}</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
     </div>
   </div>
   <ng-template #elseBlock>

@@ -16,7 +16,15 @@ img {
 
 td {
   max-width: 10vw;
-  border-radius: 10px;
+
+}
+
+.td1 {
+  border-radius: 10px 0 0 10px;
+}
+
+.td2 {
+  border-radius: 0 10px 10px 0;
 }
 
 .title {
