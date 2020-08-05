@@ -46,6 +46,8 @@ button {
   border-radius: 5px 5px 0 0;
   width: 100%;
   max-width: 300px;
+  box-shadow: -10px 0 20px -5px rgba(115, 115, 115, 0.75),
+  10px 0 20px -5px rgba(115, 115, 115, 0.75);
 }
 
 .custom-select {
