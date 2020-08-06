@@ -10,8 +10,12 @@ img {
   border-radius: 5px;
 }
 
-.mInfo {
+.col-txt {
   text-align: left;
+}
+
+.col-img {
+  text-align: center;
 }
 
 td {
@@ -36,7 +40,7 @@ td {
 }
 
 @media (max-width: 768px) {
-  html, .mInfo {
+  html, .col-txt, .col-img {
    text-align: center;
   }
   .mInfo {

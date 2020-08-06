@@ -1,9 +1,5 @@
-.p1, .p2, .p3, .p4, .p5, .p6 {
-  overflow: hidden;
-}
-
 .cw {
-  width: 100%;
+  width: 70%;
   height: auto;
 }
 
@@ -19,34 +15,23 @@ h1 {
   margin-top: 15px;
 }
 
-img {
-  align-content: start;
-}
-
 .name {
-  text-align: left;
-  width: 70%;
   margin: 0 auto;
   font-size: x-large;
 }
 
 .desc {
-  text-align: left;
-  width: 70%;
   margin: 0 auto;
   font-size: larger;
 }
 
 .link {
-  text-align: left;
-  width: 70%;
   margin: 0 auto;
   font-size: large;
 }
 
 @media screen and (max-width: 1024px) {
-  .name, .desc, .link {
-    text-align: left;
+  .name, .desc, .link, .cw {
     float: none;
     width: 100%;
   }
