@@ -22,6 +22,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WatchlistComponent} from './watchlist/watchlist.component';
 import {AuthService} from './services/auth.service';
 import { StreamComponent } from './stream/stream.component';
+import { PrivacyComponent } from './privacy/privacy.component';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -48,7 +49,8 @@ const config = {
     PopularComponent,
     UserProfileComponent,
     WatchlistComponent,
-    StreamComponent
+    StreamComponent,
+    PrivacyComponent
   ],
   imports: [
     BrowserModule,

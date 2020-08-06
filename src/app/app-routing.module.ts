@@ -8,6 +8,7 @@ import {ContactComponent} from './contact/contact.component';
 import {MoviesComponent} from './movies/movies.component';
 import {WatchlistComponent} from './watchlist/watchlist.component';
 import {AuthGuard} from './services/auth.guard';
+import {PrivacyComponent} from './privacy/privacy.component';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path: 'contact', component: ContactComponent},
   {path: 'movies', component: MoviesComponent},
   {path: 'watchlist', component: WatchlistComponent, canActivate: [AuthGuard]},
+  {path: 'privacy', component: PrivacyComponent},
   {path: '**', redirectTo: 'home'}
 ];
 
