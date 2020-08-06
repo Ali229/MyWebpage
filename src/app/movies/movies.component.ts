@@ -27,6 +27,7 @@ export class MoviesComponent implements OnInit {
   loading = false;
   selectedOption = '';
   type = '';
+  searchedTitle = '';
   currentYear = new Date().getFullYear();
   popularYears: Map<string, boolean> = new Map([['0' + this.currentYear.toString(), true],
     ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
@@ -99,6 +100,8 @@ export class MoviesComponent implements OnInit {
           this.overallScore = parseInt((this.totalScore / this.scoreCount).toFixed(2));
           this.totalColor = this.getRatingColor(this.overallScore);
           this.data.overallScore = this.overallScore;
+        } else {
+          this.searchedTitle = title;
         }
         this.loading = false;
       });
