@@ -38,7 +38,7 @@
 </form>
 <div id="target"></div>
 <div style="text-align: center;">
-<span *ngIf="loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
+  <span *ngIf="loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
 </div>
 <div *ngIf="data" [hidden]="loading" class="mt-2">
   <div *ngIf="data.Response != 'False' else elseBlock">
@@ -67,9 +67,7 @@
             </div>
           </div>
         </div>
-        <div class="row mt-2">
-          <app-stream></app-stream>
-        </div>
+        <app-stream></app-stream>
       </div>
       <div class="col-12 col-md-8 bodyText">
         <div class="ml-md-3">
