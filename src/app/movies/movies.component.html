@@ -99,7 +99,7 @@
           </div>
           <div class="row">
             <h3 *ngIf="data.Ratings.length !== 0 || tmdbScore > 0" class="mt-4"><b>Ratings</b></h3>
-            <table mdbTable borderless="true">
+            <table class="ratings" mdbTable borderless="true">
               <tbody>
               <tr *ngIf="tmdbScore > 0">
                 <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
