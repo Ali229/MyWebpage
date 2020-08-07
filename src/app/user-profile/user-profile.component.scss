@@ -7,7 +7,7 @@ img {
   height: auto;
 }
 
-.dropdown-toggle::after {
+.dropdown-toggle::before {
   content: none;
 }
 
@@ -18,5 +18,8 @@ img {
 @media (max-width: 900px) {
   button {
     width: 100%;
+  }
+  .dd {
+    text-align: center;
   }
 }

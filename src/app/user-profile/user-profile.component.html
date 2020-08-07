@@ -9,15 +9,14 @@
   </button>
 </ng-template>
 
-
 <!-- User logged in -->
 <ng-template #authenticated>
-  <div *ngIf="auth.user$ | async as user">
-    <div class="dropdown" mdbDropdown>
+  <div class="dd" *ngIf="auth.user$ | async as user">
+    <div class="btn-group dropleft" mdbDropdown>
       <a mdbDropdownToggle type="button" class="dropdown-toggle">
         <img [src]="user.photoURL" alt=""
              class="rounded-circle hoverable"></a>
-      <div class="dropdown-menu dropdown-primary">
+      <div class="dropdown-menu">
         <h6 class="dropdown-header">{{user.displayName}}</h6>
         <a class="dropdown-item" href="watchlist">Watchlist</a>
         <a class="dropdown-item" href="#">Love list</a>
