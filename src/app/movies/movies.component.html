@@ -37,7 +37,9 @@
   </div>
 </form>
 <div id="target"></div>
-<span *ngIf="loading" class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></span>
+<div style="text-align: center;">
+<span *ngIf="loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
+</div>
 <div *ngIf="data" [hidden]="loading" class="mt-2">
   <div *ngIf="data.Response != 'False' else elseBlock">
     <div class="row pl-2">
