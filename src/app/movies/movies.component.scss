@@ -69,6 +69,10 @@ button {
   font-size: 1.3rem;
 }
 
+b {
+  font-weight: bold;
+}
+
 @media (max-width: 900px) {
   button {
     float: none;
