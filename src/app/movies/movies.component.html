@@ -42,7 +42,7 @@
 </div>
 <div *ngIf="data" [hidden]="loading" class="mt-2">
   <div *ngIf="data.Response != 'False' else elseBlock">
-    <div class="row pl-2">
+    <div class="row ml-md-3">
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
           <img *ngIf="data.Poster != 'N/A'" class="poster"
@@ -70,7 +70,7 @@
         <app-stream></app-stream>
       </div>
       <div class="col-12 col-md-8 bodyText">
-        <div class="ml-md-3">
+        <div class="ml-1 ml-md-3 mt-2 mt-md-0">
           <div class="row">
             <h2><b>{{data.Title}} <span class="year text-muted">({{data.Year}})</span></b></h2>
           </div>

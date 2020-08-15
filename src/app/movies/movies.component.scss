@@ -77,8 +77,14 @@ b {
   padding-left: 0;
 }
 
-@media (max-width: 992px) {
-
+@media (max-width: 767px) and (min-width: 350px){
+  .poster {
+    margin: 0 auto;
+    display: block;
+  }
+  .poster-buttons {
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 900px) {
