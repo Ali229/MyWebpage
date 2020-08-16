@@ -96,8 +96,7 @@ export class MoviesComponent implements OnInit {
             this.totalScore += Number(this.tmdbScore);
             this.scoreCount++;
           }
-          // tslint:disable-next-line:radix
-          this.overallScore = parseInt((this.totalScore / this.scoreCount).toFixed(2));
+          this.overallScore = Math.round(this.totalScore / this.scoreCount);
           this.totalColor = this.getRatingColor(this.overallScore);
           this.data.overallScore = this.overallScore;
         } else {
