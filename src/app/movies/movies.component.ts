@@ -73,10 +73,9 @@ export class MoviesComponent implements OnInit {
             this.scoreCount++;
           }
           if (this.data.Ratings.length > 0) {
-            // tslint:disable-next-line:prefer-for-of
-            for (let x = 0; x < this.data.Ratings.length; x++) {
-              if (this.data.Ratings[x].Source === 'Rotten Tomatoes') {
-                this.rottenScore = Number(this.data.Ratings[x].Value.replace('%', ''));
+            for (const rating of this.data.Ratings) {
+              if (rating.Source === 'Rotten Tomatoes') {
+                this.rottenScore = Number(rating.Value.replace('%', ''));
                 this.rottenColor = this.getRatingColor(this.rottenScore);
                 if (this.rottenScore > 70) {
                   this.rottenImage = 'tomato_full.png';
