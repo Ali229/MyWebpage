@@ -28,6 +28,7 @@ export class MoviesComponent implements OnInit {
   selectedOption = '';
   type = '';
   searchedTitle = '';
+  posterURL = '';
   currentYear = new Date().getFullYear();
   popularYears: Map<string, boolean> = new Map([['0' + this.currentYear.toString(), true],
     ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
@@ -60,6 +61,7 @@ export class MoviesComponent implements OnInit {
         this.data = null, this.rottenScore = null;
         this.totalScore = 0, this.scoreCount = 0, this.overallScore = 0;
         this.data = info;
+        this.posterURL = null;
         if (this.data.Response !== 'False') {
           if (this.data.Metascore !== 'N/A') {
             this.metaColor = this.getRatingColor(this.data.Metascore);
@@ -95,6 +97,7 @@ export class MoviesComponent implements OnInit {
             this.totalScore += Number(this.tmdbScore);
             this.scoreCount++;
           }
+          this.loadTMDBID(this.data.imdbID);
           this.overallScore = Math.round(this.totalScore / this.scoreCount);
           this.totalColor = this.getRatingColor(this.overallScore);
           this.data.overallScore = this.overallScore;
@@ -104,6 +107,39 @@ export class MoviesComponent implements OnInit {
         this.loading = false;
       });
   }
+
+  loadTMDBID(imdbID) {
+    let url;
+    this.httpService.getData('https://api.themoviedb.org/3/find/' +
+      imdbID + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&external_source=imdb_id')
+      .subscribe(response => {
+        let data: any;
+        data = response;
+        if (data.movie_results.length > 0) {
+          url = 'https://api.themoviedb.org/3/movie/' + data.movie_results[0].id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos';
+          this.LoadTMDBDetails(url);
+        } else if (data.tv_results.length > 0) {
+          url = 'https://api.themoviedb.org/3/tv/' + data.tv_results[0].id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos';
+          this.LoadTMDBDetails(url);
+        } else {
+          if (this.data.Poster !== 'N/A') {
+            this.posterURL = this.data.Poster;
+          } else {
+            this.posterURL = 'assets/404PosterNotFound.jpg';
+          }
+        }
+      });
+  }
+
+  LoadTMDBDetails(url) {
+    this.httpService.getData(url)
+      .subscribe(response => {
+        let data: any;
+        data = response;
+        this.posterURL = 'https://image.tmdb.org/t/p/w500/' + data.poster_path;
+      });
+  }
+
 
   toggleYear(Key) {
     this.popularYears.forEach((value: boolean, key: string) => {

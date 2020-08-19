@@ -12,7 +12,7 @@ import {MdbTableDirective, MdbTablePaginationComponent} from 'angular-bootstrap-
 })
 export class WatchlistComponent implements OnInit, AfterViewInit {
   @ViewChild(MdbTablePaginationComponent, { static: true }) mdbTablePagination: MdbTablePaginationComponent;
-  @ViewChild(MdbTableDirective, { static: true }) mdbTable: MdbTableDirective
+  @ViewChild(MdbTableDirective, { static: true }) mdbTable: MdbTableDirective;
   previous: any = [];
   headElements = ['Poster', 'Title', 'Type', 'Released', 'Rating', 'Comments'];
   watchlist = [];

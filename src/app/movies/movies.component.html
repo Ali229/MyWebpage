@@ -45,10 +45,7 @@
     <div class="row ml-md-3">
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
-          <img *ngIf="data.Poster != 'N/A'" class="poster"
-               src="{{data.Poster}}" alt="Can't load image">
-          <img *ngIf="data.Poster == 'N/A'" class="poster"
-               src="assets/404PosterNotFound.jpg" alt="Can't load image">
+          <img class="poster" src="{{posterURL}}" alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
           <div class="col-auto p-0">
