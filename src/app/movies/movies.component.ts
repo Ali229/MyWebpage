@@ -54,7 +54,7 @@ export class MoviesComponent implements OnInit {
       });
   }
 
-  search(title, year, type, tmdbScore?) {
+  search(title, year, type) {
     this.loading = true;
     this.httpService.getData('https://www.omdbapi.com/?t=' + title + '&y=' + year + '&type=' + type + '&apikey=faec32e6')
       .subscribe((info) => {
@@ -91,20 +91,10 @@ export class MoviesComponent implements OnInit {
               }
             }
           }
-          this.tmdbScore = tmdbScore * 10;
-          if (this.tmdbScore > 0) {
-            this.tmdbColor = this.getRatingColor(this.tmdbScore);
-            this.totalScore += Number(this.tmdbScore);
-            this.scoreCount++;
-          }
           this.loadTMDBID(this.data.imdbID);
-          this.overallScore = Math.round(this.totalScore / this.scoreCount);
-          this.totalColor = this.getRatingColor(this.overallScore);
-          this.data.overallScore = this.overallScore;
         } else {
           this.searchedTitle = title;
         }
-        this.loading = false;
       });
   }
 
@@ -112,7 +102,9 @@ export class MoviesComponent implements OnInit {
     let url;
     this.httpService.getData('https://api.themoviedb.org/3/find/' +
       imdbID + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&external_source=imdb_id')
+
       .subscribe(response => {
+        console.log(imdbID);
         let data: any;
         data = response;
         if (data.movie_results.length > 0) {
@@ -127,6 +119,8 @@ export class MoviesComponent implements OnInit {
           } else {
             this.posterURL = 'assets/404PosterNotFound.jpg';
           }
+          this.loading = false;
+          this.calculateOverallScore();
         }
       });
   }
@@ -136,8 +130,24 @@ export class MoviesComponent implements OnInit {
       .subscribe(response => {
         let data: any;
         data = response;
+
         this.posterURL = 'https://image.tmdb.org/t/p/w500/' + data.poster_path;
+
+        this.tmdbScore = data.vote_average * 10;
+        if (this.tmdbScore > 0) {
+          this.tmdbColor = this.getRatingColor(this.tmdbScore);
+          this.totalScore += Number(this.tmdbScore);
+          this.scoreCount++;
+        }
+        this.calculateOverallScore();
+        this.loading = false;
       });
+  }
+
+  calculateOverallScore() {
+    this.overallScore = Math.round(this.totalScore / this.scoreCount);
+    this.totalColor = this.getRatingColor(this.overallScore);
+    this.data.overallScore = this.overallScore;
   }
 
 

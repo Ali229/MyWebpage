@@ -121,11 +121,10 @@
                 <td><span class="badge badge-{{rottenColor}} animated zoomIn z-depth-3"
                 >{{rottenScore}}</span></td>
               </tr>
-              <tr *ngIf="totalScore !=  0 && scoreCount > 1">
+              <tr *ngIf="overallScore !=  0 && scoreCount > 1">
                 <td><img class="icon" src="assets/avg.png" alt="Can't load image"
                          style="border-radius: 15px;"></td>
-                <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3"
-                >{{overallScore}}</span></td>
+                <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3">{{overallScore}}</span></td>
               </tr>
               </tbody>
             </table>

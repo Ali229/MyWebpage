@@ -12,7 +12,7 @@ export class PopularComponent {
   constructor(private mc: MoviesComponent) {
   }
 
-  pSearch(title, year, tmdbScore) {
-    this.mc.search(title, year, 'movie', tmdbScore);
+  pSearch(title, year) {
+    this.mc.search(title, year, 'movie');
   }
 }
