@@ -94,7 +94,9 @@ export class MoviesComponent implements OnInit {
           this.loadTMDBID(this.data.imdbID);
         } else {
           this.searchedTitle = title;
+          this.loading = false;
         }
+
       });
   }
 
@@ -102,7 +104,6 @@ export class MoviesComponent implements OnInit {
     let url;
     this.httpService.getData('https://api.themoviedb.org/3/find/' +
       imdbID + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&external_source=imdb_id')
-
       .subscribe(response => {
         let data: any;
         data = response;
@@ -118,7 +119,6 @@ export class MoviesComponent implements OnInit {
           } else {
             this.posterURL = 'assets/404PosterNotFound.jpg';
           }
-          this.loading = false;
           this.calculateOverallScore();
         }
       });
@@ -139,7 +139,6 @@ export class MoviesComponent implements OnInit {
           this.scoreCount++;
         }
         this.calculateOverallScore();
-        this.loading = false;
       });
   }
 
@@ -147,6 +146,7 @@ export class MoviesComponent implements OnInit {
     this.overallScore = Math.round(this.totalScore / this.scoreCount);
     this.totalColor = this.getRatingColor(this.overallScore);
     this.data.overallScore = this.overallScore;
+    this.loading = false;
   }
 
 
