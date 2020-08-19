@@ -107,11 +107,10 @@ export class MoviesComponent implements OnInit {
       .subscribe(response => {
         let data: any;
         data = response;
-        console.log(data.tv_results);
-        if (data.movie_results.length > 0 && data.movie_results.poster_path !== undefined) {
+        if (data.movie_results.length > 0 && data.movie_results[0].poster_path !== undefined) {
           url = 'https://api.themoviedb.org/3/movie/' + data.movie_results[0].id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos';
           this.LoadTMDBDetails(url);
-        } else if (data.tv_results.length > 0  && data.tv_results.poster_path !== undefined) {
+        } else if (data.tv_results.length > 0  && data.tv_results[0].poster_path !== undefined) {
           url = 'https://api.themoviedb.org/3/tv/' + data.tv_results[0].id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos';
           this.LoadTMDBDetails(url);
         } else {
