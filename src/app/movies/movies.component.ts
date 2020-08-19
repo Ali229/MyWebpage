@@ -104,7 +104,6 @@ export class MoviesComponent implements OnInit {
       imdbID + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&external_source=imdb_id')
 
       .subscribe(response => {
-        console.log(imdbID);
         let data: any;
         data = response;
         if (data.movie_results.length > 0) {
