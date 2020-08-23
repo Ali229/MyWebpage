@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {MoviesComponent} from '../movies/movies.component';
+import {TitleService} from '../services/title.service';
 
 @Component({
   selector: 'app-popular',
@@ -7,12 +7,8 @@ import {MoviesComponent} from '../movies/movies.component';
   styleUrls: ['./popular.component.scss']
 })
 export class PopularComponent {
-  @Input() public popList: string[];
+  @Input() public popList: any;
 
-  constructor(private mc: MoviesComponent) {
-  }
-
-  pSearch(title, year) {
-    this.mc.search(title, year, 'movie');
+  constructor(public ts: TitleService) {
   }
 }

@@ -3,15 +3,16 @@
   <ng-container *ngFor="let movie of popList.results | slice:0:10; let i = index">
     <tr *ngIf="i % 2 == 0">
       <td class="hoverable td1">
-        <div class="row" (click)="pSearch(movie.title, movie.release_date.substring(0, 4))">
-          <div class="col col-img"><img class="icons z-depth-3" [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path"
-                                alt="Can't load image"></div>
+        <div class="row" (click)="ts.search(movie.id, 'movie')">
+          <div class="col col-img"><img class="icons z-depth-3"
+                                        [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path"
+                                        alt="Can't load image"></div>
           <div class="col col-txt mt-1 mt-md-0">
             <p class="title"><b>{{i + 1}}. {{movie.title}}</b></p>
             <p>{{movie.release_date | date}}</p>
             <p>
               <span *ngIf="movie.vote_average != 0"
-                    class="badge badge-{{mc.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">
+                    class="badge badge-{{ts.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">
               {{movie.vote_average * 10}}</span>
               <span *ngIf="movie.vote_average == 0"
                     class="badge badge-secondary animated zoomIn z-depth-3">
@@ -24,16 +25,16 @@
 
       <td class="hoverable td2">
         <div class="row"
-             (click)="pSearch(popList.results[i+1].title, popList.results[i+1].release_date.substring(0, 4))">
+             (click)="ts.search(popList.results[i+1].id, 'movie')">
           <div class="col col-img"><img class="icons z-depth-3"
-                                [src]="'https://image.tmdb.org/t/p/w154' + popList.results[i+1].poster_path"
-                                alt="Can't load image"></div>
+                                        [src]="'https://image.tmdb.org/t/p/w154' + popList.results[i+1].poster_path"
+                                        alt="Can't load image"></div>
           <div class="col col-txt mt-1 mt-md-0">
             <p class="title"><b>{{i + 2}}. {{popList.results[i + 1].title}}</b></p>
             <p>{{popList.results[i + 1].release_date | date}}</p>
             <p>
               <span *ngIf="popList.results[i + 1].vote_average != 0"
-                    class="badge badge-{{mc.getRatingColor(popList.results[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
+                    class="badge badge-{{ts.getRatingColor(popList.results[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
               {{popList.results[i + 1].vote_average * 10}}</span>
               <span *ngIf="popList.results[i + 1].vote_average == 0"
                     class="badge badge-secondary animated zoomIn z-depth-3">

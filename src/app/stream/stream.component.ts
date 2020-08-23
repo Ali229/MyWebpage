@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpService} from '../services/http.service';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-stream',
@@ -8,7 +8,7 @@ import {HttpService} from '../services/http.service';
 })
 export class StreamComponent implements OnInit {
 
-  constructor(private httpService: HttpService) {
+  constructor(private http: HttpClient) {
   }
 
   ngOnInit() {
@@ -30,7 +30,7 @@ export class StreamComponent implements OnInit {
       page_size: 1
     };
     //
-    // this.httpService.postData('https://apis.justwatch.com/content/titles/en_US/popular', body)
+    // this.http.postData('https://apis.justwatch.com/content/titles/en_US/popular', body)
     //   .subscribe((response) => {
     //     console.log(response);
     //   });

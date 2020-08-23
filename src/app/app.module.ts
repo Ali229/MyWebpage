@@ -12,7 +12,6 @@ import {ContactComponent} from './contact/contact.component';
 import {SkillbarComponent} from './skillbar/skillbar.component';
 import {MoviesComponent} from './movies/movies.component';
 import {HttpClientModule} from '@angular/common/http';
-import {HttpService} from './services/http.service';
 import {FormsModule} from '@angular/forms';
 import {PopularComponent} from './popular/popular.component';
 import {AngularFireModule} from '@angular/fire';
@@ -23,6 +22,8 @@ import {WatchlistComponent} from './watchlist/watchlist.component';
 import {AuthService} from './services/auth.service';
 import { StreamComponent } from './stream/stream.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+import { TitleComponent } from './title/title.component';
+import {TitleService} from './services/title.service';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -50,7 +51,8 @@ const config = {
     UserProfileComponent,
     WatchlistComponent,
     StreamComponent,
-    PrivacyComponent
+    PrivacyComponent,
+    TitleComponent
   ],
   imports: [
     BrowserModule,
@@ -63,8 +65,8 @@ const config = {
     AngularFireAuthModule,
   ],
   providers: [
-    HttpService,
-    AuthService
+    AuthService,
+    TitleService
   ],
   bootstrap: [AppComponent]
 })
