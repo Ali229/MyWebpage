@@ -2,13 +2,15 @@
   <span *ngIf="ts.loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
 </div>
 <div *ngIf="!ts.error else elseBlock">
-  <div *ngIf="movie" [hidden]="ts.loading" class="mt-2">
+  <div *ngIf="title" [hidden]="ts.loading" class="mt-2">
     <div class="row ml-md-3">
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
-          <img *ngIf="movie.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + movie.poster_path}}"
+          <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
                alt="Can't load image">
-          <img *ngIf="!movie.poster_path" class="poster" src="assets/404PosterNotFound.jpg" alt="Can't load image">
+          <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
+               alt="Can't load image">
+          <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg" alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
           <div class="col-auto p-0">
@@ -32,70 +34,67 @@
       <div class="col-12 col-md-8 bodyText">
         <div class="ml-1 ml-md-3 mt-2 mt-md-0">
           <div class="row">
-            <h2><b>{{movie.title ? movie.title : movie.name}} <span
-              class="year text-muted">({{movie.release_date ?
-              (movie.release_date | date:'yyyy') : (movie.first_air_date | date:'yyyy')}})
+            <h2><b>{{title.title ? title.title : title.name}} <span
+              class="year text-muted">({{title.release_date ?
+              (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
             </span></b></h2>
           </div>
           <div class="row">
 
-            <!--                    <span *ngIf="movie.Rated != 'N/A'">{{data.Rated}}-->
+            <!--                    <span *ngIf="title.Rated != 'N/A'">{{data.Rated}}-->
             <!--                      <span class="text-muted">|&nbsp;</span></span>-->
             <!--                    <span *ngIf="data.Released != 'N/A'">{{data.Released}}-->
             <!--                      <span class="text-muted">|&nbsp;</span></span>-->
-            <span>{{movie.release_date ? (movie.release_date | date:'d MMMM yyyy') : (movie.first_air_date | date:'d MMMM yyyy')}}
+            <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
               <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="movie.genres">
+            <span *ngIf="title.genres">
             <ng-container
-              *ngFor="let genre of movie.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}} </ng-container>
+              *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}} </ng-container>
             <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="movie.runtime">{{getRuntime()}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="movie.original_language">{{getLanguage()}}</span>
+            <span *ngIf="title.runtime">{{getRuntime()}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+            <span *ngIf="title.original_language">{{getLanguage()}}</span>
 
           </div>
           <div class="row">
-            <div *ngIf="movie.tagline">
-              <div class="mt-3 text-muted font-italic">{{movie.tagline}}</div>
+            <div *ngIf="title.tagline">
+              <div class="mt-3 text-muted font-italic">{{title.tagline}}</div>
             </div>
           </div>
           <div class="row">
-            <div *ngIf="movie.overview">
+            <div *ngIf="title.overview">
               <h3 class="mt-3"><b>Plot</b></h3>
-              <div>{{movie.overview}}</div>
+              <div>{{title.overview}}</div>
             </div>
           </div>
           <div class="row">
-            <h3 *ngIf="movie.vote_average" class="mt-4"><b>Ratings</b></h3>
+            <h3 *ngIf="title.vote_average" class="mt-4"><b>Ratings</b></h3>
             <table class="ratings" mdbTable borderless="true">
               <tbody>
-              <tr *ngIf="movie.vote_average > 0">
+              <tr *ngIf="title.vote_average > 0">
                 <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(movie.vote_average * 10)}} animated zoomIn z-depth-3"
-                >{{movie.vote_average * 10}}</span></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.vote_average * 10)}} animated zoomIn z-depth-3">
+                  {{title.vote_average * 10}}</span></td>
               </tr>
-              <!--            <tr *ngIf="data.Metascore != 'N/A'">-->
-              <!--              <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>-->
-              <!--              <td><span class="badge badge-{{metaColor}} animated zoomIn z-depth-3"-->
-              <!--              >{{data.Metascore}}</span></td>-->
-              <!--            </tr>-->
-              <!--            <tr *ngIf="data.imdbRating != 'N/A'">-->
-              <!--              <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"-->
-              <!--                       style="border-radius: 15px;"></td>-->
-              <!--              <td><span class="badge badge-{{imdbColor}} animated zoomIn z-depth-3"-->
-              <!--              >{{data.imdbRating}}</span></td>-->
-              <!--            </tr>-->
-              <!--            <tr>-->
-              <!--            <tr *ngIf="rottenScore !=  null">-->
-              <!--              <td><img class="icon" src="assets/{{rottenImage}}" alt="Can't load image"-->
-              <!--                       style="border-radius: 15px;"></td>-->
-              <!--              <td><span class="badge badge-{{rottenColor}} animated zoomIn z-depth-3"-->
-              <!--              >{{rottenScore}}</span></td>-->
-              <!--            </tr>-->
-              <!--            <tr *ngIf="overallScore !=  0 && scoreCount > 1">-->
-              <!--              <td><img class="icon" src="assets/avg.png" alt="Can't load image"-->
-              <!--                       style="border-radius: 15px;"></td>-->
-              <!--              <td><span class="badge badge-{{totalColor}} animated zoomIn z-depth-3">{{overallScore}}</span></td>-->
-              <!--            </tr>-->
+              <tr *ngIf="title.imdbScore">
+                <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
+                  {{title.imdbScore}}</span></td>
+              </tr>
+              <tr *ngIf="title.rottenScore">
+                <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
+                  {{title.rottenScore}}</span></td>
+              </tr>
+              <tr *ngIf="title.metaScore">
+                <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
+                  {{title.metaScore}}</span></td>
+              </tr>
+              <tr *ngIf="title.averageScore !== 0 && title.scoreCount > 1">
+                <td><img class="icon" src="assets/avg.png" alt="Can't load image" style="border-radius: 15px;"></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
+                  {{title.averageScore}}</span></td>
+              </tr>
               </tbody>
             </table>
           </div>

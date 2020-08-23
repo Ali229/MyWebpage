@@ -19,9 +19,8 @@ export class TitleService {
   constructor(private http: HttpClient) {
   }
 
-  private movieSubject$: BehaviorSubject<Title> = new BehaviorSubject(null);
-  movie$ = this.movieSubject$.asObservable();
-
+  private titleSubject$: BehaviorSubject<Title> = new BehaviorSubject(null);
+  title$ = this.titleSubject$.asObservable();
 
   multiSearch() {
     this.loading = true;
@@ -44,21 +43,53 @@ export class TitleService {
   }
 
   search(id, type) {
-    this.error = false;
     this.loading = true;
-    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&language=en-US')
+    this.error = false;
+    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids')
       .pipe(take(1)).subscribe(data => {
-      this.movieSubject$.next(data);
+      this.titleSubject$.next(data);
+      this.searchOMDBRatings(data);
       this.loading = false;
     });
   }
 
-  // search(id) {
-  //   this.movie = this.http
-  //     .get<Movie>('https://api.themoviedb.org/3/movie/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&language=en-US')
-  //     .map(res => this.movie = res);
-  //   console.log(this.movie);
-  // }
+  searchOMDBRatings(data) {
+    this.http.get('http://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
+      .subscribe((response: any) => {
+        data.totalScore = 0;
+        data.averageScore = 0;
+        data.scoreCount = 0;
+        for (const rating of response.Ratings) {
+          if (rating.Source === 'Internet Movie Database') {
+            data.imdbScore = parseFloat(rating.Value) * 10;
+            data.totalScore += data.imdbScore;
+            data.scoreCount++;
+          } else if (rating.Source === 'Rotten Tomatoes') {
+            data.rottenScore = parseFloat(rating.Value.replace('%', ''));
+            data.totalScore += data.rottenScore;
+            data.scoreCount++;
+            if (data.rottenScore >= 50) {
+              data.rottenImage = 'tomato_full.png';
+            } else if (data.rottenScore < 50) {
+              data.rottenImage = 'tomato_rotten.png';
+            }
+          } else if (rating.Source === 'Metacritic') {
+            data.metaScore = parseFloat(rating.Value);
+            data.totalScore += data.metaScore;
+            data.scoreCount++;
+          }
+        }
+        if (data.vote_average) {
+          data.totalScore += data.vote_average * 10;
+          data.scoreCount++;
+        }
+        data.averageScore = Math.round(data.totalScore / data.scoreCount);
+        if (response.Poster !== 'N/A') {
+          data.omdbPoster = response.Poster;
+        }
+        this.titleSubject$.next(data);
+      });
+  }
 
   getRatingColor(rating) {
     if (rating > 70) {

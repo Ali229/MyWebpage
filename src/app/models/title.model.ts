@@ -8,6 +8,7 @@ export interface Title {
   overview: string;
   genres: object[];
   tagline: string;
+  external_ids: any;
 
   // TV-Specific
   first_air_date: Date;
@@ -17,17 +18,15 @@ export interface Title {
   release_date: Date;
   title: string;
 
-  metaColor: string;
-  imdbColor: string;
-  rottenColor: string;
-  tmdbColor: string;
-  averageColor: string;
-
-  tmdbScore: number;
+  // Other ratings
+  metaScore: number;
+  imdbScore: number;
   rottenScore: number;
+
   scoreCount: number;
   totalScore: number;
   averageScore: number;
 
   rottenImage: string;
+  omdbPoster: string;
 }
