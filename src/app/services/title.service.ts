@@ -45,8 +45,9 @@ export class TitleService {
   search(id, type) {
     this.loading = true;
     this.error = false;
-    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids')
+    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
       .pipe(take(1)).subscribe(data => {
+      data = this.getCertification(data, type);
       this.titleSubject$.next(data);
       this.searchOMDBRatings(data);
       this.loading = false;
@@ -98,6 +99,24 @@ export class TitleService {
       return 'warning';
     } else if (rating < 50) {
       return 'danger';
+    }
+  }
+
+  getCertification(data, type) {
+    if (type === 'movie') {
+      for (const certification of data.release_dates.results) {
+        if (certification.iso_3166_1 === 'US') {
+          data.certification = certification.release_dates[0].certification;
+          return data;
+        }
+      }
+    } else {
+      for (const certification of data.content_ratings.results) {
+        if (certification.iso_3166_1 === 'US') {
+          data.certification = certification.rating;
+          return data;
+        }
+      }
     }
   }
 }

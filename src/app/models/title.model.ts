@@ -9,14 +9,17 @@ export interface Title {
   genres: object[];
   tagline: string;
   external_ids: any;
+  certification: string;
 
   // TV-Specific
   first_air_date: Date;
   name: string;
+  content_ratings: object[];
 
   // Movie-Specific
   release_date: Date;
   title: string;
+  release_dates: any; // used for certification
 
   // Other ratings
   metaScore: number;

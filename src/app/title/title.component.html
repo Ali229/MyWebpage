@@ -2,7 +2,7 @@
   <span *ngIf="ts.loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
 </div>
 <div *ngIf="!ts.error else elseBlock">
-  <div *ngIf="title" [hidden]="ts.loading" class="mt-2">
+  <div [hidden]="ts.loading" class="mt-2">
     <div class="row ml-md-3">
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
@@ -10,7 +10,8 @@
                alt="Can't load image">
           <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
                alt="Can't load image">
-          <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg" alt="Can't load image">
+          <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg"
+               alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
           <div class="col-auto p-0">
@@ -40,11 +41,8 @@
             </span></b></h2>
           </div>
           <div class="row">
-
-            <!--                    <span *ngIf="title.Rated != 'N/A'">{{data.Rated}}-->
-            <!--                      <span class="text-muted">|&nbsp;</span></span>-->
-            <!--                    <span *ngIf="data.Released != 'N/A'">{{data.Released}}-->
-            <!--                      <span class="text-muted">|&nbsp;</span></span>-->
+            <span *ngIf="title.certification">{{title.certification}}
+              <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
               <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.genres">

@@ -51,7 +51,6 @@ export class TitleComponent implements OnInit, OnDestroy {
     }
   }
 
-
   getLanguage() {
     for (const language of this.languages) {
       if (language.iso_639_1 === this.title.original_language) {
