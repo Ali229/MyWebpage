@@ -2,7 +2,7 @@
   <span *ngIf="ts.loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
 </div>
 <div *ngIf="!ts.error else elseBlock">
-  <div [hidden]="ts.loading" class="mt-2">
+  <div *ngIf="title" [hidden]="ts.loading" class="mt-2">
     <div class="row ml-md-3">
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
