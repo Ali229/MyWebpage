@@ -48,6 +48,7 @@ export class TitleService {
     this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
       .pipe(take(1)).subscribe(data => {
       data = this.getCertification(data, type);
+      data = this.getTrailer(data);
       this.titleSubject$.next(data);
       this.searchOMDBRatings(data);
       this.loading = false;
@@ -55,41 +56,43 @@ export class TitleService {
   }
 
   searchOMDBRatings(data) {
-    this.http.get('http://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
-      .subscribe((response: any) => {
-        data.totalScore = 0;
-        data.averageScore = 0;
-        data.scoreCount = 0;
-        for (const rating of response.Ratings) {
-          if (rating.Source === 'Internet Movie Database') {
-            data.imdbScore = parseFloat(rating.Value) * 10;
-            data.totalScore += data.imdbScore;
-            data.scoreCount++;
-          } else if (rating.Source === 'Rotten Tomatoes') {
-            data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-            data.totalScore += data.rottenScore;
-            data.scoreCount++;
-            if (data.rottenScore >= 50) {
-              data.rottenImage = 'tomato_full.png';
-            } else if (data.rottenScore < 50) {
-              data.rottenImage = 'tomato_rotten.png';
+    if (data.external_ids.imdb_id) {
+      this.http.get('http://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
+        .subscribe((response: any) => {
+          data.totalScore = 0;
+          data.averageScore = 0;
+          data.scoreCount = 0;
+          for (const rating of response.Ratings) {
+            if (rating.Source === 'Internet Movie Database') {
+              data.imdbScore = parseFloat(rating.Value) * 10;
+              data.totalScore += data.imdbScore;
+              data.scoreCount++;
+            } else if (rating.Source === 'Rotten Tomatoes') {
+              data.rottenScore = parseFloat(rating.Value.replace('%', ''));
+              data.totalScore += data.rottenScore;
+              data.scoreCount++;
+              if (data.rottenScore >= 50) {
+                data.rottenImage = 'tomato_full.png';
+              } else if (data.rottenScore < 50) {
+                data.rottenImage = 'tomato_rotten.png';
+              }
+            } else if (rating.Source === 'Metacritic') {
+              data.metaScore = parseFloat(rating.Value);
+              data.totalScore += data.metaScore;
+              data.scoreCount++;
             }
-          } else if (rating.Source === 'Metacritic') {
-            data.metaScore = parseFloat(rating.Value);
-            data.totalScore += data.metaScore;
+          }
+          if (data.vote_average) {
+            data.totalScore += data.vote_average * 10;
             data.scoreCount++;
           }
-        }
-        if (data.vote_average) {
-          data.totalScore += data.vote_average * 10;
-          data.scoreCount++;
-        }
-        data.averageScore = Math.round(data.totalScore / data.scoreCount);
-        if (response.Poster !== 'N/A') {
-          data.omdbPoster = response.Poster;
-        }
-        this.titleSubject$.next(data);
-      });
+          data.averageScore = Math.round(data.totalScore / data.scoreCount);
+          if (response.Poster !== 'N/A') {
+            data.omdbPoster = response.Poster;
+          }
+          this.titleSubject$.next(data);
+        });
+    }
   }
 
   getRatingColor(rating) {
@@ -118,5 +121,20 @@ export class TitleService {
         }
       }
     }
+    return data;
+  }
+
+  getTrailer(data) {
+    for (const video of data.videos.results) {
+      data.trailer = 'https://www.youtube.com/watch?v=' + video.key;
+      if (video.name.toLowerCase().includes('trailer')) {
+        data.trailer = 'https://www.youtube.com/watch?v=' + video.key;
+        return data;
+      }
+    }
+    if (!data.trailer) {
+      data.trailer = 'https://www.youtube.com/results?search_query=' + (data.title ? data.title : data.name) + ' Trailer';
+    }
+    return data;
   }
 }

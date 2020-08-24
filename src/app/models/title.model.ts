@@ -10,6 +10,8 @@ export interface Title {
   tagline: string;
   external_ids: any;
   certification: string;
+  videos: any;
+  trailer: string;
 
   // TV-Specific
   first_air_date: Date;
