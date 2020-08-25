@@ -77,7 +77,12 @@ b {
   padding-left: 0;
 }
 
-@media (max-width: 767px) and (min-width: 350px){
+.certifications {
+  padding: 0.06em 4px 0.15em 4px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 767px) and (min-width: 350px) {
   .poster {
     margin: 0 auto;
     display: block;

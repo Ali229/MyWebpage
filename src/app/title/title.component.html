@@ -38,15 +38,14 @@
       <div class="col-12 col-md-8 bodyText">
         <div class="ml-1 ml-md-3 mt-2 mt-md-0">
           <div class="row">
-<!--            <h2>{{title.id}}</h2>-->
+            <!--            <h2>{{title.id}}</h2>-->
             <h2><b>{{title.title ? title.title : title.name}} <span
               class="year text-muted">({{title.release_date ?
               (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
             </span></b></h2>
           </div>
           <div class="row">
-            <span *ngIf="title.certification">{{title.certification}}
-              <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+            <span *ngIf="title.certification"><span class="certifications">{{title.certification}}</span>&nbsp;&nbsp;&nbsp;</span>
             <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
               <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.genres">
