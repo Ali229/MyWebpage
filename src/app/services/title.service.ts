@@ -3,6 +3,13 @@ import {HttpClient} from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
+import languagesData from '../../assets/languages.json';
+
+interface Language {
+  'iso_639_1': string;
+  'english_name': string;
+  'name': string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +22,10 @@ export class TitleService {
   year: number;
   error: boolean;
   errorTitle: string;
+  languages: Language[];
 
   constructor(private http: HttpClient) {
+    this.languages = languagesData;
   }
 
   private titleSubject$: BehaviorSubject<Title> = new BehaviorSubject(null);
@@ -47,8 +56,10 @@ export class TitleService {
     this.error = false;
     this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
       .pipe(take(1)).subscribe(data => {
-      data = this.getCertification(data, type);
-      data = this.getTrailer(data);
+      data.certification = this.getCertification(data, type);
+      data.trailer = this.getTrailer(data);
+      data.language = this.getLanguage(data);
+      data.runtimeText = this.getRuntime(data);
       this.titleSubject$.next(data);
       this.searchOMDBRatings(data);
       this.loading = false;
@@ -90,6 +101,9 @@ export class TitleService {
           if (response.Poster !== 'N/A') {
             data.omdbPoster = response.Poster;
           }
+          if (response.Awards !== 'N/A') {
+            data.awards = response.Awards;
+          }
           this.titleSubject$.next(data);
         });
     }
@@ -109,32 +123,45 @@ export class TitleService {
     if (type === 'movie') {
       for (const certification of data.release_dates.results) {
         if (certification.iso_3166_1 === 'US') {
-          data.certification = certification.release_dates[0].certification;
-          return data;
+          return certification.release_dates[0].certification;
         }
       }
     } else {
       for (const certification of data.content_ratings.results) {
         if (certification.iso_3166_1 === 'US') {
-          data.certification = certification.rating;
-          return data;
+          return certification.rating;
         }
       }
     }
-    return data;
   }
 
   getTrailer(data) {
+    let secondaryVideo;
     for (const video of data.videos.results) {
-      data.trailer = 'https://www.youtube.com/watch?v=' + video.key;
+      secondaryVideo = 'https://www.youtube.com/watch?v=' + video.key;
       if (video.name.toLowerCase().includes('trailer')) {
-        data.trailer = 'https://www.youtube.com/watch?v=' + video.key;
-        return data;
+        return 'https://www.youtube.com/watch?v=' + video.key;
       }
     }
-    if (!data.trailer) {
-      data.trailer = 'https://www.youtube.com/results?search_query=' + (data.title ? data.title : data.name) + ' Trailer';
+    if (secondaryVideo) {
+      return secondaryVideo;
     }
-    return data;
+    return 'https://www.youtube.com/results?search_query=' + (data.title ? data.title : data.name) + ' Trailer';
+  }
+
+  getLanguage(data) {
+    for (const language of this.languages) {
+      if (language.iso_639_1 === data.original_language) {
+        return language.english_name;
+      }
+    }
+  }
+
+  getRuntime(data) {
+    if (data.runtime > 60) {
+      return (data.runtime - data.runtime % 60) / 60 + 'h ' + data.runtime % 60 + 'min';
+    } else {
+      return data.runtime + 'min';
+    }
   }
 }

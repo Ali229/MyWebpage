@@ -5,6 +5,7 @@ export interface Title {
   vote_average: number;
   runtime: number;
   original_language: string;
+  language: string;
   overview: string;
   genres: object[];
   tagline: string;
@@ -12,6 +13,8 @@ export interface Title {
   certification: string;
   videos: any;
   trailer: string;
+  runtimeText: string;
+  awards: string;
 
   // TV-Specific
   first_air_date: Date;

@@ -53,8 +53,8 @@
             <ng-container
               *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}} </ng-container>
             <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.runtime">{{getRuntime()}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.original_language">{{getLanguage()}}</span>
+            <span *ngIf="title.runtime">{{title.runtimeText}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+            <span *ngIf="title.language">{{title.language}}</span>
 
           </div>
           <div class="row">
@@ -66,6 +66,12 @@
             <div *ngIf="title.overview">
               <h3 class="mt-2"><b>Plot</b></h3>
               <div>{{title.overview}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div *ngIf="title.awards">
+              <h3 class="mt-4"><b>Awards</b></h3>
+              <div>{{title.awards}}</div>
             </div>
           </div>
           <div class="row">
