@@ -15,16 +15,33 @@ h1 {
   border-radius: 10px;
 }
 
-button {
-  margin: 0;
+select {
+  border-radius: 10px 0 0 10px;
 }
 
-.custom-select {
-  background-color: #f4f4f4;
+button {
+  border-radius: 0 10px 10px 0;
 }
 
 b {
   font-weight: bold;
+}
+
+button,
+button:hover,
+button:active,
+button:visited,
+button:focus {
+  color: #3F729B !important;
+  border-color: #3F729B !important;
+}
+
+input,
+select:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px white inset!important;
 }
 
 @media (max-width: 900px) {

@@ -1,38 +1,28 @@
 <h1>Movies</h1>
 <form>
   <div class="row toprow">
-    <div class="col-auto">
-      <div class="md-form">
-        <input mdbInput type="text" id="mname" class="form-control" [(ngModel)]="ts.title" name="movname">
-        <label for="mname">Title</label>
-      </div>
-    </div>
-    <div class="col-auto">
-      <div class="md-form">
-        <input mdbInput type="text" id="myear" class="form-control" [(ngModel)]="ts.year" name="movyear">
-        <label for="myear">Year</label>
-      </div>
-    </div>
-    <div class="col-auto">
-      <div class="md-form">
-        <select name="sel" class="browser-default custom-select" [(ngModel)]="ts.selectedOption">
-          <option value="">All</option>
-          <option value="movie">Movie</option>
-          <option value="tv">TV</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-auto">
-      <div class="md-form">
-        <button type="submit" mdbBtn color="elegant" mdbWavesEffect (click)="ts.multiSearch()"
-                id="sub" [disabled]="!ts.title" size="md"> Search
-        </button>
+    <div class="col">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <select name="sel" class="browser-default custom-select" [(ngModel)]="ts.selectedOption">
+            <option value="">All</option>
+            <option value="movie">Movie</option>
+            <option value="tv">TV</option>
+          </select>
+        </div>
+        <input placeholder="Search for movies or tv shows" aria-label="Search for movies or tv shows"
+               type="text" id="mname" class="form-control" [(ngModel)]="ts.title" name="movname">
+        <input placeholder="Year" aria-label="Year" type="text" id="myear" class="form-control col-2"
+               [(ngModel)]="ts.year" name="movyear" aria-describedby="button-addon2">
+        <div class="input-group-append">
+          <button mdbBtn color="black" outline="true" size="md" class="m-0 px-3 py-2" type="submit"
+                  id="button-addon2" mdbWavesEffect (click)="ts.multiSearch()" [disabled]="!ts.title">Search
+          </button>
+        </div>
       </div>
     </div>
     <div class="col-auto ml-auto">
-      <div class="md-form">
-        <app-user-profile></app-user-profile>
-      </div>
+      <app-user-profile></app-user-profile>
     </div>
   </div>
 </form>
