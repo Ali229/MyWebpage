@@ -19,7 +19,7 @@ export class TitleService {
   selectedOption = '';
   type = '';
   title: string;
-  year: number;
+  year: string;
   error: boolean;
   errorTitle: string;
   languages: Language[];
@@ -34,21 +34,21 @@ export class TitleService {
   multiSearch() {
     this.loading = true;
     this.error = false;
-    this.http.get('https://api.themoviedb.org/3/search/multi?api_key=e84ac8af3c49ad3253e0369ec64dfbff&query=' + this.title + '&page=1')
+    this.http.get('https://api.themoviedb.org/3/search/multi?api_key=e84ac8af3c49ad3253e0369ec64dfbff&query=' + this.title)
       .subscribe((response: any) => {
-        if (response.total_results > 0) {
-          for (const result of response.results) {
-            if (result.media_type !== 'person') {
-              return this.search(result.id, result.media_type);
-            }
+        for (const result of response.results) {
+          if (result.media_type !== 'person' &&
+            (this.selectedOption ? result.media_type === this.selectedOption : true) &&
+            (this.year ? this.year === new Date(result.release_date).getFullYear().toString() : true)
+          ) {
+            console.log(typeof this.year, typeof new Date(result.release_date).getFullYear());
+            return this.search(result.id, result.media_type);
           }
-        } else {
-          this.loading = false;
-          this.error = true;
-          this.errorTitle = this.title;
         }
+        this.loading = false;
+        this.error = true;
+        return this.errorTitle = this.title;
       });
-    return;
   }
 
   search(id, type) {

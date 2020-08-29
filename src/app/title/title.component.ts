@@ -32,6 +32,9 @@ export class TitleComponent implements OnInit, OnDestroy {
   }
 
   addToWatchlist() {
-    return this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+    console.log(this.auth.uid);
+    if (this.auth.uid) {
+      return this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+    }
   }
 }

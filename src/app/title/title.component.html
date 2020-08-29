@@ -15,8 +15,11 @@
                alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
-          <div class="col-auto p-0">
+          <div class="col-auto p-0"
+               mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}"
+               placement="top">
             <div class="watchlist" (click)="addToWatchlist()">
+
               <i class="fas fa-bookmark"></i> Watchlist
             </div>
           </div>
