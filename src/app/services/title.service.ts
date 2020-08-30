@@ -39,9 +39,7 @@ export class TitleService {
         for (const result of response.results) {
           if (result.media_type !== 'person' &&
             (this.selectedOption ? result.media_type === this.selectedOption : true) &&
-            (this.year ? this.year === new Date(result.release_date).getFullYear().toString() : true)
-          ) {
-            console.log(typeof this.year, typeof new Date(result.release_date).getFullYear());
+            (this.year ? this.year === new Date(result.release_date).getFullYear().toString() : true)) {
             return this.search(result.id, result.media_type);
           }
         }
@@ -60,6 +58,7 @@ export class TitleService {
       data.trailer = this.getTrailer(data);
       data.language = this.getLanguage(data);
       data.runtimeText = this.getRuntime(data);
+      data.media_type = type;
       this.titleSubject$.next(data);
       this.searchOMDBRatings(data);
       this.loading = false;

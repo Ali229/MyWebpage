@@ -1,33 +1,41 @@
-<h1>Watchlist</h1>
-<table mdbTable #tableEl="mdbTable" class="z-depth-1">
-  <thead>
-  <tr>
-    <th *ngFor="let head of headElements; let i = index" scope="col">{{head}}
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let el of watchlist; let i = index">
-    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
-      <img *ngIf="el.Poster != 'N/A'" class="poster animated slideInLeft z-depth-3" src="{{el.Poster}}"
+<h1><b>Your Watchlist</b></h1>
+<ng-container *ngFor="let title of watchlist; let i = index">
+  <div class="row mb-3 main-row">
+    <a class="col-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
+      <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
            alt="Can't load image">
-      <img *ngIf="el.Poster == 'N/A'" class="poster animated slideInLeft z-depth-3" src="assets/404PosterNotFound.jpg"
+      <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
            alt="Can't load image">
-    </td>
-    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Title}}</td>
-    <td
-      *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Type | titlecase}}</td>
-    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Released}}</td>
-    <td
-      *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.overallScore}}</td>
-    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{el.Comments}}</td>
-  </tr>
-  </tbody>
-  <tfoot class="grey lighten-5 w-100">
-  <tr>
-    <td [attr.colspan]="headElements.length">
-      <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="watchlist"></mdb-table-pagination>
-    </td>
-  </tr>
-  </tfoot>
-</table>
+      <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg"
+           alt="Can't load image">
+    </a>
+
+    <div class="col p-2">
+      <div class="row">
+      <h5><b>{{title.title ? title.title : title.name}} <span
+        class="year text-muted">({{title.release_date ?
+        (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
+            </span></b></h5>
+      </div>
+
+      <div class="row">
+        <span *ngIf="title.certification"><span class="certifications">{{title.certification}}</span>&nbsp;&nbsp;&nbsp;</span>
+        <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
+          <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+        <span *ngIf="title.genres">
+            <ng-container
+              *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}} </ng-container>
+            <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+        <span *ngIf="title.runtime">{{title.runtimeText}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+        <span *ngIf="title.language">{{title.language}}</span>
+      </div>
+
+      <div class="row mt-3 pr-3">
+        <div *ngIf="title.overview">
+          <div>{{title.overview}}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-container>

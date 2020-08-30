@@ -15,20 +15,19 @@
                alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
-          <div class="col-auto p-0"
-               mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}"
-               placement="top">
+          <div class="col-auto p-0" placement="top"
+               mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}">
             <div class="watchlist" (click)="addToWatchlist()">
-
               <i class="fas fa-bookmark"></i> Watchlist
             </div>
           </div>
-          <div class="col-auto ml-auto p-0">
+          <div class="col-auto ml-auto p-0" placement="top"
+               mdbTooltip="{{(auth.user$ | async) ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
             <div class="love">
               <i class="fas fa-heart"></i>
             </div>
           </div>
-          <div class="col-auto p-0">
+          <div class="col-auto p-0" placement="top" mdbTooltip="Play trailer">
             <a [href]="title.trailer" target="_blank" style="color:white">
               <div class="trailer">
                 <i class="fas fa-play"></i>
@@ -57,7 +56,6 @@
             <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.runtime">{{title.runtimeText}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.language">{{title.language}}</span>
-
           </div>
           <div class="row">
             <div *ngIf="title.tagline">
