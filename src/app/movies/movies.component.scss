@@ -1,7 +1,3 @@
-h1 {
-  margin-bottom: 30px;
-}
-
 .nav-justified {
   margin-top: 10px;
   border-radius: 10px;
@@ -36,21 +32,25 @@ button:focus {
   border-color: #3F729B !important;
 }
 
-input,
-select:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px white inset!important;
+input:-webkit-autofill {
+  -webkit-background-clip: border;
+  -webkit-box-shadow: 0 0 0 50px white inset !important;
+  -webkit-text-fill-color: #495057;
 }
 
-@media (max-width: 900px) {
-  button {
-    float: none;
+input, select, button {
+  height: 50px;
+}
+
+@media (max-width: 767px) {
+  .input-group, button, .custom-select, .form-control, .col-auto {
+    display: block;
     width: 100%;
+    border-radius: 5px !important;
+    margin-bottom: 5px;
   }
-  .toprow > .col-auto, #sub {
-    width: 100%;
+  .not-phone-user {
+    display: none;
   }
 }
 
@@ -59,3 +59,5 @@ select:-webkit-autofill:focus {
     display: none !important;
   }
 }
+
+

@@ -5,13 +5,13 @@
 <!-- User NOT logged in -->
 <ng-template #guest>
   <button type="submit" (click)="auth.googleSignin()" mdbBtn color="elegant" mdbWavesEffect id="target" size="md">
-    Connect With &nbsp;<i class="fab fa-google"></i>
+    Connect With Google
   </button>
 </ng-template>
 
 <!-- User logged in -->
 <ng-template #authenticated>
-  <div class="dd" *ngIf="auth.user$ | async as user">
+  <ng-container class="profile mt-2 mt-md-0" *ngIf="auth.user$ | async as user">
     <div class="btn-group dropleft" mdbDropdown>
       <a mdbDropdownToggle type="button" class="dropdown-toggle">
         <img [src]="user.photoURL" alt=""
@@ -24,5 +24,5 @@
         <a class="dropdown-item" (click)="auth.signOut()">Logout</a>
       </div>
     </div>
-  </div>
+  </ng-container>
 </ng-template>
