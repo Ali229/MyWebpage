@@ -1,8 +1,17 @@
-<h1><b>Your Watchlist</b></h1>
+<div class="row">
+  <h1 class="col-7 desktop"><b>Your Watchlist</b></h1>
+  <h1 class="col-7 mobile"><b>Watchlist</b></h1>
+  <div class="col-auto ml-auto button-col">
+    <button type="submit" [routerLink]="['/movies']" mdbBtn color="elegant" mdbWavesEffect id="target" size="md">
+      Back to Movies
+    </button>
+  </div>
+</div>
 <ng-container *ngFor="let title of watchlist; let i = index">
-  <div class="row mb-3 main-row">
-    <a class="col-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
-      <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
+  <div class="row mb-3 main-row animated zoomIn">
+    <a class="col-12 col-md-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
+      <img *ngIf="title.poster_path" class="poster hoverable"
+           src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
            alt="Can't load image">
       <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
            alt="Can't load image">
@@ -10,12 +19,13 @@
            alt="Can't load image">
     </a>
 
-    <div class="col p-2">
+    <div class="col-12 col-md-8 p-2">
       <div class="row">
-      <h5><b>{{title.title ? title.title : title.name}} <span
-        class="year text-muted">({{title.release_date ?
-        (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
-            </span></b></h5>
+        <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']"><h5>
+          <b>{{title.title ? title.title : title.name}}
+            <span class="year text-muted">({{title.release_date ?
+              (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
+            </span></b></h5></a>
       </div>
 
       <div class="row">
@@ -35,7 +45,16 @@
           <div>{{title.overview}}</div>
         </div>
       </div>
+    </div>
 
+    <div class="col-2 pr-0">
+      <div *ngIf="title.averageScore"
+           class="badge badge-{{ts.getRatingColor(title.averageScore)}} d-flex align-content-center flex-wrap justify-content-center">
+        {{title.averageScore}}</div>
+
+      <div *ngIf="!title.averageScore && title.vote_average"
+           class="badge badge-{{ts.getRatingColor(title.vote_average * 10)}} d-flex align-content-center flex-wrap justify-content-center">
+        {{title.vote_average * 10}}</div>
     </div>
   </div>
 </ng-container>

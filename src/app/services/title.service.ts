@@ -132,6 +132,7 @@ export class TitleService {
         }
       }
     }
+    return '';
   }
 
   getTrailer(data) {
