@@ -1,15 +1,14 @@
 <div class="row">
-  <h1 class="col-7 desktop"><b>Your Watchlist</b></h1>
-  <h1 class="col-7 mobile"><b>Watchlist</b></h1>
-  <div class="col-auto ml-auto button-col">
+  <h1 class="col"><b>Your Watchlist</b></h1>
+  <div class="col-auto ml-auto button-col mb-1 mb-sm-0">
     <button type="submit" [routerLink]="['/movies']" mdbBtn color="elegant" mdbWavesEffect id="target" size="md">
       Back to Movies
     </button>
   </div>
 </div>
 <ng-container *ngFor="let title of watchlist; let i = index">
-  <div class="row mb-3 main-row animated zoomIn">
-    <a class="col-12 col-md-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
+  <div class="row mb-3 main-row animated zoomIn z-depth-1">
+    <a class="col-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
       <img *ngIf="title.poster_path" class="poster hoverable"
            src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
            alt="Can't load image">
@@ -19,7 +18,7 @@
            alt="Can't load image">
     </a>
 
-    <div class="col-12 col-md-8 p-2">
+    <div class="col-8 p-2">
       <div class="row">
         <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']"><h5>
           <b>{{title.title ? title.title : title.name}}
@@ -28,7 +27,7 @@
             </span></b></h5></a>
       </div>
 
-      <div class="row">
+      <div class="row d-none d-sm-block">
         <span *ngIf="title.certification"><span class="certifications">{{title.certification}}</span>&nbsp;&nbsp;&nbsp;</span>
         <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
           <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
@@ -40,9 +39,27 @@
         <span *ngIf="title.language">{{title.language}}</span>
       </div>
 
-      <div class="row mt-3 pr-3">
+      <div class="row mt-3 pr-3 d-none d-sm-block">
         <div *ngIf="title.overview">
           <div>{{title.overview}}</div>
+        </div>
+      </div>
+
+      <div class="row mt-1 mt-lg-3">
+        <div class="col-4 col-sm-1">
+          <a>
+            <i class="fas fa-bookmark fa-lg amber-text"></i>
+          </a>
+        </div>
+        <div class="col-4 col-sm-1">
+          <a>
+            <i class="fas fa-heart fa-lg"></i>
+          </a>
+        </div>
+        <div class="col-4 col-sm-1">
+          <a [href]="title.trailer" target="_blank">
+            <i class="fas fa-play fa-lg"></i>
+          </a>
         </div>
       </div>
     </div>

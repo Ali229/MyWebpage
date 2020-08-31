@@ -24,7 +24,8 @@ export class WatchlistComponent implements OnInit {
   }
 
   async getWatchlist() {
-    const snapshot = await firebase.firestore().collection('/users/' + this.auth.uid + '/watchlist').get();
+    const snapshot = await firebase.firestore().collection('/users/' + this.auth.uid + '/watchlist')
+      .orderBy('watchlistAddDate').get();
     return snapshot.docs.map(doc => doc.data());
   }
 }
