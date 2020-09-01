@@ -16,6 +16,7 @@ export interface Title {
   runtimeText: string;
   awards: string;
   watchlistAddDate: Date;
+  watchlistDocId: string;
 
   // TV-Specific
   first_air_date: Date;

@@ -31,10 +31,10 @@ export class TitleComponent implements OnInit, OnDestroy {
     this.terminate$.complete();
   }
 
-  addToWatchlist() {
+  async addToWatchlist() {
     this.title.watchlistAddDate = new Date();
     if (this.auth.uid) {
-      return this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+      return await this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
     }
   }
 }
