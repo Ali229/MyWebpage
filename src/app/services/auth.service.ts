@@ -50,6 +50,6 @@ export class AuthService {
 
   async signOut() {
     await this.afAuth.signOut();
-    // this.router.navigate(['/movies']);
+    this.uid = null;
   }
 }
