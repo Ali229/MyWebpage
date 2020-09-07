@@ -17,6 +17,8 @@ export interface Title {
   awards: string;
   watchlistAddDate: Date;
   watchlistDocId: string;
+  year: any;
+  streams: any;
 
   // TV-Specific
   first_air_date: Date;
@@ -39,4 +41,13 @@ export interface Title {
 
   rottenImage: string;
   omdbPoster: string;
+
+  // Streams
+  netflixURL: string;
+  huluURL: string;
+  disneyURL: string;
+  amazonURL: string;
+  youtubeURL: string;
+  appleURL: string;
+  slingURL: string;
 }

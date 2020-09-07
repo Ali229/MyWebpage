@@ -57,12 +57,17 @@ b {
   border: 1px solid rgba(0, 0, 0, 0.6);
 }
 
+.stream {
+  max-width: 300px;
+  text-align: center;
+}
+
 @media (max-width: 767px) and (min-width: 350px) {
   .poster {
     margin: 0 auto;
     display: block;
   }
-  .poster-buttons {
+  .poster-buttons, .stream {
     margin: 0 auto;
   }
 }

@@ -39,7 +39,8 @@ export class TitleService {
         for (const result of response.results) {
           if (result.media_type !== 'person' &&
             (this.selectedOption ? result.media_type === this.selectedOption : true) &&
-            (this.year ? this.year === new Date(result.release_date).getFullYear().toString() : true)) {
+            (this.year ? (this.year === new Date(result.release_date).getFullYear().toString()) ||
+              (this.year === new Date(result.first_air_date).getFullYear().toString()) : true)) {
             return this.search(result.id, result.media_type);
           }
         }
@@ -59,8 +60,10 @@ export class TitleService {
       data.language = this.getLanguage(data);
       data.runtimeText = this.getRuntime(data);
       data.media_type = type;
+      data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
       this.titleSubject$.next(data);
       this.searchOMDBRatings(data);
+      this.searchStreams(data);
       this.loading = false;
     });
   }
@@ -106,6 +109,58 @@ export class TitleService {
           this.titleSubject$.next(data);
         });
     }
+  }
+
+  searchStreams(data) {
+    const body = {
+      content_types: null,
+      presentation_types: null,
+      providers: null,
+      genres: null,
+      languages: null,
+      release_year_from: data.year,
+      release_year_until: data.year,
+      monetization_types: ['flatrate'],
+      min_price: null,
+      max_price: null,
+      scoring_filter_types: null,
+      cinema_release: null,
+      query: data.title ? data.title : data.name,
+      page: null,
+      page_size: 10,
+    };
+    this.http.post('https://apis.justwatch.com/content/titles/en_US/popular', body)
+      .subscribe((response: any) => {
+          for (const result of response.items) {
+            // tslint:disable-next-line:no-unused-expression
+            result.object_type === 'show' ? (result.object_type = 'tv') : '';
+            if (result.title === body.query && result.original_release_year === data.year && result.object_type === data.media_type) {
+              data.streams = result;
+              for (const stream of data.streams.offers) {
+                if (stream.monetization_type === 'flatrate') {
+                  if (stream.urls.standard_web.includes('netflix')) {
+                    data.netflixURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('disney')) {
+                    data.disneyURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('hulu')) {
+                    data.huluURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('amazon')) {
+                    data.amazonURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('youtube')) {
+                    data.youtubeURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('apple')) {
+                    data.appleURL = stream.urls.standard_web;
+                  } else if (stream.urls.standard_web.includes('sling')) {
+                    data.slingURL = stream.urls.standard_web;
+                  }
+                }
+              }
+              return;
+            }
+          }
+        }
+      );
+    this.titleSubject$.next(data);
   }
 
   getRatingColor(rating) {

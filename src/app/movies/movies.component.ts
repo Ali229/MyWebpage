@@ -42,8 +42,8 @@ export class MoviesComponent {
     });
   }
 
-  scrollToElement(): void {
+  scrollToElement() {
     const x = document.getElementById('target');
-    x.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'end'});
+    x.scrollIntoView({behavior: 'smooth'});
   }
 }

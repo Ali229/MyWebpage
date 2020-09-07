@@ -21,15 +21,7 @@ export class WatchlistComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getWatchlist().then(result => {
-    //   // console.log(result);
-    //   //   result.forEach((index: Title) => {
-    //   //     this.watchlist.push(index);
-    //   //   });
-    //   // });
-    // });
     this.getWatchlist();
-    console.log('hello');
   }
 
 
@@ -46,20 +38,6 @@ export class WatchlistComponent implements OnInit {
     if (this.watchlist.length === 0) {
       this.empty = true;
     }
-    console.log(this.watchlist);
-
-    // snapshot.docs.forEach((index: any) => {
-    //   this.watchlist.push(index.data());
-    //   console.log(index.data());
-    // });
-
-
-    // console.log(snapshot);
-    // snapshot.docs.map(doc => this.doc1 = doc.id);
-    // snapshot.docs.map(doc => this.doc2 = doc.data());
-    // console.log(1, this.doc1);
-    // console.log(2, this.doc2);
-
   }
 
   async removeFromWatchlist(id) {
