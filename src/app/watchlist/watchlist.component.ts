@@ -3,7 +3,6 @@ import {AuthService} from '../services/auth.service';
 import * as firebase from 'firebase/app';
 import {Title} from '../models/title.model';
 import {TitleService} from '../services/title.service';
-import {HttpClient} from '@angular/common/http';
 import {AngularFirestore} from '@angular/fire/firestore';
 
 @Component({
@@ -13,8 +12,6 @@ import {AngularFirestore} from '@angular/fire/firestore';
 })
 export class WatchlistComponent implements OnInit {
   watchlist: Title[] = [];
-  doc1: any;
-  doc2: any;
   empty = false;
 
   constructor(public auth: AuthService, private afs: AngularFirestore, public ts: TitleService) {
