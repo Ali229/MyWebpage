@@ -1,23 +1,28 @@
-<div [hidden]="ts.loading">
-    <a class="col" [href]="title.netflixURL" target="_blank" *ngIf="title.netflixURL">
-      <img class="hoverable stream-button" src="assets/netflix.svg" alt="Netflix">
-    </a>
-  <a class="col" [href]="title.disneyURL" target="_blank" *ngIf="title.disneyURL">
-    <img class="hoverable stream-button" src="assets/disney.webp" alt="Disney">
-  </a>
-  <a class="col" [href]="title.huluURL" target="_blank" *ngIf="title.huluURL">
-    <img class="hoverable stream-button" src="assets/hulu.png" alt="Hulu">
-  </a>
-  <a class="col" [href]="title.amazonURL" target="_blank" *ngIf="title.amazonURL">
-    <img class="hoverable stream-button" src="assets/prime.jpg" alt="Amazon">
-  </a>
-  <a class="col" [href]="title.youtubeURL" target="_blank" *ngIf="title.youtubeURL">
-    <img class="hoverable stream-button" src="assets/youtube.png" alt="Youtube">
-  </a>
-  <a class="col" [href]="title.appleURL" target="_blank" *ngIf="title.appleURL">
-    <img class="hoverable stream-button" src="assets/apple.png" alt="Apple">
-  </a>
-  <a class="col" [href]="title.slingURL" target="_blank" *ngIf="title.slingURL">
-    <img class="hoverable stream-button" src="assets/sling.png" alt="Sling">
-  </a>
+<div class="col mt-2 p-0" *ngIf="ts.loadingStreams">
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated theme-color" role="progressbar"
+         style="width: 100%">
+    </div>
+  </div>
 </div>
+<a class="col" [href]="title.netflixURL" target="_blank" *ngIf="title.netflixURL">
+  <img class="hoverable stream-button" src="assets/netflix.svg" alt="Netflix">
+</a>
+<a class="col" [href]="title.disneyURL" target="_blank" *ngIf="title.disneyURL">
+  <img class="hoverable stream-button" src="assets/disney.webp" alt="Disney">
+</a>
+<a class="col" [href]="title.huluURL" target="_blank" *ngIf="title.huluURL">
+  <img class="hoverable stream-button" src="assets/hulu.png" alt="Hulu">
+</a>
+<a class="col" [href]="title.amazonURL" target="_blank" *ngIf="title.amazonURL">
+  <img class="hoverable stream-button" src="assets/prime.jpg" alt="Amazon">
+</a>
+<a class="col" [href]="title.youtubeURL" target="_blank" *ngIf="title.youtubeURL">
+  <img class="hoverable stream-button" src="assets/youtube.png" alt="Youtube">
+</a>
+<a class="col" [href]="title.appleURL" target="_blank" *ngIf="title.appleURL">
+  <img class="hoverable stream-button" src="assets/apple.png" alt="Apple">
+</a>
+<a class="col" [href]="title.slingURL" target="_blank" *ngIf="title.slingURL">
+  <img class="hoverable stream-button" src="assets/sling.png" alt="Sling">
+</a>

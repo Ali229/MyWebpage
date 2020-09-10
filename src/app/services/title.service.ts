@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class TitleService {
   error: boolean;
   errorTitle: string;
   languages: Language[];
+  loadingStreams = false;
 
   constructor(private http: HttpClient) {
     this.languages = languagesData;
@@ -32,6 +33,7 @@ export class TitleService {
   title$ = this.titleSubject$.asObservable();
 
   multiSearch() {
+    this.loadingStreams = true;
     this.loading = true;
     this.error = false;
     this.http.get('https://api.themoviedb.org/3/search/multi?api_key=e84ac8af3c49ad3253e0369ec64dfbff&query=' + this.title)
@@ -51,6 +53,7 @@ export class TitleService {
   }
 
   search(id, type) {
+    this.loadingStreams = true;
     this.loading = true;
     this.error = false;
     this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
@@ -70,7 +73,7 @@ export class TitleService {
 
   searchOMDBRatings(data) {
     if (data.external_ids.imdb_id) {
-      this.http.get('http://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
+      this.http.get('https://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
         .subscribe((response: any) => {
           data.totalScore = 0;
           data.averageScore = 0;
@@ -129,7 +132,9 @@ export class TitleService {
       page: null,
       page_size: 10,
     };
-    this.http.post('https://apis.justwatch.com/content/titles/en_US/popular', body)
+    const headers = new HttpHeaders({Authorization: '*'});
+    const options = {headers};
+    this.http.post('https://cors-anywhere.herokuapp.com/https://apis.justwatch.com/content/titles/en_US/popular', body, options)
       .subscribe((response: any) => {
           for (const result of response.items) {
             // tslint:disable-next-line:no-unused-expression
@@ -155,12 +160,13 @@ export class TitleService {
                   }
                 }
               }
-              return;
+              this.titleSubject$.next(data);
             }
           }
+          return this.loadingStreams = false;
         }
       );
-    this.titleSubject$.next(data);
+
   }
 
   getRatingColor(rating) {

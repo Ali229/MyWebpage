@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Title} from '../models/title.model';
 import {Subject} from 'rxjs';
-import {AuthService} from '../services/auth.service';
 import {TitleService} from '../services/title.service';
 import {takeUntil} from 'rxjs/operators';
 
@@ -14,7 +13,7 @@ export class StreamComponent implements OnInit, OnDestroy {
   title: Title;
   private terminate$: Subject<Title> = new Subject();
 
-  constructor(public auth: AuthService, public ts: TitleService) {
+  constructor(public ts: TitleService) {
   }
 
   ngOnInit() {
