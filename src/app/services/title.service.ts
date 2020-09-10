@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
@@ -132,9 +132,7 @@ export class TitleService {
       page: null,
       page_size: 10,
     };
-    const headers = new HttpHeaders({Authorization: '*'});
-    const options = {headers};
-    this.http.post('https://cors-anywhere.herokuapp.com/https://apis.justwatch.com/content/titles/en_US/popular', body, options)
+    this.http.post('https://cors-anywhere.herokuapp.com/https://apis.justwatch.com/content/titles/en_US/popular', body)
       .subscribe((response: any) => {
           for (const result of response.items) {
             // tslint:disable-next-line:no-unused-expression
@@ -166,7 +164,6 @@ export class TitleService {
           return this.loadingStreams = false;
         }
       );
-
   }
 
   getRatingColor(rating) {
