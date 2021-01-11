@@ -4,9 +4,13 @@
     <tr *ngIf="i % 2 == 0">
       <td class="hoverable td1">
         <div class="row" (click)="ts.search(movie.id, 'movie')">
-          <div class="col col-img"><img class="icons z-depth-3"
-                                        [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path"
-                                        alt="Can't load image"></div>
+          <div class="col col-img">
+            <img *ngIf="movie.poster_path" class="icons z-depth-3"
+                 [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path"
+                 alt="Can't load image">
+            <img *ngIf="!movie.poster_path" class="icons z-depth-3" src="assets/404PosterNotFound.jpg"
+                 alt="Can't load image">
+          </div>
           <div class="col col-txt mt-1 mt-md-0">
             <p class="title"><b>{{i + 1}}. {{movie.title}}</b></p>
             <p>{{movie.release_date | date}}</p>
@@ -26,9 +30,12 @@
       <td class="hoverable td2">
         <div class="row"
              (click)="ts.search(popList.results[i+1].id, 'movie')">
-          <div class="col col-img"><img class="icons z-depth-3"
-                                        [src]="'https://image.tmdb.org/t/p/w154' + popList.results[i+1].poster_path"
-                                        alt="Can't load image"></div>
+          <div class="col col-img">
+            <img *ngIf="popList.results[i+1].poster_path" class="icons z-depth-3" [src]="'https://image.tmdb.org/t/p/w154' + popList.results[i+1].poster_path"
+                 alt="Can't load image">
+            <img *ngIf="!popList.results[i+1].poster_path" class="icons z-depth-3" src="assets/404PosterNotFound.jpg"
+                 alt="Can't load image">
+          </div>
           <div class="col col-txt mt-1 mt-md-0">
             <p class="title"><b>{{i + 2}}. {{popList.results[i + 1].title}}</b></p>
             <p>{{popList.results[i + 1].release_date | date}}</p>
