@@ -34,7 +34,8 @@ export class TitleComponent implements OnInit, OnDestroy {
   async addToWatchlist() {
     if (this.auth.uid) {
       this.title.watchlistAddDate = new Date();
-      return await this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+      await this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+      return this.auth.getWatchlist();
     }
   }
 }

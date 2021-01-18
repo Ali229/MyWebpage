@@ -17,10 +17,13 @@
         <div class="row poster-buttons z-depth-3">
           <div class="col-auto p-0" placement="top"
                mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}">
-            <div class="watchlist" (click)="addToWatchlist()">
-              <i class="fas fa-bookmark"></i> Watchlist
+            <div class="watchlist">
+              <span *ngIf="!auth.getWatchlisted(title.id)" (click)="addToWatchlist()"><i class="fas fa-bookmark"></i> Watchlist</span>
+              <span *ngIf="auth.getWatchlisted(title.id)" (click)="auth.removeFromWatchlist(title.id)"><i
+                class="fas fa-bookmark amber-text"></i> Watchlisted</span>
             </div>
           </div>
+
           <div class="col-auto ml-auto p-0" placement="top"
                mdbTooltip="{{(auth.user$ | async) ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
             <div class="love">
@@ -40,7 +43,6 @@
       <div class="col-12 col-md-8 bodyText">
         <div class="ml-1 ml-md-3 mt-2 mt-md-0">
           <div class="row">
-            <!--            <h2>{{title.id}}</h2>-->
             <h2><b>{{title.title ? title.title : title.name}} <span
               class="year text-muted">({{title.release_date ?
               (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
