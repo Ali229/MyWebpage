@@ -15,12 +15,13 @@
                alt="Can't load image">
         </div>
         <div class="row poster-buttons z-depth-3">
-          <div class="col-auto p-0" placement="top"
-               mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}">
-            <div class="watchlist" *ngIf="!auth.getWatchlisted(title.id)" (click)="auth.addToWatchlist(title)">
+          <div class="col-auto p-0" placement="top">
+            <div class="watchlist" *ngIf="!auth.getWatchlisted(title.id)" (click)="auth.addToWatchlist(title)"
+                 mdbTooltip="Add to watchlist">
               <span class="unselectable"><i class="fas fa-bookmark"></i>&nbsp;&nbsp;Watchlist</span>
             </div>
-            <div class="watchlist" *ngIf="auth.getWatchlisted(title.id)" (click)="auth.removeFromWatchlist(title.id)">
+            <div class="watchlist" *ngIf="auth.getWatchlisted(title.id)" (click)="auth.removeFromWatchlist(title.id)"
+                 mdbTooltip="Remove from watchlist">
               <span class="unselectable"><i class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
           </div>
