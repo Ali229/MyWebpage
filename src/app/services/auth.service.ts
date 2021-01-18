@@ -74,6 +74,17 @@ export class AuthService {
     }
   }
 
+  async addToWatchlist(title) {
+    if (this.uid) {
+      title.watchlistAddDate = new Date();
+      await this.afs.collection('/users/' + this.uid + '/watchlist').add(title);
+      this.toastr.success((title.title ? title.title : title.name) + ' added to watchlist');
+      return this.getWatchlist();
+    } else {
+      this.toastr.info('Please login to use watchlist feature');
+    }
+  }
+
   async removeFromWatchlist(id) {
     for (const item of this.watchlist) {
       if (item.id === id) {
@@ -85,9 +96,11 @@ export class AuthService {
   }
 
   public getWatchlisted(id) {
-    for (const item of this.watchlist) {
-      if (item.id === id) {
-        return true;
+    if (this.uid) {
+      for (const item of this.watchlist) {
+        if (item.id === id) {
+          return true;
+        }
       }
     }
     return false;
