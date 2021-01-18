@@ -18,9 +18,9 @@
           <div class="col-auto p-0" placement="top"
                mdbTooltip="{{(auth.user$ | async) ? 'Add to watchlist': 'Login to add this title to your watchlist'}}">
             <div class="watchlist">
-              <span *ngIf="!auth.getWatchlisted(title.id)" (click)="addToWatchlist()"><i class="fas fa-bookmark"></i> Watchlist</span>
+              <span *ngIf="!auth.getWatchlisted(title.id)" (click)="addToWatchlist()"><i class="fas fa-bookmark"></i>&nbsp;&nbsp;Watchlist</span>
               <span *ngIf="auth.getWatchlisted(title.id)" (click)="auth.removeFromWatchlist(title.id)"><i
-                class="fas fa-bookmark amber-text"></i> Watchlisted</span>
+                class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added</span>
             </div>
           </div>
 

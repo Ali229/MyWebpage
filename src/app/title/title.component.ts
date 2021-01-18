@@ -6,6 +6,7 @@ import {Title} from '../models/title.model';
 import {TitleService} from '../services/title.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {ToastrService} from 'ngx-toastr';
 
 
 @Component({
@@ -18,7 +19,8 @@ export class TitleComponent implements OnInit, OnDestroy {
   title: Title;
   private terminate$: Subject<Title> = new Subject();
 
-  constructor(private http: HttpClient, private afs: AngularFirestore, public auth: AuthService, public ts: TitleService) {
+  constructor(private http: HttpClient, private afs: AngularFirestore, public auth: AuthService,
+              public ts: TitleService, private toastr: ToastrService) {
   }
 
   ngOnInit() {
@@ -35,6 +37,7 @@ export class TitleComponent implements OnInit, OnDestroy {
     if (this.auth.uid) {
       this.title.watchlistAddDate = new Date();
       await this.afs.collection('/users/' + this.auth.uid + '/watchlist').add(this.title);
+      this.toastr.success((this.title.title ? this.title.title : this.title.name) + ' added to watchlist');
       return this.auth.getWatchlist();
     }
   }

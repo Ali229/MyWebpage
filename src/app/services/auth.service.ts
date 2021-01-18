@@ -7,6 +7,7 @@ import {Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {Title} from '../models/title.model';
 import * as firebase from 'firebase';
+import {ToastrService} from 'ngx-toastr';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
   watchlist: Title[] = null;
   empty = false;
 
-  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {
+  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
     this.user$ = this.afAuth.authState.pipe(
       switchMap(user => {
         // Logged in
@@ -77,6 +78,7 @@ export class AuthService {
     for (const item of this.watchlist) {
       if (item.id === id) {
         await this.afs.collection('/users/' + this.uid + '/watchlist').doc(item.watchlistDocId).delete();
+        this.toastr.success((item.title ? item.title : item.name) + ' removed from watchlist');
         return this.getWatchlist();
       }
     }

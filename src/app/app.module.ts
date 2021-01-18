@@ -20,10 +20,13 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WatchlistComponent} from './watchlist/watchlist.component';
 import {AuthService} from './services/auth.service';
-import { StreamComponent } from './stream/stream.component';
-import { PrivacyComponent } from './privacy/privacy.component';
-import { TitleComponent } from './title/title.component';
+import {StreamComponent} from './stream/stream.component';
+import {PrivacyComponent} from './privacy/privacy.component';
+import {TitleComponent} from './title/title.component';
 import {TitleService} from './services/title.service';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ToastrModule} from 'ngx-toastr';
+import {CommonModule} from '@angular/common';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -63,6 +66,9 @@ const config = {
     AngularFireModule.initializeApp(config),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    CommonModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [
     AuthService,
