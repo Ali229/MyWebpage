@@ -8,9 +8,9 @@
       <div class="col-12 col-md-4 animated zoomIn text-light">
         <div class="row">
           <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
-               alt="Can't load image">
+               alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
           <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
-               alt="Can't load image">
+               alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
           <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg"
                alt="Can't load image">
         </div>
