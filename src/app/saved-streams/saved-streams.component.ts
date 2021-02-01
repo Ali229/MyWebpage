@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Title} from '../models/title.model';
 
 @Component({
   selector: 'app-saved-streams',
@@ -6,8 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./saved-streams.component.scss']
 })
 export class SavedStreamsComponent implements OnInit {
+  @Input() public title: Title;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
