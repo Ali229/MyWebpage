@@ -132,7 +132,7 @@ export class TitleService {
       page: null,
       page_size: 10,
     };
-    this.http.post('https://apis.justwatch.com/content/titles/en_US/popular', body)
+    this.http.post('https://cors-anywhere-movies.herokuapp.com/https://apis.justwatch.com/content/titles/en_US/popular', body)
       .subscribe((response: any) => {
           for (const result of response.items) {
             // tslint:disable-next-line:no-unused-expression
