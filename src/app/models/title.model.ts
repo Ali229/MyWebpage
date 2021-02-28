@@ -24,6 +24,7 @@ export interface Title {
   first_air_date: Date;
   name: string;
   content_ratings: object[];
+  number_of_seasons: number;
 
   // Movie-Specific
   release_date: Date;
