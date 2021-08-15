@@ -1,13 +1,21 @@
 <div class="row">
-  <h1 class="col p-0"><b>Your Watchlist <span *ngIf="auth.watchlist.length !==0">({{auth.watchlist.length}})</span></b>
+  <h1 class="col p-0"><b>My Watchlist <span *ngIf="auth.watchlist.length !==0">({{auth.watchlist.length}})</span></b>
   </h1>
+  <div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0 mr-2">
+    <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedType"
+            (change)="changeMediaType(selectedType)">
+      <option value="All">All</option>
+      <option value="movie">Movie</option>
+      <option value="tv">TV</option>
+    </select>
+  </div>
   <div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0">
     <button type="submit" routerLink="../movies" mdbBtn color="elegant" mdbWavesEffect id="target" size="md">
       Back to Movies
     </button>
   </div>
 </div>
-<ng-container *ngFor="let title of auth.watchlist; let i = index">
+<ng-container *ngFor="let title of filteredList; let i = index">
   <div class="row mb-3 main-row animated zoomIn z-depth-1">
     <a class="col-2 pl-0" (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
       <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
@@ -49,7 +57,7 @@
 
       <div class="row mt-lg-3">
         <div class="col-4 col-sm-1">
-          <a (click)="auth.removeFromWatchlist(title.id)">
+          <a (click)="remove(title.id)">
             <i class="fas fa-bookmark fa-lg amber-text"></i>
           </a>
         </div>
