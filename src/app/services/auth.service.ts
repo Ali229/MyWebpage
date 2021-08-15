@@ -59,7 +59,7 @@ export class AuthService {
 
   async signOut() {
     await this.afAuth.signOut();
-    this.uid = null;
+    this.uid = 'nothing';
   }
 
 
@@ -79,7 +79,7 @@ export class AuthService {
   }
 
   async addToWatchlist(title) {
-    if (this.uid) {
+    if (this.uid !== 'nothing') {
       title.watchlistAddDate = new Date();
       await this.afs.collection('/users/' + this.uid + '/watchlist').add(title);
       this.toastr.success((title.title ? title.title : title.name) + ' added to watchlist');
@@ -100,7 +100,7 @@ export class AuthService {
   }
 
   public getWatchlisted(id) {
-    if (this.uid) {
+    if (this.uid !== 'nothing') {
       for (const item of this.watchlist) {
         if (item.id === id) {
           return true;
