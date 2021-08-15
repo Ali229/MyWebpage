@@ -1,17 +1,5 @@
-<div *ngIf="auth.user$ | async; then authenticated else guest">
-  <!-- template will replace this div -->
-</div>
-
-<!-- User NOT logged in -->
-<ng-template #guest>
-  <button type="submit" (click)="auth.googleSignin()" mdbBtn color="elegant" mdbWavesEffect id="target" size="md">
-    Connect With Google
-  </button>
-</ng-template>
-
-<!-- User logged in -->
-<ng-template #authenticated>
-  <ng-container class="profile mt-2 mt-md-0" *ngIf="auth.user$ | async as user">
+<div *ngIf="auth.user$ | async as user; else guest">
+  <ng-container class="profile mt-2 mt-md-0">
     <div class="btn-group dropleft" mdbDropdown>
       <a mdbDropdownToggle type="button" class="dropdown-toggle">
         <img [src]="user.photoURL" alt=""
@@ -25,4 +13,12 @@
       </div>
     </div>
   </ng-container>
+</div>
+
+<!-- User NOT logged in -->
+<ng-template #guest>
+  <button type="submit" (click)="auth.googleSignin()" mdbBtn color="elegant" mdbWavesEffect id="target" size="md"
+          *ngIf="auth.uid === 'nothing'">
+    Connect With Google
+  </button>
 </ng-template>
