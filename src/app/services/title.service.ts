@@ -58,6 +58,7 @@ export class TitleService {
     this.error = false;
     this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
       .pipe(take(1)).subscribe(data => {
+      data.vote_average = Math.round(data.vote_average * 10);
       data.certification = this.getCertification(data, type);
       data.trailer = this.getTrailer(data);
       data.language = this.getLanguage(data);
@@ -99,7 +100,7 @@ export class TitleService {
             }
           }
           if (data.vote_average) {
-            data.totalScore += data.vote_average * 10;
+            data.totalScore += data.vote_average;
             data.scoreCount++;
           }
           data.averageScore = Math.round(data.totalScore / data.scoreCount);

@@ -89,8 +89,8 @@
               <tbody>
               <tr *ngIf="title.vote_average > 0">
                 <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.vote_average * 10)}} animated zoomIn z-depth-3">
-                  {{title.vote_average * 10}}</span></td>
+                <td><span class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
+                  {{title.vote_average}}</span></td>
               </tr>
               <tr *ngIf="title.imdbScore">
                 <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
