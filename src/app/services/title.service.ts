@@ -141,21 +141,22 @@ export class TitleService {
             if (result.title === body.query && result.original_release_year === data.year && result.object_type === data.media_type) {
               data.streams = result;
               console.log(data);
-                if (stream.monetization_type === 'flatrate') {
-                  if (stream.urls.standard_web.includes('netflix')) {
-                    data.netflixURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('disney')) {
-                    data.disneyURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('hulu')) {
-                    data.huluURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('amazon')) {
-                    data.amazonURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('youtube')) {
-                    data.youtubeURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('apple')) {
-                    data.appleURL = stream.urls.standard_web;
-                  } else if (stream.urls.standard_web.includes('sling')) {
-                    data.slingURL = stream.urls.standard_web;
+              for (const offer of data.streams.offers) {
+                if (offer.monetization_type === 'flatrate') {
+                  if (offer.provider_id === 8) {
+                    data.netflixURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 337) {
+                    data.disneyURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 15) {
+                    data.huluURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 9) {
+                    data.amazonURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 188) {
+                    data.youtubeURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 350) {
+                    data.appleURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 299) {
+                    data.slingURL = offer.urls.standard_web;
                   }
                 }
               }
