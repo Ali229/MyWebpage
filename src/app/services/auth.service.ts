@@ -16,6 +16,8 @@ export class AuthService {
   uid: string;
   watchlist: Title[] = null;
   empty = false;
+  moviesCount: number;
+  tvCount: number;
 
   constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
     this.user$ = this.afAuth.authState.pipe(
@@ -68,9 +70,16 @@ export class AuthService {
     const snapshot: any = await firebase.firestore().collection('/users/' + this.uid + '/watchlist')
       .orderBy('watchlistAddDate').get();
     let x = 0;
+    this.moviesCount = 0;
+    this.tvCount = 0;
     for (const i of snapshot.docs) {
       this.watchlist.push(i.data());
       this.watchlist[x].watchlistDocId = i.id;
+      if (this.watchlist[x].media_type === 'movie') {
+        this.moviesCount++;
+      } else if (this.watchlist[x].media_type === 'tv') {
+        this.tvCount++;
+      }
       x++;
     }
     if (this.watchlist.length === 0) {

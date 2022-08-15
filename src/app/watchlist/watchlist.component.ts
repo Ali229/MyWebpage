@@ -17,8 +17,8 @@ export class WatchlistComponent {
   }
 
   async remove(id) {
-   await this.auth.removeFromWatchlist(id);
-   this.changeMediaType(this.selectedType);
+    await this.auth.removeFromWatchlist(id);
+    this.changeMediaType(this.selectedType);
   }
 
   changeMediaType(selectedType) {

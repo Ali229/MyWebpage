@@ -5,8 +5,8 @@
     <select name="sel" class="browser-default custom-select" [(ngModel)]="selectedType"
             (change)="changeMediaType(selectedType)">
       <option value="All">All</option>
-      <option value="movie">Movie</option>
-      <option value="tv">TV</option>
+      <option value="movie">Movies<span *ngIf="auth.moviesCount !==0"> ({{auth.moviesCount}})</span></option>
+      <option value="tv">TV<span *ngIf="auth.tvCount !==0"> ({{auth.tvCount}})</span></option>
     </select>
   </div>
   <div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0">
