@@ -51,4 +51,5 @@ export interface Title {
   youtubeURL: string;
   appleURL: string;
   slingURL: string;
+  peackcockURL: string;
 }

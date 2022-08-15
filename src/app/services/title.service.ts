@@ -140,7 +140,6 @@ export class TitleService {
             result.object_type === 'show' ? (result.object_type = 'tv') : '';
             if (result.title === body.query && result.original_release_year === data.year && result.object_type === data.media_type) {
               data.streams = result;
-              console.log(data);
               for (const offer of data.streams.offers) {
                 if (offer.monetization_type === 'flatrate') {
                   if (offer.provider_id === 8) {
@@ -157,6 +156,8 @@ export class TitleService {
                     data.appleURL = offer.urls.standard_web;
                   } else if (offer.provider_id === 299) {
                     data.slingURL = offer.urls.standard_web;
+                  } else if (offer.provider_id === 387) {
+                    data.peackcockURL = offer.urls.standard_web;
                   }
                 }
               }
