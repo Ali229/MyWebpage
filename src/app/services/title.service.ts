@@ -140,7 +140,7 @@ export class TitleService {
             result.object_type === 'show' ? (result.object_type = 'tv') : '';
             if (result.title === body.query && result.original_release_year === data.year && result.object_type === data.media_type) {
               data.streams = result;
-              for (const stream of data.streams.offers) {
+              console.log(data);
                 if (stream.monetization_type === 'flatrate') {
                   if (stream.urls.standard_web.includes('netflix')) {
                     data.netflixURL = stream.urls.standard_web;
