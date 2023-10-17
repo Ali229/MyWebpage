@@ -23,7 +23,6 @@ export class TitleService {
   error: boolean;
   errorTitle: string;
   languages: Language[];
-  loadingStreams = false;
 
   constructor(private http: HttpClient) {
     this.languages = languagesData;
@@ -33,7 +32,6 @@ export class TitleService {
   title$ = this.titleSubject$.asObservable();
 
   multiSearch() {
-    this.loadingStreams = true;
     this.loading = true;
     this.error = false;
     this.http.get('https://api.themoviedb.org/3/search/multi?api_key=e84ac8af3c49ad3253e0369ec64dfbff&query=' + this.title)
@@ -53,10 +51,9 @@ export class TitleService {
   }
 
   search(id, type) {
-    this.loadingStreams = true;
     this.loading = true;
     this.error = false;
-    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings')
+    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings,watch/providers')
       .pipe(take(1)).subscribe(data => {
       data.vote_average = Math.round(data.vote_average * 10);
       data.certification = this.getCertification(data, type);
@@ -115,58 +112,31 @@ export class TitleService {
     }
   }
 
-  searchStreams(data) {
-    const body = {
-      content_types: null,
-      presentation_types: null,
-      providers: null,
-      genres: null,
-      languages: null,
-      release_year_from: data.year,
-      release_year_until: data.year,
-      monetization_types: ['flatrate'],
-      min_price: null,
-      max_price: null,
-      scoring_filter_types: null,
-      cinema_release: null,
-      query: data.title ? data.title : data.name,
-      page: null,
-      page_size: 10,
-    };
-    this.http.post('https://cors-anywhere-movies.herokuapp.com/https://apis.justwatch.com/content/titles/en_US/popular', body)
-      .subscribe((response: any) => {
-          for (const result of response.items) {
-            // tslint:disable-next-line:no-unused-expression
-            result.object_type === 'show' ? (result.object_type = 'tv') : '';
-            if (result.title === body.query && result.original_release_year === data.year && result.object_type === data.media_type) {
-              data.streams = result;
-              for (const offer of data.streams.offers) {
-                if (offer.monetization_type === 'flatrate') {
-                  if (offer.provider_id === 8) {
-                    data.netflixURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 337) {
-                    data.disneyURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 15) {
-                    data.huluURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 9) {
-                    data.amazonURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 188) {
-                    data.youtubeURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 350) {
-                    data.appleURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 299) {
-                    data.slingURL = offer.urls.standard_web;
-                  } else if (offer.provider_id === 387) {
-                    data.peackcockURL = offer.urls.standard_web;
-                  }
-                }
-              }
-              this.titleSubject$.next(data);
-            }
-          }
-          return this.loadingStreams = false;
+  searchStreams(data: Title) {
+    const providers = data['watch/providers'];
+    if (providers && providers.results && providers.results.US && providers.results.US.flatrate) {
+      data.streams = providers.results.US.flatrate;
+      for (const stream of data.streams) {
+        if (stream.provider_id === 8) {
+          data.onNetflix = true;
+        } else if (stream.provider_id === 337) {
+          data.onDisney = true;
+        } else if (stream.provider_id === 15) {
+          data.onHulu = true;
+        } else if (stream.provider_id === 9) {
+          data.onAmazon = true;
+        } else if (stream.provider_id === 188) {
+          data.onYoutube = true;
+        } else if (stream.provider_id === 350) {
+          data.onApple = true;
+        } else if (stream.provider_id === 299) {
+          data.onSling = true;
+        } else if (stream.provider_id === 387) {
+          data.onPeacock = true;
         }
-      );
+      }
+      this.titleSubject$.next(data);
+    }
   }
 
   getRatingColor(rating) {

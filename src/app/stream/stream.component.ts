@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Title} from '../models/title.model';
 import {Subject} from 'rxjs';
 import {TitleService} from '../services/title.service';
@@ -10,6 +10,8 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./stream.component.scss']
 })
 export class StreamComponent implements OnInit, OnDestroy {
+  @Input() public wishListTitle: Title;
+
   title: Title;
   private terminate$: Subject<Title> = new Subject();
 
@@ -17,7 +19,11 @@ export class StreamComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => this.title = data);
+    if (this.wishListTitle) {
+      this.title = this.wishListTitle;
+    } else {
+      this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => this.title = data);
+    }
   }
 
   ngOnDestroy() {

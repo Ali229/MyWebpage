@@ -44,12 +44,13 @@ export interface Title {
   omdbPoster: string;
 
   // Streams
-  netflixURL: string;
-  huluURL: string;
-  disneyURL: string;
-  amazonURL: string;
-  youtubeURL: string;
-  appleURL: string;
-  slingURL: string;
-  peackcockURL: string;
+  'watch/providers': any;
+  onNetflix: boolean;
+  onHulu: boolean;
+  onDisney: boolean;
+  onAmazon: boolean;
+  onYoutube: boolean;
+  onApple: boolean;
+  onSling: boolean;
+  onPeacock: boolean;
 }
