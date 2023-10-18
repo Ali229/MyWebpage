@@ -6,7 +6,7 @@
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show active" [ngClass]="{ 'show active': year.isSelected }"
        *ngFor="let year of popularYears" (click)="scrollToElement()">
-    <table striped="true" class="table table-borderless table-striped" *ngIf="popularMovies">
+    <table striped="true" class="table table-borderless table-striped" *ngIf="popularMovies.length > 0 && popularMovies[year.index]">
       <tbody>
       <ng-container *ngFor="let movie of popularMovies[year.index].results | slice:0:10; let i = index">
         <tr *ngIf="i % 2 == 0">
