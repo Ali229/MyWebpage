@@ -52,11 +52,11 @@
           </div>
           <div class="row">
             <span *ngIf="title.certification"><span class="certifications">{{title.certification}}</span>&nbsp;&nbsp;&nbsp;</span>
-            <span>{{title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy')}}
+            <span>{{title.release_date ? (title.release_date | date:'d MMMM') : (title.first_air_date | date:'d MMMM')}}
               <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.genres">
-            <ng-container
-              *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}} </ng-container>
+            <span *ngIf="title.genres.length > 0">
+            <ng-container *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}}
+            </ng-container>
             <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.runtime">{{title.runtimeText}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
             <span *ngIf="title.number_of_seasons">{{title.number_of_seasons}}
