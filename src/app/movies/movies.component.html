@@ -32,12 +32,12 @@
 <h2 class="mb-3 mt-3"><b><span style="color: #3F729B; font-size: 130%; border-radius: 10px">|</span> Popular Movies</b>
 </h2>
 <nav class="nav nav-pills nav-justified unique-color">
-  <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
-     [ngClass]="{'unique-color-dark': year.value}">{{year.key.substring(1)}}</a>
+  <a class="nav-item text-light" (click)="toggleYear(year.year)" *ngFor="let year of popularYears"
+     [ngClass]="{'unique-color-dark': year.isSelected}">{{year.year}}</a>
 </nav>
 <div class="tab-content" id="pills-tabContent">
-  <div class="tab-pane fade show active" [ngClass]="{ 'show active': year.value }"
-       *ngFor="let year of popularYears | keyvalue" (click)="scrollToElement()">
-    <app-popular [popList]="popularMovies[year.key.substring(0,1)]"></app-popular>
+  <div class="tab-pane fade show active" [ngClass]="{ 'show active': year.isSelected }"
+       *ngFor="let year of popularYears" (click)="scrollToElement()">
+    <app-popular [popList]="popularMovies[year.index]"></app-popular>
   </div>
 </div>

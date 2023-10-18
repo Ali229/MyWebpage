@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MoviesComponent implements OnInit {
   currentYear = new Date().getFullYear();
-  popularYears: Map<string, boolean> = new Map();
+  popularYears: any[] = [];
   popularMovies: any[] = [];
 
   constructor(private http: HttpClient, public ts: TitleService) { }
@@ -22,9 +22,10 @@ export class MoviesComponent implements OnInit {
   initializeYears() {
     for (let i = 0; i < 5; i++) {
       const year = (this.currentYear - i).toString();
-      this.popularYears.set(i + year, i === 0);
+      this.popularYears.push({ year, index: i, isSelected: i === 0 });
     }
   }
+
 
   fetchMostPopular(year: number) {
     const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
@@ -39,9 +40,9 @@ export class MoviesComponent implements OnInit {
     });
   }
 
-  toggleYear(key: string) {
-    this.popularYears.forEach((value, year) => {
-      this.popularYears.set(year, year === key);
+  toggleYear(selectedYear: string) {
+    this.popularYears.forEach(yearData => {
+      yearData.isSelected = yearData.year === selectedYear;
     });
   }
 
