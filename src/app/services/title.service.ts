@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Title} from '../models/title.model';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 import languagesData from '../../assets/languages.json';
 
@@ -30,6 +30,7 @@ export class TitleService {
 
   private titleSubject$: BehaviorSubject<Title> = new BehaviorSubject(null);
   title$ = this.titleSubject$.asObservable();
+  currentSearchSubscription: Subscription;
 
   multiSearch() {
     this.loading = true;
@@ -53,7 +54,13 @@ export class TitleService {
   search(id, type) {
     this.loading = true;
     this.error = false;
-    this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings,watch/providers')
+
+    // Cancel the previous HTTP request when a new one is initiated
+    if (this.currentSearchSubscription) {
+      this.currentSearchSubscription.unsubscribe();
+    }
+
+    this.currentSearchSubscription = this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings,watch/providers')
       .pipe(take(1)).subscribe(data => {
       data.vote_average = Math.round(data.vote_average * 10);
       data.certification = this.getCertification(data, type);
