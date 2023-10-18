@@ -1,49 +1,54 @@
-import {Component} from '@angular/core';
-import {TitleService} from '../services/title.service';
-import {HttpClient} from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { TitleService } from '../services/title.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-movies',
   templateUrl: './movies.component.html',
   styleUrls: ['./movies.component.scss']
 })
-
-export class MoviesComponent {
-
+export class MoviesComponent implements OnInit {
   currentYear = new Date().getFullYear();
-  popularYears: any = new Map([['0' + this.currentYear.toString(), true],
-    ['1' + (this.currentYear - 1).toString(), false], ['2' + (this.currentYear - 2).toString(), false],
-    ['3' + (this.currentYear - 3).toString(), false], ['4' + (this.currentYear - 4).toString(), false],
-  ]);
-  popularMovies = [];
+  popularYears: Map<string, boolean> = new Map();
+  popularMovies: any[] = [];
 
-  constructor(private http: HttpClient, public ts: TitleService) {
-    this.mostPopular(this.currentYear);
+  constructor(private http: HttpClient, public ts: TitleService) { }
+
+  ngOnInit() {
+    this.initializeYears();
+    this.fetchMostPopular(this.currentYear);
   }
 
-  mostPopular(year) {
-    this.http.get('https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc' + '' +
-      '&api_key=e84ac8af3c49ad3253e0369ec64dfbff&primary_release_year=' + year.toString())
-      .subscribe((response) => {
-        this.popularMovies.push(response);
-        if (year.toString() !== (this.currentYear - 4).toString()) {
-          this.mostPopular(year - 1);
-        }
-      });
+  initializeYears() {
+    for (let i = 0; i < 5; i++) {
+      const year = (this.currentYear - i).toString();
+      this.popularYears.set(i + year, i === 0);
+    }
   }
 
-  toggleYear(Key) {
-    this.popularYears.forEach((value: boolean, key: string) => {
-      if (key === Key) {
-        this.popularYears.set(key, true);
-      } else {
-        this.popularYears.set(key, false);
+  fetchMostPopular(year: number) {
+    const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
+    const apiUrl = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc` +
+      `&api_key=${apiKey}&primary_release_year=${year}`;
+
+    this.http.get(apiUrl).subscribe((response: any) => {
+      this.popularMovies.push(response);
+      if (year > this.currentYear - 4) {
+        this.fetchMostPopular(year - 1);
       }
     });
   }
 
+  toggleYear(key: string) {
+    this.popularYears.forEach((value, year) => {
+      this.popularYears.set(year, year === key);
+    });
+  }
+
   scrollToElement() {
-    const x = document.getElementById('target');
-    x.scrollIntoView({behavior: 'smooth'});
+    const target = document.getElementById('target');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }

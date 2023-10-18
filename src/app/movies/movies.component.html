@@ -11,13 +11,14 @@
             <option value="tv">TV</option>
           </select>
         </div>
-        <input placeholder="Search for movies or tv shows" aria-label="Search for movies or tv shows"
+        <input placeholder="Search for movies or TV shows" aria-label="Search for movies or TV shows"
                type="text" class="form-control" [(ngModel)]="ts.title" name="movname">
         <input placeholder="Year" aria-label="Year" type="text" class="form-control col-md-2"
                [(ngModel)]="ts.year" aria-describedby="button-addon2" name="movyear">
         <div class="input-group-append">
-          <button mdbBtn color="black" outline="true" size="md" class="m-0 px-3 py-2" type="submit"
-                  id="button-addon2" mdbWavesEffect (click)="ts.multiSearch()" [disabled]="!ts.title">Search
+          <button mdbBtn color="black" outline="true" size="md"
+                  class="m-0 px-3 py-2" type="submit" id="button-addon2" mdbWavesEffect
+                  (click)="ts.multiSearch()" [disabled]="!ts.title"> Search
           </button>
         </div>
       </div>
@@ -28,15 +29,15 @@
   </div>
 </form>
 <app-title></app-title>
-<h2 class="mb-3 mt-3"><b><span style="color:#3F729B; font-size: 130%; border-radius:10px">|</span> Popular Movies</b>
+<h2 class="mb-3 mt-3"><b><span style="color: #3F729B; font-size: 130%; border-radius: 10px">|</span> Popular Movies</b>
 </h2>
 <nav class="nav nav-pills nav-justified unique-color">
   <a class="nav-item text-light" (click)="toggleYear(year.key)" *ngFor="let year of popularYears | keyvalue"
-     [ngClass]="{'unique-color-dark':year.value}">{{year.key.substring(1)}}
-  </a>
+     [ngClass]="{'unique-color-dark': year.value}">{{year.key.substring(1)}}</a>
 </nav>
-<div class="tab-content" id="pills-tabContent" *ngFor="let year of popularYears | keyvalue" (click)="scrollToElement()">
-  <div class="tab-pane fade show active" [ngClass]="{'show active':year.value}">
-    <app-popular [popList]=popularMovies[year.key.substring(0,1)]></app-popular>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" [ngClass]="{ 'show active': year.value }"
+       *ngFor="let year of popularYears | keyvalue" (click)="scrollToElement()">
+    <app-popular [popList]="popularMovies[year.key.substring(0,1)]"></app-popular>
   </div>
 </div>
