@@ -10,7 +10,7 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./stream.component.scss']
 })
 export class StreamComponent implements OnInit, OnDestroy {
-  @Input() public wishListTitle: Title;
+  @Input() public incomingTitle: Title;
 
   title: Title;
   private terminate$: Subject<Title> = new Subject();
@@ -19,8 +19,8 @@ export class StreamComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.wishListTitle) {
-      this.title = this.wishListTitle;
+    if (this.incomingTitle) {
+      this.title = this.incomingTitle;
     } else {
       this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => this.title = data);
     }

@@ -18,6 +18,7 @@
                      alt="Can't load image">
                 <img *ngIf="!movie.poster_path" class="icons z-depth-3" src="assets/404PosterNotFound.jpg"
                      alt="Can't load image">
+                <app-stream class="row stream-margin" [incomingTitle]="movie"></app-stream>
               </div>
               <div class="col col-txt mt-1 mt-md-0">
                 <p class="title"><b>{{i + 1}}. {{movie.title}}</b></p>
