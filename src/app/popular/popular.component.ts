@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TitleService} from '../services/title.service';
 import {HttpClient} from '@angular/common/http';
 import {Title} from '../models/title.model';
@@ -9,51 +9,51 @@ import {Title} from '../models/title.model';
   styleUrls: ['./popular.component.scss']
 })
 export class PopularComponent implements OnInit {
-  currentYear = new Date().getFullYear().toString();
-  popularYears: any[] = [];
-  popularMovies: any = {};
+  selectedType = 'movie';
+  popularMovies: Title[] = [];
+  popularTVShows: Title[] = [];
+  popularList: Title[] = [];
 
   constructor(private http: HttpClient, public ts: TitleService) {
   }
 
   ngOnInit() {
-    this.initializeYears();
-    this.fetchMostPopular(this.currentYear);
+    this.toggleMediaType('movie');
   }
 
-  initializeYears() {
-    for (let i = 0; i < 5; i++) {
-      const year = (parseInt(this.currentYear, 10) - i).toString();
-      this.popularYears.push({year, index: i, isSelected: i === 0});
-      this.popularMovies[year] = []; // Initialize movies array for each year
+  toggleMediaType(type: string) {
+    this.selectedType = type;
+    const selectedList = this.selectedType === 'movie' ? this.popularMovies : this.popularTVShows;
+    if (selectedList.length === 0) {
+      this.fetchMostPopular();
     }
+    this.popularList = selectedList;
   }
 
-  toggleYear(selectedYear: string) {
-    this.popularYears.forEach((yearData) => {
-      yearData.isSelected = yearData.year === selectedYear;
-    });
-
-    if (this.popularMovies[selectedYear].length === 0) {
-      this.fetchMostPopular(selectedYear);
-    }
-  }
-
-  fetchMostPopular(year: string) {
+  fetchMostPopular() {
     const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
-    const apiUrl = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc` +
-      `&api_key=${apiKey}&primary_release_year=${year}`;
-
+    const regionOrLang = this.selectedType === 'movie' ? 'region=us' : 'with_original_language=en&first_air_date_year=2023';
+    const apiUrl = `https://api.themoviedb.org/3/discover/${this.selectedType}?sort_by=popularity.desc` +
+      `&api_key=${apiKey}&${regionOrLang}`;
     this.http.get(apiUrl).subscribe((response: any) => {
-      this.popularMovies[year] = response;
-      this.getProviders(year);
+      response.results.forEach((title: Title) => {
+        if (this.selectedType === 'movie') {
+          this.popularMovies.push(title);
+        } else {
+          this.popularTVShows.push(title);
+        }
+      });
+      this.getProviders();
     });
   }
 
-  getProviders(year: string) {
+  getProviders() {
     const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
-    this.popularMovies[year].results.forEach((title: Title) => {
-      const watchProvidersUrl = `https://api.themoviedb.org/3/movie/${title.id}/watch/providers?api_key=${apiKey}`;
+    const titles = this.selectedType === 'movie' ? this.popularMovies : this.popularTVShows;
+
+    titles.forEach((title: Title) => {
+      const watchProvidersUrl = `https://api.themoviedb.org/3/${this.selectedType}/${title.id}/watch/providers?api_key=${apiKey}`;
+
       this.http.get(watchProvidersUrl).subscribe((response) => {
         title = this.searchStreams(response, title);
       });

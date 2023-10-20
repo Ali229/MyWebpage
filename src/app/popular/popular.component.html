@@ -1,33 +1,34 @@
 <nav class="nav nav-pills nav-justified unique-color">
-  <a class="nav-item text-light" (click)="toggleYear(year.year)" *ngFor="let year of popularYears"
-     [ngClass]="{'unique-color-dark': year.isSelected}">{{year.year}}</a>
+  <a class="nav-item text-light" (click)="toggleMediaType('movie')"
+     [ngClass]="{'unique-color-dark': selectedType === 'movie'}">Movies</a>
+  <a class="nav-item text-light" (click)="toggleMediaType('tv')"
+     [ngClass]="{'unique-color-dark': selectedType ==='tv'}">TV Shows</a>
 </nav>
 
 <div class="tab-content" id="pills-tabContent">
-  <div class="tab-pane fade show active" [ngClass]="{ 'show active': year.isSelected }"
-       *ngFor="let year of popularYears" (click)="scrollToElement()">
-    <table striped="true" class="table table-borderless table-striped" *ngIf="popularMovies[year.year]?.results">
+  <div class="tab-pane fade show active" [ngClass]="{ 'show active': true }" (click)="scrollToElement()">
+    <table striped="true" class="table table-borderless table-striped" *ngIf="popularMovies">
       <tbody>
-      <ng-container *ngFor="let movie of popularMovies[year.year].results | slice:0:10; let i = index">
+      <ng-container *ngFor="let title of popularList| slice:0:20; let i = index">
         <tr *ngIf="i % 2 == 0">
           <td class="hoverable td1">
-            <div class="row" (click)="ts.search(movie.id, 'movie')">
+            <div class="row" (click)="ts.search(title.id, selectedType)">
               <div class="col col-img">
-                <img *ngIf="movie.poster_path" class="icons z-depth-3"
-                     [src]="'https://image.tmdb.org/t/p/w154' + movie.poster_path"
+                <img *ngIf="title.poster_path" class="icons z-depth-3"
+                     [src]="'https://image.tmdb.org/t/p/w154' + title.poster_path"
                      alt="Can't load image">
-                <img *ngIf="!movie.poster_path" class="icons z-depth-3" src="assets/404PosterNotFound.jpg"
+                <img *ngIf="!title.poster_path" class="icons z-depth-3" src="assets/404PosterNotFound.jpg"
                      alt="Can't load image">
-                <app-stream class="row stream-margin" [incomingTitle]="movie"></app-stream>
+                <app-stream class="row stream-margin" [incomingTitle]="title"></app-stream>
               </div>
               <div class="col col-txt mt-1 mt-md-0">
-                <p class="title"><b>{{i + 1}}. {{movie.title}}</b></p>
-                <p>{{movie.release_date | date}}</p>
+                <p class="title"><b>{{i + 1}}. {{title.title ? title.title : title.name}}</b></p>
+                <p>{{title.release_date ? (title.release_date | date) : (title.first_air_date | date)}}</p>
                 <p>
-                    <span *ngIf="movie.vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(movie.vote_average*10)}} animated zoomIn z-depth-3">
-                      {{movie.vote_average * 10}}</span>
-                  <span *ngIf="movie.vote_average == 0"
+                    <span *ngIf="title.vote_average != 0"
+                          class="badge badge-{{ts.getRatingColor(title.vote_average*10)}} animated zoomIn z-depth-3">
+                      {{title.vote_average * 10}}</span>
+                  <span *ngIf="title.vote_average == 0"
                         class="badge badge-secondary animated zoomIn z-depth-3">
                       NR</span>
                 </p>
@@ -37,23 +38,24 @@
 
           <td class="hoverable td2">
             <div class="row"
-                 (click)="ts.search(popularMovies[year.year].results[i+1].id, 'movie')">
+                 (click)="ts.search(popularList[i+1].id, selectedType)">
               <div class="col col-img">
-                <img *ngIf="popularMovies[year.year].results[i+1].poster_path" class="icons z-depth-3"
-                     [src]="'https://image.tmdb.org/t/p/w154' + popularMovies[year.year].results[i+1].poster_path"
+                <img *ngIf="popularList[i+1].poster_path" class="icons z-depth-3"
+                     [src]="'https://image.tmdb.org/t/p/w154' + popularList[i+1].poster_path"
                      alt="Can't load image">
-                <img *ngIf="!popularMovies[year.year].results[i+1].poster_path" class="icons z-depth-3"
+                <img *ngIf="!popularList[i+1].poster_path" class="icons z-depth-3"
                      src="assets/404PosterNotFound.jpg"
                      alt="Can't load image">
+                  <app-stream class="row stream-margin" [incomingTitle]="popularList[i+1]"></app-stream>
               </div>
               <div class="col col-txt mt-1 mt-md-0">
-                <p class="title"><b>{{i + 2}}. {{popularMovies[year.year].results[i + 1].title}}</b></p>
-                <p>{{popularMovies[year.year].results[i + 1].release_date | date}}</p>
+                <p class="title"><b>{{i + 2}}. {{popularList[i + 1].title? popularList[i + 1].title : popularList[i + 1].name}}</b></p>
+                <p>{{popularList[i + 1].release_date ? (popularList[i + 1].release_date | date) : (popularList[i + 1].first_air_date | date)}}</p>
                 <p>
-                    <span *ngIf="popularMovies[year.year].results[i + 1].vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(popularMovies[year.year].results[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
-                      {{popularMovies[year.year].results[i + 1].vote_average * 10}}</span>
-                  <span *ngIf="popularMovies[year.year].results[i + 1].vote_average == 0"
+                    <span *ngIf="popularList[i + 1].vote_average != 0"
+                          class="badge badge-{{ts.getRatingColor(popularList[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
+                      {{popularList[i + 1].vote_average * 10}}</span>
+                  <span *ngIf="popularList[i + 1].vote_average == 0"
                         class="badge badge-secondary animated zoomIn z-depth-3">
                       NR</span>
                 </p>
