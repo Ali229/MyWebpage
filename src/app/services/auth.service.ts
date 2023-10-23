@@ -89,17 +89,18 @@ export class AuthService {
 
   async addToWatchlist(title) {
     if (this.uid !== 'nothing') {
+      const titleName = title.title ? title.title : title.name;
       // First, check if the title already exists in the user's watchlist
       const watchlistRef = await firebase.firestore().collection('/users/' + this.uid + '/watchlist');
-      const query = await watchlistRef.where('title', '==', title.title).get();
+      const query = await watchlistRef.where('id', '==', title.id).get();
       if (query.empty) {
         // If the query result is empty, the title is not in the watchlist, so add it
         title.watchlistAddDate = new Date();
         await watchlistRef.add(title);
-        this.toastr.success((title.title ? title.title : title.name) + ' added to watchlist');
+        this.toastr.success((titleName) + ' added to watchlist');
         return this.getWatchlist();
       } else {
-        this.toastr.info((title.title ? title.title : title.name) + ' is already in your watchlist');
+        this.toastr.info((titleName) + ' is already in your watchlist');
       }
     } else {
       this.toastr.info('Please login to use the watchlist feature');
@@ -109,20 +110,21 @@ export class AuthService {
 
   async removeFromWatchlist(id) {
     if (this.uid !== 'nothing') {
-      for (const item of this.watchlist) {
-        if (item.id === id) {
+      for (const title of this.watchlist) {
+        const titleName = title.title ? title.title : title.name;
+        if (title.id === id) {
           // Check if the item exists in the watchlist
           const watchlistRef = await firebase.firestore().collection('/users/' + this.uid + '/watchlist');
-          const query = await watchlistRef.where('title', '==', item.title).get();
+          const query = await watchlistRef.where('id', '==', title.id).get();
 
           if (!query.empty) {
             // If the query result is not empty, the item is in the watchlist, so remove it
-            await watchlistRef.doc(item.watchlistDocId).delete();
-            this.toastr.success((item.title ? item.title : item.name) + ' removed from watchlist');
+            await watchlistRef.doc(title.watchlistDocId).delete();
+            this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
             return this.getWatchlist();
           } else {
             // If the query result is empty, show a message indicating that the item is not in the watchlist
-            this.toastr.info((item.title ? item.title : item.name) + ' is not in your watchlist');
+            this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
           }
         }
       }
