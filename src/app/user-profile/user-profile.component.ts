@@ -6,10 +6,13 @@ import {AuthService} from '../services/auth.service';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent {
+  showIcon = false;
 
   constructor(public auth: AuthService) {
   }
 
-  ngOnInit() {}
+  onImageError() {
+    this.showIcon = true;
+  }
 }
