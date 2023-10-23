@@ -1,5 +1,5 @@
 <div id="target"></div>
-<h1 class="mb-3"><b>Movies</b><span style="float: right;"><app-user-profile></app-user-profile></span></h1>
+<h1 *ngIf="isPhone"><b>Movies</b><span style="float: right;"><app-user-profile></app-user-profile></span></h1>
 <form>
   <div class="row mb-4">
     <div class="col">
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="col-auto ml-auto not-phone-user">
+    <div *ngIf="!isPhone" class="col-auto ml-auto not-phone-user">
       <app-user-profile></app-user-profile>
     </div>
   </div>
