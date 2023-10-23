@@ -52,16 +52,18 @@ export class PopularComponent implements OnInit {
     const titles = this.selectedType === 'movie' ? this.popularMovies : this.popularTVShows;
 
     titles.forEach((title: Title) => {
-      const watchProvidersUrl = `https://api.themoviedb.org/3/${this.selectedType}/${title.id}/watch/providers?api_key=${apiKey}`;
-
-      this.http.get(watchProvidersUrl).subscribe((response) => {
+      const watchProvidersUrl = `https://api.themoviedb.org/3/${this.selectedType}/${title.id}?api_key=${apiKey}&append_to_response=watch/providers`;
+      this.http.get(watchProvidersUrl).subscribe((response: any) => {
+        if (this.selectedType === 'movie') {
+          title.release_date = response.release_date;
+        }
         title = this.searchStreams(response, title);
       });
     });
   }
 
   searchStreams(response: any, title: Title): Title {
-    const providers = response;
+    const providers = response['watch/providers'];
     if (providers && providers.results && providers.results.US && providers.results.US.flatrate) {
       title.streams = providers.results.US.flatrate;
       for (const stream of title.streams) {
