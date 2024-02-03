@@ -13,6 +13,7 @@ export class PopularComponent implements OnInit {
   popularMovies: Title[] = [];
   popularTVShows: Title[] = [];
   popularList: Title[] = [];
+  protected readonly Math = Math;
 
   constructor(private http: HttpClient, public ts: TitleService) {
   }

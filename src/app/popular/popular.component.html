@@ -26,8 +26,8 @@
                 <p>{{title.release_date ? (title.release_date | date) : (title.first_air_date | date)}}</p>
                 <p>
                     <span *ngIf="title.vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(title.vote_average*10)}} animated zoomIn z-depth-3">
-                      {{title.vote_average * 10}}</span>
+                          class="badge badge-{{ts.getRatingColor(Math.round(title.vote_average*10))}} animated zoomIn z-depth-3">
+                      {{Math.round(title.vote_average * 10)}}</span>
                   <span *ngIf="title.vote_average == 0"
                         class="badge badge-secondary animated zoomIn z-depth-3">
                       NR</span>
@@ -53,8 +53,8 @@
                 <p>{{popularList[i + 1].release_date ? (popularList[i + 1].release_date | date) : (popularList[i + 1].first_air_date | date)}}</p>
                 <p>
                     <span *ngIf="popularList[i + 1].vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(popularList[i + 1].vote_average*10)}} animated zoomIn z-depth-3">
-                      {{popularList[i + 1].vote_average * 10}}</span>
+                          class="badge badge-{{ts.getRatingColor(Math.round(popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
+                     {{Math.round(popularList[i + 1].vote_average * 10)}}</span>
                   <span *ngIf="popularList[i + 1].vote_average == 0"
                         class="badge badge-secondary animated zoomIn z-depth-3">
                       NR</span>
