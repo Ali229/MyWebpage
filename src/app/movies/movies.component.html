@@ -12,7 +12,7 @@
           </select>
         </div>
         <input placeholder="Search for movies or TV shows" aria-label="Search for movies or TV shows"
-               type="text" class="form-control" [(ngModel)]="ts.title" name="movname">
+               type="text" class="form-control" [(ngModel)]="ts.title" name="movname" #searchInput>
         <input placeholder="Year" aria-label="Year" type="text" class="form-control col-md-2"
                [(ngModel)]="ts.year" aria-describedby="button-addon2" name="movyear">
         <div class="input-group-append">
