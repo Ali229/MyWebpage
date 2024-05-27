@@ -27,6 +27,8 @@ import {TitleService} from './services/title.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ToastrModule} from 'ngx-toastr';
 import {CommonModule} from '@angular/common';
+import { SettingsComponent } from './settings/settings.component';
+import { LovelistComponent } from './lovelist/lovelist.component';
 
 const config = {
   apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
@@ -55,7 +57,9 @@ const config = {
     WatchlistComponent,
     StreamComponent,
     PrivacyComponent,
-    TitleComponent
+    TitleComponent,
+    SettingsComponent,
+    LovelistComponent
   ],
   imports: [
     BrowserModule,

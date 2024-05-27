@@ -1,25 +1,26 @@
 <div *ngIf="auth.user$ | async as user; else guest">
-  <ng-container class="profile mt-2 mt-md-0">
-    <div class="btn-group dropleft" mdbDropdown>
-      <a mdbDropdownToggle type="button" class="dropdown-toggle">
-        <img [src]="user.photoURL" alt="" class="rounded-circle hoverable" (error)="onImageError()">
-        <i *ngIf="showIcon" class="fas fa-user fa-lg mt-3"></i>
-      </a>
-      <div class="dropdown-menu">
-        <h6 class="dropdown-header">{{user.displayName}}</h6>
-        <a class="dropdown-item" routerLink="../watchlist">Watchlist ({{auth.watchlist.length}})</a>
-        <a class="dropdown-item" href="#">Love list</a>
-        <div class="divider dropdown-divider"></div>
-        <a class="dropdown-item" (click)="auth.signOut()">Logout</a>
-      </div>
-    </div>
-  </ng-container>
+    <ng-container class="profile mt-2 mt-md-0">
+        <div class="btn-group dropleft" mdbDropdown>
+            <a class="dropdown-toggle" mdbDropdownToggle type="button">
+                <img (error)="onImageError()" [src]="user.photoURL" alt="" class="rounded-circle hoverable">
+                <i *ngIf="showIcon" class="fas fa-user fa-lg mt-3"></i>
+            </a>
+            <div class="dropdown-menu">
+                <h6 class="dropdown-header">{{ user.displayName }}</h6>
+                <a class="dropdown-item" routerLink="../watchlist">Watchlist ({{ auth.watchlist.length }})</a>
+                <a class="dropdown-item" routerLink="../lovelist">Love list</a>
+                <a class="dropdown-item" routerLink="../settings">Settings</a>
+                <div class="divider dropdown-divider"></div>
+                <a (click)="auth.signOut()" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </ng-container>
 </div>
 
 <!-- User NOT logged in -->
 <ng-template #guest>
-  <button type="submit" (click)="auth.googleSignin()" mdbBtn color="elegant" mdbWavesEffect id="target" size="md"
-          *ngIf="auth.uid === 'nothing'">
-    Connect With Google
-  </button>
+    <button (click)="auth.googleSignin()" *ngIf="auth.uid === 'nothing'" color="elegant" id="target" mdbBtn mdbWavesEffect size="md"
+            type="submit">
+        Connect With Google
+    </button>
 </ng-template>

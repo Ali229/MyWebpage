@@ -35,7 +35,7 @@ export class PopularComponent implements OnInit {
         const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
         const regionOrLang = this.selectedType === 'movie' ? 'region=us' :
             'with_original_language=en&first_air_date_year=' + new Date().getFullYear();
-        const apiUrl = `https://api.themoviedb.org/3/discover/${this.selectedType}?sort_by=popularity.desc` +
+        const apiUrl = `https://api.themoviedb.org/3/discover/${this.selectedType}?with_watch_providers=8&watch_region=US&sort_by=popularity.desc` +
             `&api_key=${apiKey}&${regionOrLang}`;
         this.http.get(apiUrl).subscribe((response: any) => {
             response.results.forEach((title: Title) => {
