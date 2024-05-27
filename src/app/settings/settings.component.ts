@@ -13,7 +13,7 @@ export class SettingsComponent implements OnInit {
         {id: 'hulu', name: 'Hulu', icon: 'assets/hulu.png', selected: false},
         {id: 'amazon', name: 'Amazon Prime Video', icon: 'assets/prime.jpg', selected: false},
         {id: 'youtube', name: 'Youtube', icon: 'assets/youtube.png', selected: false},
-        {id: 'apple', name: 'HBO Max', icon: 'assets/apple.png', selected: false},
+        {id: 'apple', name: 'Apple', icon: 'assets/apple.png', selected: false},
         {id: 'sling', name: 'Sling', icon: 'assets/sling.png', selected: false},
         {id: 'peacock', name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
     ];
