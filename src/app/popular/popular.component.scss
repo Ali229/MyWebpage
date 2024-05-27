@@ -13,8 +13,12 @@
 
 .badge {
   border-radius: 10px;
-  font-size: 35px;
-  padding: 30px;
+  font-size: 30px;
+  width: 80px;
+  height: 80px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 img {

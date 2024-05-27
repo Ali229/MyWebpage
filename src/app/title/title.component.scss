@@ -9,8 +9,12 @@
 
 .badge {
   border-radius: 10px;
-  font-size: 45px;
-  padding: 30px;
+  font-size: 35px;
+  width: 100px;
+  height: 100px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   margin-left: 60px;
 }
 
