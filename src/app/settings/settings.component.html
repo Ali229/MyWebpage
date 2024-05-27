@@ -9,3 +9,18 @@
         </button>
     </div>
 </div>
+
+<div class="mt-4">
+    <h6 class="text-muted">Select Streaming Providers</h6>
+    <div *ngFor="let provider of providers" class="provider-option">
+        <label [for]="provider.id">
+            <input [(ngModel)]="provider.selected" [id]="provider.id" [name]="provider.id" type="checkbox">
+            <span> {{ provider.name }}</span>
+        </label>
+        <img [alt]="provider.name + ' Icon'" [src]="provider.icon">
+    </div>
+    <button (click)="updateSettings()" color="elegant" mdbBtn mdbWavesEffect size="md" type="submit">
+        Save
+    </button>
+</div>
+

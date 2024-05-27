@@ -143,4 +143,59 @@ export class AuthService {
     }
     return false;
   }
+
+  async saveSettings(providers) {
+    if (this.uid) {
+      try {
+        const streamsCollection = await firebase.firestore().collection(`/users/${this.uid}/streams`);
+
+        // Iterate through each provider
+        for (const provider of providers) {
+          const providerDoc = streamsCollection.doc(provider.id);
+
+          // Check if the provider is selected
+          if (provider.selected) {
+            // If selected, set the document with provider's name
+            await providerDoc.set({ name: provider.name });
+          } else {
+            // If not selected, delete the document
+            await providerDoc.delete();
+          }
+        }
+
+        // Alert after all operations are done
+        this.toastr.success('Settings saved successfully!');
+      } catch (error) {
+        this.toastr.error('Error saving settings: ', error);
+      }
+    } else {
+      this.toastr.info('Please login to use the watchlist feature');
+    }
+  }
+
+  async loadSettings(providers) {
+    if (this.uid) {
+      try {
+        const streamsCollection = await firebase.firestore().collection(`/users/${this.uid}/streams`);
+        const snapshot = await streamsCollection.get();
+
+        // Iterate through each document in the collection
+        snapshot.forEach(doc => {
+          const providerId = doc.id;
+          // Find the corresponding provider in the providers list
+          const providerIndex = providers.findIndex(provider => provider.id === providerId);
+
+          // If provider exists in the providers list
+          if (providerIndex !== -1) {
+            // Update the selected property based on the data retrieved from Firestore
+            providers[providerIndex].selected = true;
+          }
+        });
+      } catch (error) {
+        this.toastr.error('Error saving settings: ', error);
+      }
+    } else {
+      this.toastr.info('Please login to use the watchlist feature');
+    }
+  }
 }
