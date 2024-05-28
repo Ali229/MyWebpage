@@ -11,6 +11,8 @@ import {takeUntil} from 'rxjs/operators';
 })
 export class StreamComponent implements OnInit, OnDestroy {
   @Input() public incomingTitle: Title;
+  @Input() imgWidth = '55px';
+  @Input() imgHeight = '55px';
 
   title: Title;
   private terminate$: Subject<Title> = new Subject();

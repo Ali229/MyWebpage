@@ -56,8 +56,8 @@ td {
   cursor:pointer;
 }
 
-.stream-margin {
-  margin-left: 3.5rem;
+.stream {
+  max-width: 120px;
 }
 
 @media (max-width: 768px) {
