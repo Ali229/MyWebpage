@@ -1,8 +1,8 @@
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/netflix.svg" alt="Netflix" *ngIf="false">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/disney.webp" alt="Disney">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/hulu.png" alt="Hulu">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/prime.jpg" alt="Amazon">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/youtube.png" alt="Youtube">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/apple.png" alt="Apple">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/sling.png" alt="Sling">
-<img [style.width]="imgWidth" [style.height]="imgHeight" src="assets/peacock.svg" alt="Peacock">
+<img *ngIf="title.onNetflix" [style.height]="imgHeight" [style.width]="imgWidth" alt="Netflix" src="assets/netflix.svg">
+<img *ngIf="title.onDisney" [style.height]="imgHeight" [style.width]="imgWidth" alt="Disney" src="assets/disney.webp">
+<img *ngIf="title.onHulu" [style.height]="imgHeight" [style.width]="imgWidth" alt="Hulu" src="assets/hulu.png">
+<img *ngIf="title.onAmazon" [style.height]="imgHeight" [style.width]="imgWidth" alt="Amazon" src="assets/prime.jpg">
+<img *ngIf="title.onYoutube" [style.height]="imgHeight" [style.width]="imgWidth" alt="Youtube" src="assets/youtube.png">
+<img *ngIf="title.onApple" [style.height]="imgHeight" [style.width]="imgWidth" alt="Apple" src="assets/apple.png">
+<img *ngIf="title.onSling" [style.height]="imgHeight" [style.width]="imgWidth" alt="Sling" src="assets/sling.png">
+<img *ngIf="title.onPeacock" [style.height]="imgHeight" [style.width]="imgWidth" alt="Peacock" src="assets/peacock.svg">
