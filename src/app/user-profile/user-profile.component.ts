@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss']
+    selector: 'app-user-profile',
+    templateUrl: './user-profile.component.html',
+    styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent {
-  showIcon = false;
+    showIcon = false;
 
-  constructor(public auth: AuthService) {
-  }
+    constructor(public auth: AuthService) {
+    }
 
-  onImageError() {
-    this.showIcon = true;
-  }
+    onImageError() {
+        this.showIcon = true;
+    }
 }

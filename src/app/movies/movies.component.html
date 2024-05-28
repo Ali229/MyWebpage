@@ -1,32 +1,32 @@
 <div id="target"></div>
 <h1 *ngIf="isPhone"><b>Movies</b><span style="float: right;"><app-user-profile></app-user-profile></span></h1>
 <form>
-  <div class="row mb-4">
-    <div class="col">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <select name="sel" class="browser-default custom-select" [(ngModel)]="ts.selectedOption">
-            <option value="">All</option>
-            <option value="movie">Movie</option>
-            <option value="tv">TV</option>
-          </select>
+    <div class="row mb-4">
+        <div class="col">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <select name="sel" class="browser-default custom-select" [(ngModel)]="ts.selectedOption">
+                        <option value="">All</option>
+                        <option value="movie">Movie</option>
+                        <option value="tv">TV</option>
+                    </select>
+                </div>
+                <input placeholder="Search for movies or TV shows" aria-label="Search for movies or TV shows"
+                       type="text" class="form-control" [(ngModel)]="ts.title" name="movname" #searchInput>
+                <input placeholder="Year" aria-label="Year" type="text" class="form-control col-md-2"
+                       [(ngModel)]="ts.year" aria-describedby="button-addon2" name="movyear">
+                <div class="input-group-append">
+                    <button mdbBtn color="black" outline="true" size="md"
+                            class="m-0 px-3 py-2" type="submit" id="button-addon2" mdbWavesEffect
+                            (click)="ts.multiSearch()" [disabled]="!ts.title"> Search
+                    </button>
+                </div>
+            </div>
         </div>
-        <input placeholder="Search for movies or TV shows" aria-label="Search for movies or TV shows"
-               type="text" class="form-control" [(ngModel)]="ts.title" name="movname" #searchInput>
-        <input placeholder="Year" aria-label="Year" type="text" class="form-control col-md-2"
-               [(ngModel)]="ts.year" aria-describedby="button-addon2" name="movyear">
-        <div class="input-group-append">
-          <button mdbBtn color="black" outline="true" size="md"
-                  class="m-0 px-3 py-2" type="submit" id="button-addon2" mdbWavesEffect
-                  (click)="ts.multiSearch()" [disabled]="!ts.title"> Search
-          </button>
+        <div *ngIf="!isPhone" class="col-auto ml-auto not-phone-user">
+            <app-user-profile></app-user-profile>
         </div>
-      </div>
     </div>
-    <div *ngIf="!isPhone" class="col-auto ml-auto not-phone-user">
-      <app-user-profile></app-user-profile>
-    </div>
-  </div>
 </form>
 <app-title></app-title>
 <h2 class="mb-3 mt-3"><b><span style="color: #3F729B; font-size: 130%; border-radius: 10px">|</span> Popular</b>

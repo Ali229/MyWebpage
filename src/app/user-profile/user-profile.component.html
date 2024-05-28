@@ -19,7 +19,8 @@
 
 <!-- User NOT logged in -->
 <ng-template #guest>
-    <button (click)="auth.googleSignin()" *ngIf="auth.uid === 'nothing'" color="elegant" id="target" mdbBtn mdbWavesEffect size="md"
+    <button (click)="auth.googleSignin()" *ngIf="auth.uid === 'nothing'" color="elegant" id="target" mdbBtn
+            mdbWavesEffect size="md"
             type="submit">
         Connect With Google
     </button>

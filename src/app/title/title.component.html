@@ -1,127 +1,140 @@
 <div style="text-align: center;">
-  <span *ngIf="ts.loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
+    <span *ngIf="ts.loading" class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
 </div>
 <div *ngIf="!ts.error else elseBlock">
-  <div *ngIf="title" [hidden]="ts.loading" class="mt-2">
+    <div *ngIf="title" [hidden]="ts.loading" class="mt-2">
 
-    <div class="row ml-md-3">
-      <div class="col-12 col-md-4 animated zoomIn text-light">
-        <div class="row">
-          <img *ngIf="title.poster_path" class="poster" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
-               alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
-          <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
-               alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
-          <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster" src="assets/404PosterNotFound.jpg"
-               alt="Can't load image">
-        </div>
-        <div class="row poster-buttons z-depth-3">
-          <div class="col-auto p-0" placement="top">
-            <div class="watchlist" *ngIf="!auth.getWatchlisted(title.id)" (click)="auth.addToWatchlist(title)"
-                 mdbTooltip="Add to watchlist">
-              <span class="unselectable"><i class="fas fa-bookmark"></i>&nbsp;&nbsp;Watchlist</span>
-            </div>
-            <div class="watchlist" *ngIf="auth.getWatchlisted(title.id)" (click)="auth.removeFromWatchlist(title.id)"
-                 mdbTooltip="Remove from watchlist">
-              <span class="unselectable"><i class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            </div>
-          </div>
+        <div class="row ml-md-3">
+            <div class="col-12 col-md-4 animated zoomIn text-light">
+                <div class="row">
+                    <img *ngIf="title.poster_path" class="poster"
+                         src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}"
+                         alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
+                    <img *ngIf="!title.poster_path && title.omdbPoster" class="poster" src="{{title.omdbPoster}}"
+                         alt="Can't load image" onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
+                    <img *ngIf="!title.poster_path && !title.omdbPoster" class="poster"
+                         src="assets/404PosterNotFound.jpg"
+                         alt="Can't load image">
+                </div>
+                <div class="row poster-buttons z-depth-3">
+                    <div class="col-auto p-0" placement="top">
+                        <div class="watchlist" *ngIf="!auth.getWatchlisted(title.id)"
+                             (click)="auth.addToWatchlist(title)"
+                             mdbTooltip="Add to watchlist">
+                            <span class="unselectable"><i class="fas fa-bookmark"></i>&nbsp;&nbsp;Watchlist</span>
+                        </div>
+                        <div class="watchlist" *ngIf="auth.getWatchlisted(title.id)"
+                             (click)="auth.removeFromWatchlist(title.id)"
+                             mdbTooltip="Remove from watchlist">
+                            <span class="unselectable"><i class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        </div>
+                    </div>
 
-          <div class="col-auto ml-auto p-0" placement="top"
-               mdbTooltip="{{(auth.user$ | async) ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
-            <div class="love">
-              <i class="fas fa-heart"></i>
+                    <div class="col-auto ml-auto p-0" placement="top"
+                         mdbTooltip="{{(auth.user$ | async) ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
+                        <div class="love">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="col-auto p-0" placement="top" mdbTooltip="Play trailer">
+                        <a [href]="title.trailer" target="_blank" style="color:white">
+                            <div class="trailer">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <app-stream class="row stream"></app-stream>
             </div>
-          </div>
-          <div class="col-auto p-0" placement="top" mdbTooltip="Play trailer">
-            <a [href]="title.trailer" target="_blank" style="color:white">
-              <div class="trailer">
-                <i class="fas fa-play"></i>
-              </div>
-            </a>
-          </div>
-        </div>
-        <app-stream class="row stream"></app-stream>
-      </div>
-      <div class="col-12 col-md-8 bodyText">
-        <div class="ml-1 ml-md-3 mt-2 mt-md-0">
-          <div class="row">
-            <h2><b>{{title.title ? title.title : title.name}} <span
-              class="year text-muted">({{title.release_date ?
-              (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')}})
+            <div class="col-12 col-md-8 bodyText">
+                <div class="ml-1 ml-md-3 mt-2 mt-md-0">
+                    <div class="row">
+                        <h2><b>{{ title.title ? title.title : title.name }} <span
+                                class="year text-muted">({{
+                                title.release_date ?
+                                    (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')
+                            }})
             </span></b></h2>
-          </div>
-          <div class="row">
-            <span *ngIf="title.certification"><span class="certifications">{{title.certification}}</span>&nbsp;&nbsp;&nbsp;</span>
-            <span>{{title.release_date ? (title.release_date | date:'d MMMM') : (title.first_air_date | date:'d MMMM')}}
-              <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.genres.length > 0">
-            <ng-container *ngFor="let genre of title.genres;  let isLast=last">{{genre.name}}{{isLast ? '' : ', '}}
+                    </div>
+                    <div class="row">
+                        <span *ngIf="title.certification"><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
+                        <span>{{ title.release_date ? (title.release_date | date:'d MMMM') : (title.first_air_date | date:'d MMMM') }}
+                            <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+                        <span *ngIf="title.genres.length > 0">
+            <ng-container *ngFor="let genre of title.genres;  let isLast=last">{{ genre.name }}{{ isLast ? '' : ', ' }}
             </ng-container>
             <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.runtime">{{title.runtimeText}}<span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-            <span *ngIf="title.number_of_seasons">{{title.number_of_seasons}}
-              <ng-container *ngIf="title.number_of_seasons > 1"> Seasons </ng-container>
+                        <span *ngIf="title.runtime">{{ title.runtimeText }}<span
+                                class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+                        <span *ngIf="title.number_of_seasons">{{ title.number_of_seasons }}
+                            <ng-container *ngIf="title.number_of_seasons > 1"> Seasons </ng-container>
               <ng-container *ngIf="title.number_of_seasons == 1"> Season </ng-container>
               <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span>
             </span>
-            <span *ngIf="title.language">{{title.language}}</span>
-          </div>
-          <div class="row">
-            <div *ngIf="title.tagline">
-              <div class="mt-2 text-muted font-italic">{{title.tagline}}</div>
+                        <span *ngIf="title.language">{{ title.language }}</span>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="title.tagline">
+                            <div class="mt-2 text-muted font-italic">{{ title.tagline }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="title.overview">
+                            <h3 class="mt-2"><b>Plot</b></h3>
+                            <div>{{ title.overview }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="title.awards">
+                            <h3 class="mt-4"><b>Awards</b></h3>
+                            <div>{{ title.awards }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3 *ngIf="title.vote_average" class="mt-4"><b>Ratings</b></h3>
+                        <table class="ratings" mdbTable borderless="true">
+                            <tbody>
+                            <tr *ngIf="title.vote_average > 0">
+                                <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
+                                <td><span
+                                        class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
+                  {{ title.vote_average }}</span></td>
+                            </tr>
+                            <tr *ngIf="title.imdbScore">
+                                <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
+                                <td><span
+                                        class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
+                  {{ title.imdbScore }}</span></td>
+                            </tr>
+                            <tr *ngIf="title.rottenScore">
+                                <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
+                                <td><span
+                                        class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
+                  {{ title.rottenScore }}</span></td>
+                            </tr>
+                            <tr *ngIf="title.metaScore">
+                                <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
+                                <td><span
+                                        class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
+                  {{ title.metaScore }}</span></td>
+                            </tr>
+                            <tr *ngIf="title.averageScore !== 0 && title.scoreCount > 1">
+                                <td><img class="icon" src="assets/avg.png" alt="Can't load image"
+                                         style="border-radius: 15px;"></td>
+                                <td><span
+                                        class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
+                  {{ title.averageScore }}</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="row">
-            <div *ngIf="title.overview">
-              <h3 class="mt-2"><b>Plot</b></h3>
-              <div>{{title.overview}}</div>
-            </div>
-          </div>
-          <div class="row">
-            <div *ngIf="title.awards">
-              <h3 class="mt-4"><b>Awards</b></h3>
-              <div>{{title.awards}}</div>
-            </div>
-          </div>
-          <div class="row">
-            <h3 *ngIf="title.vote_average" class="mt-4"><b>Ratings</b></h3>
-            <table class="ratings" mdbTable borderless="true">
-              <tbody>
-              <tr *ngIf="title.vote_average > 0">
-                <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
-                  {{title.vote_average}}</span></td>
-              </tr>
-              <tr *ngIf="title.imdbScore">
-                <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
-                  {{title.imdbScore}}</span></td>
-              </tr>
-              <tr *ngIf="title.rottenScore">
-                <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
-                  {{title.rottenScore}}</span></td>
-              </tr>
-              <tr *ngIf="title.metaScore">
-                <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
-                  {{title.metaScore}}</span></td>
-              </tr>
-              <tr *ngIf="title.averageScore !== 0 && title.scoreCount > 1">
-                <td><img class="icon" src="assets/avg.png" alt="Can't load image" style="border-radius: 15px;"></td>
-                <td><span class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
-                  {{title.averageScore}}</span></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <ng-template #elseBlock>
-  <div class="alert alert-danger" role="alert">
-    No results for {{ts.errorTitle}}!
-  </div>
+    <div class="alert alert-danger" role="alert">
+        No results for {{ ts.errorTitle }}!
+    </div>
 </ng-template>

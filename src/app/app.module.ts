@@ -27,58 +27,58 @@ import {TitleService} from './services/title.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ToastrModule} from 'ngx-toastr';
 import {CommonModule} from '@angular/common';
-import { SettingsComponent } from './settings/settings.component';
-import { LovelistComponent } from './lovelist/lovelist.component';
+import {SettingsComponent} from './settings/settings.component';
+import {LovelistComponent} from './lovelist/lovelist.component';
 
 const config = {
-  apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
-  authDomain: 'movies-ec8a3.firebaseapp.com',
-  databaseURL: 'https://movies-ec8a3.firebaseio.com',
-  projectId: 'movies-ec8a3',
-  storageBucket: 'movies-ec8a3.appspot.com',
-  messagingSenderId: '932511714350',
-  appId: '1:932511714350:web:7de03d075c18d6ad6923bf',
-  measurementId: 'G-E9R6114SYD'
+    apiKey: 'AIzaSyD2Rtw1qMew1Tua80ZYBMilrUVSzypcJ6E',
+    authDomain: 'movies-ec8a3.firebaseapp.com',
+    databaseURL: 'https://movies-ec8a3.firebaseio.com',
+    projectId: 'movies-ec8a3',
+    storageBucket: 'movies-ec8a3.appspot.com',
+    messagingSenderId: '932511714350',
+    appId: '1:932511714350:web:7de03d075c18d6ad6923bf',
+    measurementId: 'G-E9R6114SYD'
 };
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavbarComponent,
-    HomeComponent,
-    ProjectsComponent,
-    EducationComponent,
-    EmploymentComponent,
-    ContactComponent,
-    SkillbarComponent,
-    MoviesComponent,
-    PopularComponent,
-    UserProfileComponent,
-    WatchlistComponent,
-    StreamComponent,
-    PrivacyComponent,
-    TitleComponent,
-    SettingsComponent,
-    LovelistComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    MDBBootstrapModule.forRoot(),
-    FormsModule,
-    AngularFireModule.initializeApp(config),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    CommonModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot()
-  ],
-  providers: [
-    AuthService,
-    TitleService
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        NavbarComponent,
+        HomeComponent,
+        ProjectsComponent,
+        EducationComponent,
+        EmploymentComponent,
+        ContactComponent,
+        SkillbarComponent,
+        MoviesComponent,
+        PopularComponent,
+        UserProfileComponent,
+        WatchlistComponent,
+        StreamComponent,
+        PrivacyComponent,
+        TitleComponent,
+        SettingsComponent,
+        LovelistComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        MDBBootstrapModule.forRoot(),
+        FormsModule,
+        AngularFireModule.initializeApp(config),
+        AngularFirestoreModule,
+        AngularFireAuthModule,
+        CommonModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot()
+    ],
+    providers: [
+        AuthService,
+        TitleService
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 }

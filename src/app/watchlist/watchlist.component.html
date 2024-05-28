@@ -2,7 +2,8 @@
     <h1 class="col p-0"><b>Watchlist <span *ngIf="auth.watchlist.length !==0">({{ auth.watchlist.length }})</span></b>
     </h1>
     <div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0 mr-2">
-        <select (change)="changeMediaType(selectedType)" [(ngModel)]="selectedType" class="browser-default custom-select"
+        <select (change)="changeMediaType(selectedType)" [(ngModel)]="selectedType"
+                class="browser-default custom-select"
                 name="sel">
             <option value="All">All</option>
             <option value="movie">Movies<span *ngIf="auth.moviesCount !==0"> ({{ auth.moviesCount }})</span></option>
@@ -20,7 +21,8 @@
         <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']" class="col-2 pl-0">
             <img *ngIf="title.poster_path" alt="Can't load image"
                  class="poster"
-                 onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'" src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}">
+                 onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'"
+                 src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}">
             <img *ngIf="!title.poster_path && title.omdbPoster" alt="Can't load image" class="poster"
                  onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'" src="{{title.omdbPoster}}">
             <img *ngIf="!title.poster_path && !title.omdbPoster" alt="Can't load image" class="poster"
