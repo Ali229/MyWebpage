@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<div class="mt-4">
+<div *ngIf="this.auth.settingsLoaded; else loading" class="mt-4">
     <h6 class="text-muted">Select Streaming Providers</h6>
     <div *ngFor="let provider of providers" class="provider-option">
         <label [for]="provider.id">
@@ -23,4 +23,8 @@
         Save
     </button>
 </div>
+
+<ng-template #loading>
+    <div class="spinner-border" role="status" style="width: 8rem; height: 8rem;"></div>
+</ng-template>
 

@@ -18,6 +18,7 @@ export class AuthService {
     empty = false;
     moviesCount: number;
     tvCount: number;
+    settingsLoaded = false;
 
     constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
         this.user$ = this.afAuth.authState.pipe(
@@ -174,6 +175,7 @@ export class AuthService {
     }
 
     async loadSettings(providers) {
+        this.settingsLoaded = false;
         if (this.uid) {
             try {
                 const streamsCollection = await firebase.firestore().collection(`/users/${this.uid}/streams`);
@@ -197,5 +199,6 @@ export class AuthService {
         } else {
             this.toastr.info('Please login to use the watchlist feature');
         }
+        this.settingsLoaded = true;
     }
 }
