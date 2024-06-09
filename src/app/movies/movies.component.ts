@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {TitleService} from '../services/title.service';
+import {AuthService} from '../services/auth.service';
 
 @Component({
     selector: 'app-movies',
@@ -11,7 +12,7 @@ export class MoviesComponent implements OnInit, AfterViewInit {
     @ViewChild('searchInput', {static: false}) searchInput: ElementRef;
     isPhone: boolean = window.innerWidth <= 767.98; // Check if the screen width is less than or equal to your breakpoint
 
-    constructor(public ts: TitleService) {
+    constructor(public ts: TitleService, public auth: AuthService) {
     }
 
     ngOnInit() {
