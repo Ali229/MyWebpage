@@ -29,6 +29,16 @@ input, select, button {
   height: 50px;
 }
 
+.pop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkbox {
+  height: 15px;
+}
+
 @media (max-width: 767.98px) {
   .input-group, button, .custom-select, .form-control, .col-auto {
     display: block;
@@ -46,5 +56,3 @@ input, select, button {
     display: none !important;
   }
 }
-
-
