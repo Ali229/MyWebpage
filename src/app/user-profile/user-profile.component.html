@@ -1,12 +1,12 @@
-<div *ngIf="auth.user$ | async as user; else guest">
+<div *ngIf="auth.user.uid; else guest">
     <ng-container class="profile mt-2 mt-md-0">
         <div class="btn-group dropleft" mdbDropdown>
             <a class="dropdown-toggle" mdbDropdownToggle type="button">
-                <img (error)="onImageError()" [src]="user.photoURL" alt="" class="rounded-circle hoverable">
+                <img (error)="onImageError()" [src]="auth.user.photoURL" alt="" class="rounded-circle hoverable">
                 <i *ngIf="showIcon" class="fas fa-user fa-lg mt-3"></i>
             </a>
             <div class="dropdown-menu">
-                <h6 class="dropdown-header">{{ user.displayName }}</h6>
+                <h6 class="dropdown-header">{{auth.user.displayName }}</h6>
                 <a class="dropdown-item" routerLink="../watchlist">Watchlist ({{ auth.watchlist.length }})</a>
                 <a class="dropdown-item" routerLink="../lovelist">Love list</a>
                 <a class="dropdown-item" routerLink="../settings">Settings</a>
@@ -19,7 +19,7 @@
 
 <!-- User NOT logged in -->
 <ng-template #guest>
-    <button (click)="auth.googleSignin()" *ngIf="auth.uid === 'nothing'" color="elegant" id="target" mdbBtn
+    <button (click)="auth.googleSignin()" *ngIf="!auth.user.uid" color="elegant" id="target" mdbBtn
             mdbWavesEffect size="md"
             type="submit">
         Connect With Google

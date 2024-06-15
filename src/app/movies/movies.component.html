@@ -33,7 +33,7 @@
 <app-title></app-title>
 <div class="pop">
     <h2><b><span style="font-size: 130%;color: #3F729B;">|</span> Popular</b></h2>
-    <h5 *ngIf="auth.user$ | async as user" class="streamable" title="Set any streaming services you have in settings">
+    <h5 *ngIf="auth.user.uid" class="streamable" title="Set any streaming services you have in settings">
         <input class="checkbox" type="checkbox"> Streamable</h5>
 </div>
 <app-popular></app-popular>

@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="col-auto ml-auto p-0" placement="top"
-                         mdbTooltip="{{(auth.user$ | async) ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
+                         mdbTooltip="{{auth.user.uid ? 'Add to lovelist': 'Login to add this title to your lovelist'}}">
                         <div class="love">
                             <i class="fas fa-heart"></i>
                         </div>

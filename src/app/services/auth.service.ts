@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {User} from '../models/user.model';
 import {auth} from 'firebase/app';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -13,28 +13,33 @@ import {ToastrService} from 'ngx-toastr';
 export class AuthService {
 
     user$: Observable<User>;
-    uid: string;
     watchlist: Title[] = null;
     empty = false;
     moviesCount: number;
     tvCount: number;
     settingsLoaded = false;
+    public user: User = {
+        uid: null,
+        displayName: '', email: '', myCustomData: '', photoURL: ''
+    };
 
     constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
-        this.user$ = this.afAuth.authState.pipe(
-            switchMap(user => {
-                // Logged in
-                if (user) {
-                    this.uid = user.uid;
-                    this.getWatchlist();
-                    return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
-                } else {
-                    // Logged out
-                    this.uid = 'nothing';
-                    return of(null);
-                }
-            })
-        );
+        console.log('auth cons ran');
+        // Subscribe to authState once
+        this.afAuth.authState.subscribe(user => {
+            // Logged in
+            if (user) {
+                this.user = user;
+                this.getWatchlist();
+                this.afs.doc<User>(`users/${user.uid}`).valueChanges().subscribe(userData => {
+                    // handle user data changes if needed
+                    console.log('User data:', userData);
+                });
+            } else {
+                // Logged out
+                this.user.uid = null;
+            }
+        });
     }
 
     async googleSignin() {
@@ -62,37 +67,40 @@ export class AuthService {
 
     async signOut() {
         await this.afAuth.signOut();
-        this.uid = 'nothing';
+        this.user.uid = null;
     }
 
 
     async getWatchlist() {
-        this.watchlist = [];
-        const snapshot: any = await firebase.firestore().collection('/users/' + this.uid + '/watchlist')
-            .orderBy('watchlistAddDate').get();
-        let x = 0;
-        this.moviesCount = 0;
-        this.tvCount = 0;
-        for (const i of snapshot.docs) {
-            this.watchlist.push(i.data());
-            this.watchlist[x].watchlistDocId = i.id;
-            if (this.watchlist[x].media_type === 'movie') {
-                this.moviesCount++;
-            } else if (this.watchlist[x].media_type === 'tv') {
-                this.tvCount++;
+        if (this.user.uid) {
+            console.log('getting watchlist');
+            this.watchlist = [];
+            const snapshot: any = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist')
+                .orderBy('watchlistAddDate').get();
+            let x = 0;
+            this.moviesCount = 0;
+            this.tvCount = 0;
+            for (const i of snapshot.docs) {
+                this.watchlist.push(i.data());
+                this.watchlist[x].watchlistDocId = i.id;
+                if (this.watchlist[x].media_type === 'movie') {
+                    this.moviesCount++;
+                } else if (this.watchlist[x].media_type === 'tv') {
+                    this.tvCount++;
+                }
+                x++;
             }
-            x++;
-        }
-        if (this.watchlist.length === 0) {
-            this.empty = true;
+            if (this.watchlist.length === 0) {
+                this.empty = true;
+            }
         }
     }
 
     async addToWatchlist(title) {
-        if (this.uid !== 'nothing') {
+        if (this.user.uid) {
             const titleName = title.title ? title.title : title.name;
             // First, check if the title already exists in the user's watchlist
-            const watchlistRef = await firebase.firestore().collection('/users/' + this.uid + '/watchlist');
+            const watchlistRef = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist');
             const query = await watchlistRef.where('id', '==', title.id).get();
             if (query.empty) {
                 // If the query result is empty, the title is not in the watchlist, so add it
@@ -110,12 +118,12 @@ export class AuthService {
 
 
     async removeFromWatchlist(id) {
-        if (this.uid !== 'nothing') {
+        if (this.user.uid) {
             for (const title of this.watchlist) {
                 const titleName = title.title ? title.title : title.name;
                 if (title.id === id) {
                     // Check if the item exists in the watchlist
-                    const watchlistRef = await firebase.firestore().collection('/users/' + this.uid + '/watchlist');
+                    const watchlistRef = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist');
                     const query = await watchlistRef.where('id', '==', title.id).get();
 
                     if (!query.empty) {
@@ -135,7 +143,7 @@ export class AuthService {
     }
 
     public getWatchlisted(id) {
-        if (this.uid !== 'nothing') {
+        if (this.user.uid) {
             for (const item of this.watchlist) {
                 if (item.id === id) {
                     return true;
@@ -146,9 +154,9 @@ export class AuthService {
     }
 
     async saveSettings(providers) {
-        if (this.uid) {
+        if (this.user.uid) {
             try {
-                const streamsCollection = await firebase.firestore().collection(`/users/${this.uid}/streams`);
+                const streamsCollection = await firebase.firestore().collection(`/users/${this.user.uid}/streams`);
 
                 // Iterate through each provider
                 for (const provider of providers) {
@@ -176,9 +184,9 @@ export class AuthService {
 
     async loadSettings(providers) {
         this.settingsLoaded = false;
-        if (this.uid) {
+        if (this.user.uid) {
             try {
-                const streamsCollection = await firebase.firestore().collection(`/users/${this.uid}/streams`);
+                const streamsCollection = await firebase.firestore().collection(`/users/${this.user.uid}/streams`);
                 const snapshot = await streamsCollection.get();
 
                 // Iterate through each document in the collection
