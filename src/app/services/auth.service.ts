@@ -1,23 +1,30 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {User} from '../models/user.model';
 import {auth} from 'firebase/app';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {Observable, of} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 import {Title} from '../models/title.model';
 import * as firebase from 'firebase';
 import {ToastrService} from 'ngx-toastr';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-
-    user$: Observable<User>;
     watchlist: Title[] = null;
     empty = false;
     moviesCount: number;
     tvCount: number;
     settingsLoaded = false;
+    public providers = [
+        {id: 8, name: 'Netflix', icon: 'assets/netflix.svg', selected: false},
+        {id: 337, name: 'Disney+', icon: 'assets/disney.webp', selected: false},
+        {id: 15, name: 'Hulu', icon: 'assets/hulu.png', selected: false},
+        {id: 9, name: 'Amazon Prime Video', icon: 'assets/prime.jpg', selected: false},
+        {id: 188, name: 'Youtube', icon: 'assets/youtube.png', selected: false},
+        {id: 350, name: 'Apple', icon: 'assets/apple.png', selected: false},
+        {id: 299, name: 'Sling', icon: 'assets/sling.png', selected: false},
+        {id: 387, name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
+    ];
     public user: User = {
         uid: null,
         displayName: '', email: '', myCustomData: '', photoURL: ''
@@ -31,6 +38,7 @@ export class AuthService {
             if (user) {
                 this.user = user;
                 this.getWatchlist();
+                this.loadSettings();
                 this.afs.doc<User>(`users/${user.uid}`).valueChanges().subscribe(userData => {
                     // handle user data changes if needed
                     console.log('User data:', userData);
@@ -153,60 +161,57 @@ export class AuthService {
         return false;
     }
 
-    async saveSettings(providers) {
+    async saveSettings() {
         if (this.user.uid) {
             try {
-                const streamsCollection = await firebase.firestore().collection(`/users/${this.user.uid}/streams`);
+                const selectedProvidersCollectionRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
 
-                // Iterate through each provider
-                for (const provider of providers) {
-                    const providerDoc = streamsCollection.doc(provider.id);
+                // Create an object containing providerIds
+                const data = {
+                    providerIds: this.providers
+                        .filter(provider => provider.selected)
+                        .map(provider => provider.id)
+                };
 
-                    // Check if the provider is selected
-                    if (provider.selected) {
-                        // If selected, set the document with provider's name
-                        await providerDoc.set({name: provider.name});
-                    } else {
-                        // If not selected, delete the document
-                        await providerDoc.delete();
-                    }
-                }
+                // Directly set the data in a document within the collection
+                await selectedProvidersCollectionRef.doc('providerIds').set(data);
 
-                // Alert after all operations are done
-                this.toastr.success('Settings saved successfully!');
+                // Alert after the operation is done
+                this.toastr.success('Providers list saved successfully!');
             } catch (error) {
-                this.toastr.error('Error saving settings: ', error);
+                this.toastr.error('Error saving providers list: ', error);
             }
         } else {
-            this.toastr.info('Please login to use the watchlist feature');
+            this.toastr.info('Please login to use settings feature');
         }
     }
 
-    async loadSettings(providers) {
-        this.settingsLoaded = false;
+    async loadSettings() {
         if (this.user.uid) {
+            this.settingsLoaded = false;
             try {
-                const streamsCollection = await firebase.firestore().collection(`/users/${this.user.uid}/streams`);
-                const snapshot = await streamsCollection.get();
+                const selectedProvidersCollectionRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
+                const doc = await selectedProvidersCollectionRef.doc('providerIds').get();
 
-                // Iterate through each document in the collection
-                snapshot.forEach(doc => {
-                    const providerId = doc.id;
-                    // Find the corresponding provider in the providers list
-                    const providerIndex = providers.findIndex(provider => provider.id === providerId);
-
-                    // If provider exists in the providers list
-                    if (providerIndex !== -1) {
-                        // Update the selected property based on the data retrieved from Firestore
-                        providers[providerIndex].selected = true;
-                    }
-                });
+                if (doc.exists) {
+                    const data = doc.data();
+                    const selectedProviderIds = data ? data.providerIds || [] : [];
+                    // Update the providers' selected status based on the retrieved data
+                    this.providers.forEach(provider => {
+                        provider.selected = selectedProviderIds.includes(provider.id);
+                    });
+                } else {
+                    // If no document exists, make sure all providers are unselected
+                    this.providers.forEach(provider => provider.selected = false);
+                }
+                this.settingsLoaded = true;
             } catch (error) {
-                this.toastr.error('Error saving settings: ', error);
+                this.toastr.error('Error loading providers list: ', error);
+            } finally {
+                this.settingsLoaded = true;
             }
         } else {
-            this.toastr.info('Please login to use the watchlist feature');
+            this.toastr.info('Please login to use the settings feature');
         }
-        this.settingsLoaded = true;
     }
 }
