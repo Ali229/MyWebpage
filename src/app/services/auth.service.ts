@@ -61,6 +61,7 @@ export class AuthService {
             prompt: 'select_account'
         });
         const credential = await this.afAuth.signInWithPopup(provider);
+        location.reload();
         return this.updateUserData(credential.user);
     }
 
@@ -87,8 +88,8 @@ export class AuthService {
             myCustomData: '',
             photoURL: ''
         };
+        location.reload();
     }
-
 
     async getWatchlist() {
         if (this.user.uid) {
