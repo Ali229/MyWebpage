@@ -1,18 +1,18 @@
 <nav class="nav nav-pills nav-justified unique-color">
-    <a (click)="toggleMediaType('movie')" [ngClass]="{'unique-color-dark': selectedType === 'movie'}"
+    <a (click)="toggleMediaType('movie')" [ngClass]="{'unique-color-dark': popService.selectedType === 'movie'}"
        class="nav-item text-light">Movies</a>
-    <a (click)="toggleMediaType('tv')" [ngClass]="{'unique-color-dark': selectedType ==='tv'}"
+    <a (click)="toggleMediaType('tv')" [ngClass]="{'unique-color-dark': popService.selectedType ==='tv'}"
        class="nav-item text-light">TV Shows</a>
 </nav>
 
 <div class="tab-content" id="pills-tabContent">
     <div (click)="scrollToElement()" [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
-        <table *ngIf="popularMovies" class="table table-borderless table-striped" striped="true">
+        <table *ngIf="popService.popularList" class="table table-borderless table-striped" striped="true">
             <tbody>
-            <ng-container *ngFor="let title of popularList| slice:0:20; let i = index">
+            <ng-container *ngFor="let title of popService.popularList| slice:0:20; let i = index">
                 <tr *ngIf="i % 2 == 0">
                     <td class="hoverable td1">
-                        <div (click)="ts.search(title.id, selectedType)" class="row">
+                        <div (click)="ts.search(title.id, popService.selectedType)" class="row">
                             <div class="col col-img">
                                 <img *ngIf="title.poster_path"
                                      [src]="'https://image.tmdb.org/t/p/w154' + title.poster_path"
@@ -42,30 +42,30 @@
                     </td>
 
                     <td class="hoverable td2">
-                        <div (click)="ts.search(popularList[i+1].id, selectedType)"
+                        <div (click)="ts.search(popService.popularList[i+1].id, popService.selectedType)"
                              class="row">
                             <div class="col col-img">
-                                <img *ngIf="popularList[i+1].poster_path"
-                                     [src]="'https://image.tmdb.org/t/p/w154' + popularList[i+1].poster_path"
+                                <img *ngIf="popService.popularList[i+1].poster_path"
+                                     [src]="'https://image.tmdb.org/t/p/w154' + popService.popularList[i+1].poster_path"
                                      alt="Can't load image"
                                      class="icons z-depth-3">
-                                <img *ngIf="!popularList[i+1].poster_path" alt="Can't load image"
+                                <img *ngIf="!popService.popularList[i+1].poster_path" alt="Can't load image"
                                      class="icons z-depth-3"
                                      src="assets/404PosterNotFound.jpg">
                                 <div>
                                     <app-stream [imgHeight]="'35px'" [imgWidth]="'35px'"
-                                                [incomingTitle]="popularList[i+1]" class="stream"></app-stream>
+                                                [incomingTitle]="popService.popularList[i+1]" class="stream"></app-stream>
                                 </div>
                             </div>
                             <div class="col col-txt mt-1 mt-md-0">
-                                <p class="title"><b>{{ i + 2 }}. {{ popularList[i + 1].title ? popularList[i + 1].title : popularList[i + 1].name }}</b>
+                                <p class="title"><b>{{ i + 2 }}. {{ popService.popularList[i + 1].title ? popService.popularList[i + 1].title : popService.popularList[i + 1].name }}</b>
                                 </p>
-                                <p>{{ popularList[i + 1].release_date ? (popularList[i + 1].release_date | date) : (popularList[i + 1].first_air_date | date) }}</p>
+                                <p>{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
                                 <p>
-                    <span *ngIf="popularList[i + 1].vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(Math.round(popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
-                     {{ Math.round(popularList[i + 1].vote_average * 10) }}</span>
-                                    <span *ngIf="popularList[i + 1].vote_average == 0"
+                    <span *ngIf="popService.popularList[i + 1].vote_average != 0"
+                          class="badge badge-{{ts.getRatingColor(Math.round(popService.popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
+                     {{ Math.round(popService.popularList[i + 1].vote_average * 10) }}</span>
+                                    <span *ngIf="popService.popularList[i + 1].vote_average == 0"
                                           class="badge badge-secondary animated zoomIn z-depth-3">
                       NR</span>
                                 </p>

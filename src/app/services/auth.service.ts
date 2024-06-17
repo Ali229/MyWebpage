@@ -6,6 +6,7 @@ import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestor
 import {Title} from '../models/title.model';
 import * as firebase from 'firebase';
 import {ToastrService} from 'ngx-toastr';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -28,11 +29,12 @@ export class AuthService {
         uid: null,
         displayName: '', email: '', myCustomData: '', photoURL: ''
     };
-    public bShowStreamableCheckBox = false;
     public bShowStreamableOnly = false;
+    // tslint:disable-next-line:variable-name
+    private _bShowStreamableCheckBox = new BehaviorSubject<boolean>(false);
+    public bShowStreamableCheckbox$ = this._bShowStreamableCheckBox.asObservable();
 
     constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
-        console.log('auth cons ran');
         // Subscribe to authState once
         this.afAuth.authState.subscribe(user => {
             // Logged in
@@ -43,12 +45,12 @@ export class AuthService {
                 this.loadStreamableOnlySetting();
                 this.afs.doc<User>(`users/${user.uid}`).valueChanges().subscribe(userData => {
                     // handle user data changes if needed
-                    console.log('User data:', userData);
+                    console.log('Got User Data', userData);
                 });
             } else {
                 // Logged out
                 this.user.uid = null;
-                this.bShowStreamableCheckBox = true;
+                this._bShowStreamableCheckBox.next(true);
             }
         });
     }
@@ -90,7 +92,7 @@ export class AuthService {
 
     async getWatchlist() {
         if (this.user.uid) {
-            console.log('getting watchlist');
+            console.log('Getting watchlist');
             this.watchlist = [];
             const snapshot: any = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist')
                 .orderBy('watchlistAddDate').get();
@@ -250,7 +252,7 @@ export class AuthService {
                 if (doc.exists) {
                     this.bShowStreamableOnly = doc.data() ? doc.data().showStreamableOnly : false;
                 }
-                this.bShowStreamableCheckBox = true;
+                this._bShowStreamableCheckBox.next(true);
             } catch (error) {
                 this.toastr.error('Error loading providers list: ', error);
             }

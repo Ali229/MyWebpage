@@ -33,7 +33,7 @@
 <app-title></app-title>
 <div class="pop">
     <h2><b><span style="font-size: 130%;color: #3F729B;">|</span> Popular</b></h2>
-    <h5 *ngIf="auth.bShowStreamableCheckBox" class="streamable" title="Set any streaming services you have in settings">
+    <h5 *ngIf="showStreamableCheckBox" class="streamable" title="Set any streaming services you have in settings">
         <input [(ngModel)]="auth.bShowStreamableOnly" (ngModelChange)="auth.saveStreamableOnlySetting(auth.bShowStreamableOnly)"  class="checkbox"
                type="checkbox"> Streamable</h5>
 </div>
