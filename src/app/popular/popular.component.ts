@@ -46,7 +46,7 @@ export class PopularComponent implements OnInit, OnDestroy {
                 .map(provider => provider.id);
 
             if (selectedProviders.length > 0) {
-                watchProvidersParam = 'with_watch_providers=' + selectedProviders.join(',');
+                watchProvidersParam = 'with_watch_providers=' + selectedProviders.join('|');
             }
         }
         const apiUrl = `https://api.themoviedb.org/3/discover/${this.popService.selectedType}?` + watchProvidersParam + `&watch_region=US&sort_by=popularity.desc` +
