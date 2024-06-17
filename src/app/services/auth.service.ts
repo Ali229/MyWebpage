@@ -48,6 +48,7 @@ export class AuthService {
             } else {
                 // Logged out
                 this.user.uid = null;
+                this.bShowStreamableCheckBox = true;
             }
         });
     }
@@ -77,7 +78,13 @@ export class AuthService {
 
     async signOut() {
         await this.afAuth.signOut();
-        this.user.uid = null;
+        this.user = {  // Reset the entire user object
+            uid: null,
+            displayName: '',
+            email: '',
+            myCustomData: '',
+            photoURL: ''
+        };
     }
 
 
