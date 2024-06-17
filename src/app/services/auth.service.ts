@@ -3,7 +3,6 @@ import {User} from '../models/user.model';
 import {auth} from 'firebase/app';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {Observable} from 'rxjs';
 import {Title} from '../models/title.model';
 import * as firebase from 'firebase';
 import {ToastrService} from 'ngx-toastr';
@@ -29,6 +28,8 @@ export class AuthService {
         uid: null,
         displayName: '', email: '', myCustomData: '', photoURL: ''
     };
+    public bShowStreamableCheckBox = false;
+    public bShowStreamableOnly = false;
 
     constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
         console.log('auth cons ran');
@@ -39,6 +40,7 @@ export class AuthService {
                 this.user = user;
                 this.getWatchlist();
                 this.loadSettings();
+                this.loadStreamableOnlySetting();
                 this.afs.doc<User>(`users/${user.uid}`).valueChanges().subscribe(userData => {
                     // handle user data changes if needed
                     console.log('User data:', userData);
@@ -212,6 +214,41 @@ export class AuthService {
             }
         } else {
             this.toastr.info('Please login to use the settings feature');
+        }
+    }
+
+    async saveStreamableOnlySetting(StreamableOnly: boolean) {
+        if (this.user.uid) {
+            try {
+
+                const settingsRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
+                const data = {
+                    showStreamableOnly: StreamableOnly
+                };
+                await settingsRef.doc('showStreamableOnly').set(data);
+            } catch (error) {
+                this.toastr.error('Error saving streamable only settings', error);
+            }
+        } else {
+            this.toastr.info('Please login to use streamable only settings');
+        }
+    }
+
+    async loadStreamableOnlySetting() {
+        if (this.user.uid) {
+            try {
+                const settingsRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
+                const doc = await settingsRef.doc('showStreamableOnly').get();
+
+                if (doc.exists) {
+                    this.bShowStreamableOnly = doc.data() ? doc.data().showStreamableOnly : false;
+                }
+                this.bShowStreamableCheckBox = true;
+            } catch (error) {
+                this.toastr.error('Error loading providers list: ', error);
+            }
+        } else {
+            this.toastr.info('Please login to use steamable only settings');
         }
     }
 }
