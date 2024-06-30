@@ -86,21 +86,27 @@ export class TitleService {
                     for (const rating of response.Ratings) {
                         if (rating.Source === 'Internet Movie Database') {
                             data.imdbScore = parseFloat(rating.Value) * 10;
-                            data.totalScore += data.imdbScore;
-                            data.scoreCount++;
+                            if (data.imdbScore) {
+                                data.totalScore += data.imdbScore;
+                                data.scoreCount++;
+                            }
                         } else if (rating.Source === 'Rotten Tomatoes') {
                             data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-                            data.totalScore += data.rottenScore;
-                            data.scoreCount++;
-                            if (data.rottenScore >= 50) {
-                                data.rottenImage = 'tomato_full.png';
-                            } else if (data.rottenScore < 50) {
-                                data.rottenImage = 'tomato_rotten.png';
+                            if (data.imdbScore) {
+                                data.totalScore += data.rottenScore;
+                                data.scoreCount++;
+                                if (data.rottenScore >= 50) {
+                                    data.rottenImage = 'tomato_full.png';
+                                } else if (data.rottenScore < 50) {
+                                    data.rottenImage = 'tomato_rotten.png';
+                                }
                             }
                         } else if (rating.Source === 'Metacritic') {
-                            data.metaScore = parseFloat(rating.Value);
-                            data.totalScore += data.metaScore;
-                            data.scoreCount++;
+                            if (data.imdbScore) {
+                                data.metaScore = parseFloat(rating.Value);
+                                data.totalScore += data.metaScore;
+                                data.scoreCount++;
+                            }
                         }
                     }
                     if (data.vote_average) {
