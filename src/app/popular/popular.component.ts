@@ -100,6 +100,8 @@ export class PopularComponent implements OnInit, OnDestroy {
                     title.onSling = true;
                 } else if (stream.provider_id === 386) {
                     title.onPeacock = true;
+                } else if (stream.provider_id === 1899) {
+                    title.onMax = true;
                 }
             }
             return title;

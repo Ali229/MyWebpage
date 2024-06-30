@@ -53,4 +53,5 @@ export interface Title {
     onApple: boolean;
     onSling: boolean;
     onPeacock: boolean;
+    onMax: boolean;
 }

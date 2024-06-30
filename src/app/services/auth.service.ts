@@ -24,6 +24,7 @@ export class AuthService {
         {id: 350, name: 'Apple', icon: 'assets/apple.png', selected: false},
         {id: 299, name: 'Sling', icon: 'assets/sling.png', selected: false},
         {id: 386, name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
+        {id: 1899, name: 'Max', icon: 'assets/max.webp', selected: false},
     ];
     public user: User = {
         uid: null,

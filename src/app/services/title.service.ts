@@ -146,6 +146,8 @@ export class TitleService {
                     data.onSling = true;
                 } else if (stream.provider_id === 386) {
                     data.onPeacock = true;
+                } else if (stream.provider_id === 1899) {
+                    data.onMax = true;
                 }
             }
             this.titleSubject$.next(data);
