@@ -51,6 +51,7 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         const apiUrl = `https://api.themoviedb.org/3/discover/${this.popService.selectedType}?` + watchProvidersParam + `&watch_region=US&sort_by=popularity.desc` +
             `&api_key=${apiKey}&${regionOrLang}`;
+        console.log('api url is ', apiUrl);
         this.http.get(apiUrl).subscribe((response: any) => {
             response.results.forEach((title: Title) => {
                 if (this.popService.selectedType === 'movie') {
@@ -97,7 +98,7 @@ export class PopularComponent implements OnInit, OnDestroy {
                     title.onApple = true;
                 } else if (stream.provider_id === 299) {
                     title.onSling = true;
-                } else if (stream.provider_id === 387) {
+                } else if (stream.provider_id === 386) {
                     title.onPeacock = true;
                 }
             }

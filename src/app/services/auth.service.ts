@@ -23,7 +23,7 @@ export class AuthService {
         {id: 188, name: 'Youtube', icon: 'assets/youtube.png', selected: false},
         {id: 350, name: 'Apple', icon: 'assets/apple.png', selected: false},
         {id: 299, name: 'Sling', icon: 'assets/sling.png', selected: false},
-        {id: 387, name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
+        {id: 386, name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
     ];
     public user: User = {
         uid: null,

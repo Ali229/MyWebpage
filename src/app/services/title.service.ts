@@ -144,7 +144,7 @@ export class TitleService {
                     data.onApple = true;
                 } else if (stream.provider_id === 299) {
                     data.onSling = true;
-                } else if (stream.provider_id === 387) {
+                } else if (stream.provider_id === 386) {
                     data.onPeacock = true;
                 }
             }
