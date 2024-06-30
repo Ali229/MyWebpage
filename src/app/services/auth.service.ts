@@ -191,6 +191,7 @@ export class AuthService {
 
                 // Alert after the operation is done
                 this.toastr.success('Providers list saved successfully!');
+                location.reload();
             } catch (error) {
                 this.toastr.error('Error saving providers list: ', error);
             }
@@ -237,6 +238,7 @@ export class AuthService {
                     showStreamableOnly: StreamableOnly
                 };
                 await settingsRef.doc('showStreamableOnly').set(data);
+                location.reload();
             } catch (error) {
                 this.toastr.error('Error saving streamable only settings', error);
             }
