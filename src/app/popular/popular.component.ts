@@ -51,7 +51,6 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         const apiUrl = `https://api.themoviedb.org/3/discover/${this.popService.selectedType}?` + watchProvidersParam + `&watch_region=US&sort_by=popularity.desc` +
             `&api_key=${apiKey}&${regionOrLang}`;
-        console.log('api url is ', apiUrl);
         this.http.get(apiUrl).subscribe((response: any) => {
             response.results.forEach((title: Title) => {
                 if (this.popService.selectedType === 'movie') {
