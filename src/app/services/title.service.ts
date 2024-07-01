@@ -92,7 +92,7 @@ export class TitleService {
                             }
                         } else if (rating.Source === 'Rotten Tomatoes') {
                             data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-                            if (data.imdbScore) {
+                            if (data.rottenScore) {
                                 data.totalScore += data.rottenScore;
                                 data.scoreCount++;
                                 if (data.rottenScore >= 50) {
@@ -102,8 +102,8 @@ export class TitleService {
                                 }
                             }
                         } else if (rating.Source === 'Metacritic') {
-                            if (data.imdbScore) {
                                 data.metaScore = parseFloat(rating.Value);
+                                if (data.metaScore) {
                                 data.totalScore += data.metaScore;
                                 data.scoreCount++;
                             }
