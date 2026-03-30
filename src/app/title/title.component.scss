@@ -46,10 +46,25 @@
 
 .year {
   font-size: 1.3rem;
+  font-weight: inherit;
+}
+
+.title-heading {
+  margin-bottom: 0;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.title-heading b {
+  font-weight: 700;
 }
 
 b {
   font-weight: bold;
+}
+
+.ratings.table {
+  margin-bottom: 0;
 }
 
 .ratings > tbody > tr > td {

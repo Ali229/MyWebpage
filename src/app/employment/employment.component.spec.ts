@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {EmploymentComponent} from './employment.component';
 
@@ -6,12 +6,15 @@ describe('EmploymentComponent', () => {
     let component: EmploymentComponent;
     let fixture: ComponentFixture<EmploymentComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [EmploymentComponent]
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [EmploymentComponent]
         })
+            .overrideComponent(EmploymentComponent, {
+                set: {template: ''}
+            })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(EmploymentComponent);

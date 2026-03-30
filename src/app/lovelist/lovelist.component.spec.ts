@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LovelistComponent} from './lovelist.component';
 
@@ -6,12 +6,15 @@ describe('LovelistComponent', () => {
     let component: LovelistComponent;
     let fixture: ComponentFixture<LovelistComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [LovelistComponent]
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [LovelistComponent]
         })
+            .overrideComponent(LovelistComponent, {
+                set: {template: ''}
+            })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(LovelistComponent);

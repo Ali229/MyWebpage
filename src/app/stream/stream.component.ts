@@ -1,4 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {Title} from '../models/title.model';
 import {Subject} from 'rxjs';
 import {TitleService} from '../services/title.service';
@@ -7,7 +8,9 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
     selector: 'app-stream',
     templateUrl: './stream.component.html',
-    styleUrls: ['./stream.component.scss']
+    styleUrls: ['./stream.component.scss'],
+    standalone: true,
+    imports: [CommonModule]
 })
 export class StreamComponent implements OnInit, OnDestroy {
     @Input() public incomingTitle: Title;

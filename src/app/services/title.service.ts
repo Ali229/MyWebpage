@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';

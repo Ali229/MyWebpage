@@ -1,30 +1,51 @@
-<mdb-navbar SideClass="navbar navbar-expand-xl navbar-dark elegant-color justify-content-between">
-    <mdb-navbar-brand>
-        <a routerLinkActive="active" routerLink="home">
-            <mdb-icon fas icon="home" size="lg" class="white-text"></mdb-icon>
-        </a>
-        <a class="navbar-brand ml-3" routerLinkActive="active" routerLink="home">Muhammad Ali</a>
-    </mdb-navbar-brand>
-    <links>
-        <div class="navbar-nav">
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="home">Home</a>
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="projects">Projects</a>
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="education">Education</a>
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="employment">Employment</a>
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="contact">Contact</a>
-            <a class="nav-item nav-link waves-light" routerLinkActive="active" routerLink="movies">Movies</a>
-        </div>
-        <form class="form-inline ml-auto btns">
-            <div class="navbar-nav">
-                <a mdbBtn href="https://github.com/Ali229" role="button" color="white" outline="true" size="md"
-                   class="my-2 waves-light" target="_blank">GitHub</a>
-                <a mdbBtn href="https://stackoverflow.com/users/4557803/muhammad-ali" role="button" color="white"
-                   outline="true"
-                   size="md" class="my-2 waves-light" target="_blank">Stack Profile</a>
-                <a mdbBtn href="https://alinaeem.com/resume.pdf" download role="button" color="white" outline="true"
-                   size="md"
-                   class="my-2 waves-light" target="_blank">Resume</a>
+<nav class="navbar navbar-dark elegant-color app-navbar">
+    <div class="container nav-shell">
+        <div class="nav-left">
+            <a class="home-link" routerLink="home" routerLinkActive="active" (click)="closeMenu()">
+                <i aria-hidden="true" class="fas fa-home fa-lg white-text"></i>
+            </a>
+
+            <div class="nav-links desktop-nav">
+                <a class="nav-item nav-link" routerLink="home" routerLinkActive="active" (click)="closeMenu()">Home</a>
+                <a class="nav-item nav-link" routerLink="projects" routerLinkActive="active" (click)="closeMenu()">Projects</a>
+                <a class="nav-item nav-link" routerLink="education" routerLinkActive="active" (click)="closeMenu()">Education</a>
+                <a class="nav-item nav-link" routerLink="employment" routerLinkActive="active" (click)="closeMenu()">Employment</a>
+                <a class="nav-item nav-link" routerLink="contact" routerLinkActive="active" (click)="closeMenu()">Contact</a>
+                <a class="nav-item nav-link" routerLink="movies" routerLinkActive="active" (click)="closeMenu()">Movies</a>
             </div>
-        </form>
-    </links>
-</mdb-navbar>
+        </div>
+
+        <div class="nav-actions desktop-nav">
+            <a class="btn btn-outline-light nav-button" href="https://github.com/Ali229" role="button" target="_blank">GitHub</a>
+            <a class="btn btn-outline-light nav-button" href="https://stackoverflow.com/users/4557803/muhammad-ali" role="button" target="_blank">Stack Profile</a>
+            <a class="btn btn-outline-light nav-button" href="https://alinaeem.com/resume.pdf" download role="button" target="_blank">Resume</a>
+        </div>
+
+        <button
+            class="navbar-toggler mobile-toggle"
+            type="button"
+            aria-controls="mobileNavbar"
+            [attr.aria-expanded]="menuOpen"
+            aria-label="Toggle navigation"
+            (click)="toggleMenu()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+
+    <div id="mobileNavbar" class="mobile-menu" [class.open]="menuOpen">
+        <div class="container mobile-menu-inner">
+            <a class="nav-item nav-link" routerLink="home" routerLinkActive="active" (click)="closeMenu()">Home</a>
+            <a class="nav-item nav-link" routerLink="projects" routerLinkActive="active" (click)="closeMenu()">Projects</a>
+            <a class="nav-item nav-link" routerLink="education" routerLinkActive="active" (click)="closeMenu()">Education</a>
+            <a class="nav-item nav-link" routerLink="employment" routerLinkActive="active" (click)="closeMenu()">Employment</a>
+            <a class="nav-item nav-link" routerLink="contact" routerLinkActive="active" (click)="closeMenu()">Contact</a>
+            <a class="nav-item nav-link" routerLink="movies" routerLinkActive="active" (click)="closeMenu()">Movies</a>
+
+            <div class="mobile-actions">
+                <a class="btn btn-outline-light nav-button" href="https://github.com/Ali229" role="button" target="_blank">GitHub</a>
+                <a class="btn btn-outline-light nav-button" href="https://stackoverflow.com/users/4557803/muhammad-ali" role="button" target="_blank">Stack Profile</a>
+                <a class="btn btn-outline-light nav-button" href="https://alinaeem.com/resume.pdf" download role="button" target="_blank">Resume</a>
+            </div>
+        </div>
+    </div>
+</nav>

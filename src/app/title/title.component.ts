@@ -1,15 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {AuthService} from '../services/auth.service';
 import {Title} from '../models/title.model';
 import {TitleService} from '../services/title.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {StreamComponent} from '../stream/stream.component';
 
 
 @Component({
     selector: 'app-title',
     templateUrl: './title.component.html',
-    styleUrls: ['./title.component.scss']
+    styleUrls: ['./title.component.scss'],
+    standalone: true,
+    imports: [CommonModule, StreamComponent]
 })
 export class TitleComponent implements OnInit, OnDestroy {
 

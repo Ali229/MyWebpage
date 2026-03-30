@@ -1,19 +1,18 @@
 import {Injectable} from '@angular/core';
-import {User} from '../models/user.model';
-import {auth} from 'firebase/app';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {Title} from '../models/title.model';
-import * as firebase from 'firebase';
-import {ToastrService} from 'ngx-toastr';
 import {BehaviorSubject} from 'rxjs';
+import {ToastrService} from 'ngx-toastr';
+import {GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth';
+import {collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc} from 'firebase/firestore';
+import {User} from '../models/user.model';
+import {Title} from '../models/title.model';
+import {firebaseAuth, firestore} from '../firebase.config';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-    watchlist: Title[] = null;
+    watchlist: Title[] = [];
     empty = false;
-    moviesCount: number;
-    tvCount: number;
+    moviesCount = 0;
+    tvCount = 0;
     settingsLoaded = false;
     public providers = [
         {id: 8, name: 'Netflix', icon: 'assets/netflix.svg', selected: false},
@@ -31,58 +30,67 @@ export class AuthService {
         displayName: '', email: '', myCustomData: '', photoURL: ''
     };
     public bShowStreamableOnly = false;
-    // tslint:disable-next-line:variable-name
     private _bShowStreamableCheckBox = new BehaviorSubject<boolean>(false);
     public bShowStreamableCheckbox$ = this._bShowStreamableCheckBox.asObservable();
 
-    constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private toastr: ToastrService) {
-        // Subscribe to authState once
-        this.afAuth.authState.subscribe(user => {
-            // Logged in
+    constructor(private toastr: ToastrService) {
+        onAuthStateChanged(firebaseAuth, user => {
             if (user) {
-                this.user = user;
+                this.user = {
+                    uid: user.uid,
+                    displayName: user.displayName || '',
+                    email: user.email || '',
+                    myCustomData: '',
+                    photoURL: user.photoURL || ''
+                };
                 this.getWatchlist();
                 this.loadSettings();
                 this.loadStreamableOnlySetting();
-                this.afs.doc<User>(`users/${user.uid}`).valueChanges().subscribe(userData => {
-                    // handle user data changes if needed
-                    console.log('Got User Data', userData);
-                });
             } else {
-                // Logged out
-                this.user.uid = null;
+                this.user = {
+                    uid: null,
+                    displayName: '',
+                    email: '',
+                    myCustomData: '',
+                    photoURL: ''
+                };
+                this.watchlist = [];
+                this.moviesCount = 0;
+                this.tvCount = 0;
+                this.empty = false;
                 this._bShowStreamableCheckBox.next(true);
             }
         });
     }
 
     async googleSignin() {
-        const provider = new auth.GoogleAuthProvider();
+        const provider = new GoogleAuthProvider();
         provider.setCustomParameters({
             prompt: 'select_account'
         });
-        const credential = await this.afAuth.signInWithPopup(provider);
+        const credential = await signInWithPopup(firebaseAuth, provider);
+        await this.updateUserData(credential.user);
         location.reload();
-        return this.updateUserData(credential.user);
+        return credential;
     }
 
     private updateUserData(user) {
-        // Sets user data to firestore on login
-        const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
-
         const data = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
             photoURL: user.photoURL
         };
-        return userRef.set(data, {merge: true});
+        return setDoc(doc(firestore, 'users', user.uid), data, {merge: true});
+    }
 
+    async signOutUser() {
+        await signOut(firebaseAuth);
     }
 
     async signOut() {
-        await this.afAuth.signOut();
-        this.user = {  // Reset the entire user object
+        await this.signOutUser();
+        this.user = {
             uid: null,
             displayName: '',
             email: '',
@@ -94,16 +102,19 @@ export class AuthService {
 
     async getWatchlist() {
         if (this.user.uid) {
-            console.log('Getting watchlist');
             this.watchlist = [];
-            const snapshot: any = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist')
-                .orderBy('watchlistAddDate').get();
+            this.empty = false;
+            const watchlistQuery = query(
+                collection(firestore, 'users', this.user.uid, 'watchlist'),
+                orderBy('watchlistAddDate')
+            );
+            const snapshot = await getDocs(watchlistQuery);
             let x = 0;
             this.moviesCount = 0;
             this.tvCount = 0;
-            for (const i of snapshot.docs) {
-                this.watchlist.push(i.data());
-                this.watchlist[x].watchlistDocId = i.id;
+            for (const item of snapshot.docs) {
+                this.watchlist.push(item.data() as Title);
+                this.watchlist[x].watchlistDocId = item.id;
                 if (this.watchlist[x].media_type === 'movie') {
                     this.moviesCount++;
                 } else if (this.watchlist[x].media_type === 'tv') {
@@ -120,40 +131,41 @@ export class AuthService {
     async addToWatchlist(title) {
         if (this.user.uid) {
             const titleName = title.title ? title.title : title.name;
-            // First, check if the title already exists in the user's watchlist
-            const watchlistRef = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist');
-            const query = await watchlistRef.where('id', '==', title.id).get();
-            if (query.empty) {
-                // If the query result is empty, the title is not in the watchlist, so add it
+            const watchlistDocId = this.getWatchlistDocId(title);
+            const watchlistRef = doc(firestore, 'users', this.user.uid, 'watchlist', watchlistDocId);
+            const existing = await getDoc(watchlistRef);
+            if (!existing.exists()) {
                 title.watchlistAddDate = new Date();
-                await watchlistRef.add(title);
-                this.toastr.success((titleName) + ' added to watchlist');
+                title.watchlistDocId = watchlistDocId;
+                await setDoc(watchlistRef, title);
+                this.toastr.success(titleName + ' added to watchlist');
                 return this.getWatchlist();
             } else {
-                this.toastr.info((titleName) + ' is already in your watchlist');
+                this.toastr.info(titleName + ' is already in your watchlist');
             }
         } else {
             this.toastr.info('Please login to use the watchlist feature');
         }
     }
 
-
     async removeFromWatchlist(id) {
         if (this.user.uid) {
             for (const title of this.watchlist) {
-                const titleName = title.title ? title.title : title.name;
                 if (title.id === id) {
-                    // Check if the item exists in the watchlist
-                    const watchlistRef = await firebase.firestore().collection('/users/' + this.user.uid + '/watchlist');
-                    const query = await watchlistRef.where('id', '==', title.id).get();
+                    const watchlistRef = doc(
+                        firestore,
+                        'users',
+                        this.user.uid,
+                        'watchlist',
+                        title.watchlistDocId || this.getWatchlistDocId(title)
+                    );
+                    const existing = await getDoc(watchlistRef);
 
-                    if (!query.empty) {
-                        // If the query result is not empty, the item is in the watchlist, so remove it
-                        await watchlistRef.doc(title.watchlistDocId).delete();
+                    if (existing.exists()) {
+                        await deleteDoc(watchlistRef);
                         this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
                         return this.getWatchlist();
                     } else {
-                        // If the query result is empty, show a message indicating that the item is not in the watchlist
                         this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
                     }
                 }
@@ -164,7 +176,7 @@ export class AuthService {
     }
 
     public getWatchlisted(id) {
-        if (this.user.uid) {
+        if (this.user.uid && this.watchlist) {
             for (const item of this.watchlist) {
                 if (item.id === id) {
                     return true;
@@ -177,23 +189,17 @@ export class AuthService {
     async saveSettings() {
         if (this.user.uid) {
             try {
-                const selectedProvidersCollectionRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
-
-                // Create an object containing providerIds
                 const data = {
                     providerIds: this.providers
                         .filter(provider => provider.selected)
                         .map(provider => provider.id)
                 };
 
-                // Directly set the data in a document within the collection
-                await selectedProvidersCollectionRef.doc('providerIds').set(data);
-
-                // Alert after the operation is done
+                await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'providerIds'), data);
                 this.toastr.success('Providers list saved successfully!');
                 location.reload();
             } catch (error) {
-                this.toastr.error('Error saving providers list: ', error);
+                this.toastr.error(String(error), 'Error saving providers list');
             }
         } else {
             this.toastr.info('Please login to use settings feature');
@@ -204,23 +210,19 @@ export class AuthService {
         if (this.user.uid) {
             this.settingsLoaded = false;
             try {
-                const selectedProvidersCollectionRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
-                const doc = await selectedProvidersCollectionRef.doc('providerIds').get();
+                const settingsDoc = await getDoc(doc(firestore, 'users', this.user.uid, 'settings', 'providerIds'));
 
-                if (doc.exists) {
-                    const data = doc.data();
+                if (settingsDoc.exists()) {
+                    const data = settingsDoc.data();
                     const selectedProviderIds = data ? data.providerIds || [] : [];
-                    // Update the providers' selected status based on the retrieved data
                     this.providers.forEach(provider => {
                         provider.selected = selectedProviderIds.includes(provider.id);
                     });
                 } else {
-                    // If no document exists, make sure all providers are unselected
                     this.providers.forEach(provider => provider.selected = false);
                 }
-                this.settingsLoaded = true;
             } catch (error) {
-                this.toastr.error('Error loading providers list: ', error);
+                this.toastr.error(String(error), 'Error loading providers list');
             } finally {
                 this.settingsLoaded = true;
             }
@@ -232,15 +234,13 @@ export class AuthService {
     async saveStreamableOnlySetting(StreamableOnly: boolean) {
         if (this.user.uid) {
             try {
-
-                const settingsRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
                 const data = {
                     showStreamableOnly: StreamableOnly
                 };
-                await settingsRef.doc('showStreamableOnly').set(data);
+                await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'showStreamableOnly'), data);
                 location.reload();
             } catch (error) {
-                this.toastr.error('Error saving streamable only settings', error);
+                this.toastr.error(String(error), 'Error saving streamable only settings');
             }
         } else {
             this.toastr.info('Please login to use streamable only settings');
@@ -250,18 +250,22 @@ export class AuthService {
     async loadStreamableOnlySetting() {
         if (this.user.uid) {
             try {
-                const settingsRef = firebase.firestore().collection(`/users/${this.user.uid}/settings`);
-                const doc = await settingsRef.doc('showStreamableOnly').get();
+                const streamableDoc = await getDoc(doc(firestore, 'users', this.user.uid, 'settings', 'showStreamableOnly'));
 
-                if (doc.exists) {
-                    this.bShowStreamableOnly = doc.data() ? doc.data().showStreamableOnly : false;
+                if (streamableDoc.exists()) {
+                    const data = streamableDoc.data();
+                    this.bShowStreamableOnly = data ? data.showStreamableOnly : false;
                 }
                 this._bShowStreamableCheckBox.next(true);
             } catch (error) {
-                this.toastr.error('Error loading providers list: ', error);
+                this.toastr.error(String(error), 'Error loading providers list');
             }
         } else {
             this.toastr.info('Please login to use steamable only settings');
         }
+    }
+
+    private getWatchlistDocId(title: Title) {
+        return `${title.media_type || 'title'}_${title.id}`;
     }
 }

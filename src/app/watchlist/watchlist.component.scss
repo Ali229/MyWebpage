@@ -2,8 +2,14 @@ h1 {
   margin-bottom: 30px;
 }
 
-b {
-  font-weight: bold;
+.watchlist-header {
+  margin-bottom: 1rem;
+}
+
+.watchlist-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .poster {
@@ -20,6 +26,18 @@ b {
 .certifications {
   padding: 0.06em 4px 0.15em 4px;
   border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.watchlist-title {
+  margin-bottom: 0;
+}
+
+.watchlist-title b {
+  font-weight: 700;
+}
+
+.year {
+  font-weight: inherit;
 }
 
 .badge {
@@ -58,10 +76,17 @@ a {
   h1 {
     margin-bottom: 5px;
   }
-  .button-col, button {
+  .watchlist-controls {
+    display: block;
+    width: 100%;
+  }
+  .button-col, .app-back-button, .custom-select {
     width: 100%;
     margin-right: 0;
     margin-left: 0;
+  }
+  .app-back-button {
+    margin-top: 0.5rem;
   }
   .badge {
     font-size: 20px;

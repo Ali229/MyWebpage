@@ -35,8 +35,35 @@ input, select, button {
   align-items: center;
 }
 
+.search-row {
+  align-items: center;
+}
+
+.not-phone-user {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .checkbox {
   height: 15px;
+}
+
+.mobile-movies-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-page-title {
+  margin-bottom: 0;
+}
+
+.mobile-user-profile {
+  display: inline-flex;
+  align-items: center;
 }
 
 @media (max-width: 767.98px) {
@@ -52,7 +79,7 @@ input, select, button {
 }
 
 @media(min-width: 768px) {
-  h1 {
+  .mobile-movies-header {
     display: none !important;
   }
 }

@@ -1,22 +1,26 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {TitleService} from '../services/title.service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {PopularService} from '../services/popular.service';
+import {StreamComponent} from '../stream/stream.component';
 
 @Component({
     selector: 'app-popular',
     templateUrl: './popular.component.html',
-    styleUrls: ['./popular.component.scss']
+    styleUrls: ['./popular.component.scss'],
+    standalone: true,
+    imports: [CommonModule, StreamComponent]
 })
 export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
 
-    constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, protected popService: PopularService) {
+    constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
 
     ngOnInit() {

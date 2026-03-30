@@ -1,17 +1,25 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {StreamComponent} from './stream.component';
+import {TitleService} from '../services/title.service';
+import {createTitleServiceStub} from '../testing/test-stubs';
 
 describe('StreamComponent', () => {
     let component: StreamComponent;
     let fixture: ComponentFixture<StreamComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [StreamComponent]
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [StreamComponent],
+            providers: [
+                {provide: TitleService, useValue: createTitleServiceStub()}
+            ]
         })
+            .overrideComponent(StreamComponent, {
+                set: {template: ''}
+            })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(StreamComponent);

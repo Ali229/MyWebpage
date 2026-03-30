@@ -1,18 +1,17 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {HomeComponent} from './home/home.component';
-import {ProjectsComponent} from './projects/projects.component';
-import {EmploymentComponent} from './employment/employment.component';
-import {EducationComponent} from './education/education.component';
+import {Routes} from '@angular/router';
 import {ContactComponent} from './contact/contact.component';
-import {MoviesComponent} from './movies/movies.component';
-import {WatchlistComponent} from './watchlist/watchlist.component';
-import {AuthGuard} from './services/auth.guard';
-import {PrivacyComponent} from './privacy/privacy.component';
-import {SettingsComponent} from './settings/settings.component';
+import {EducationComponent} from './education/education.component';
+import {EmploymentComponent} from './employment/employment.component';
+import {HomeComponent} from './home/home.component';
 import {LovelistComponent} from './lovelist/lovelist.component';
+import {MoviesComponent} from './movies/movies.component';
+import {PrivacyComponent} from './privacy/privacy.component';
+import {ProjectsComponent} from './projects/projects.component';
+import {SettingsComponent} from './settings/settings.component';
+import {AuthGuard} from './services/auth.guard';
+import {WatchlistComponent} from './watchlist/watchlist.component';
 
-const routes: Routes = [
+export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'projects', component: ProjectsComponent},
     {path: 'employment', component: EmploymentComponent},
@@ -25,10 +24,3 @@ const routes: Routes = [
     {path: 'lovelist', component: LovelistComponent},
     {path: '**', redirectTo: 'home'}
 ];
-
-@NgModule({
-    imports: [RouterModule.forRoot(routes, {})],
-    exports: [RouterModule]
-})
-export class AppRoutingModule {
-}

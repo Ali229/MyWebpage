@@ -1,16 +1,22 @@
 import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
 import {TitleService} from '../services/title.service';
 import {AuthService} from '../services/auth.service';
 import {Title} from '../models/title.model';
+import {StreamComponent} from '../stream/stream.component';
 
 @Component({
     selector: 'app-watchlist',
     templateUrl: './watchlist.component.html',
-    styleUrls: ['./watchlist.component.scss']
+    styleUrls: ['./watchlist.component.scss'],
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule, StreamComponent]
 })
 export class WatchlistComponent {
     selectedType = 'All';
-    filteredList: Title[] = null;
+    filteredList: Title[] = [];
 
     constructor(public auth: AuthService, public ts: TitleService) {
         this.changeMediaType(this.selectedType);

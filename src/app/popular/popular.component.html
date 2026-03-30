@@ -1,80 +1,99 @@
 <nav class="nav nav-pills nav-justified unique-color">
-    <a (click)="toggleMediaType('movie')" [ngClass]="{'unique-color-dark': popService.selectedType === 'movie'}"
-       class="nav-item text-light">Movies</a>
-    <a (click)="toggleMediaType('tv')" [ngClass]="{'unique-color-dark': popService.selectedType ==='tv'}"
-       class="nav-item text-light">TV Shows</a>
+  <a (click)="toggleMediaType('movie')" [ngClass]="{'unique-color-dark': popService.selectedType === 'movie'}"
+  class="nav-item text-light">Movies</a>
+  <a (click)="toggleMediaType('tv')" [ngClass]="{'unique-color-dark': popService.selectedType ==='tv'}"
+  class="nav-item text-light">TV Shows</a>
 </nav>
 
 <div class="tab-content" id="pills-tabContent">
-    <div (click)="scrollToElement()" [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
-        <table *ngIf="popService.popularList" class="table table-borderless table-striped" striped="true">
-            <tbody>
-            <ng-container *ngFor="let title of popService.popularList| slice:0:20; let i = index">
-                <tr *ngIf="i % 2 == 0">
-                    <td class="hoverable td1">
-                        <div (click)="ts.search(title.id, popService.selectedType)" class="row">
-                            <div class="col col-img">
-                                <img *ngIf="title.poster_path"
-                                     [src]="'https://image.tmdb.org/t/p/w154' + title.poster_path"
-                                     alt="Can't load image"
-                                     class="icons z-depth-3">
-                                <img *ngIf="!title.poster_path" alt="Can't load image"
-                                     class="icons z-depth-3"
-                                     src="assets/404PosterNotFound.jpg">
-                                <div>
-                                    <app-stream [imgHeight]="'35px'" [imgWidth]="'35px'"
-                                                [incomingTitle]="title" class="stream"></app-stream>
-                                </div>
-                            </div>
-                            <div class="col col-txt mt-1 mt-md-0">
-                                <p class="title"><b>{{ i + 1 }}. {{ title.title ? title.title : title.name }}</b></p>
-                                <p>{{ title.release_date ? (title.release_date | date) : (title.first_air_date | date) }}</p>
-                                <p>
-                    <span *ngIf="title.vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(Math.round(title.vote_average*10))}} animated zoomIn z-depth-3">
-                      {{ Math.round(title.vote_average * 10) }}</span>
-                                    <span *ngIf="title.vote_average == 0"
-                                          class="badge badge-secondary animated zoomIn z-depth-3">
-                      NR</span>
-                                </p>
-                            </div>
+  <div (click)="scrollToElement()" [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
+    @if (popService.popularList) {
+      <table class="table table-borderless table-striped" striped="true">
+        <tbody>
+          @for (title of popService.popularList| slice:0:20; track title; let i = $index) {
+            @if (i % 2 == 0) {
+              <tr>
+                <td class="hoverable td1">
+                  <div (click)="ts.search(title.id, popService.selectedType)" class="row">
+                    <div class="col col-img">
+                      @if (title.poster_path) {
+                        <img
+                          [src]="'https://image.tmdb.org/t/p/w154' + title.poster_path"
+                          alt="Can't load image"
+                          class="icons z-depth-3">
+                      }
+                      @if (!title.poster_path) {
+                        <img alt="Can't load image"
+                          class="icons z-depth-3"
+                          src="assets/404PosterNotFound.jpg">
+                        }
+                        <div>
+                          <app-stream [imgHeight]="'35px'" [imgWidth]="'35px'"
+                          [incomingTitle]="title" class="stream"></app-stream>
                         </div>
-                    </td>
-
-                    <td class="hoverable td2">
-                        <div (click)="ts.search(popService.popularList[i+1].id, popService.selectedType)"
-                             class="row">
-                            <div class="col col-img">
-                                <img *ngIf="popService.popularList[i+1].poster_path"
-                                     [src]="'https://image.tmdb.org/t/p/w154' + popService.popularList[i+1].poster_path"
-                                     alt="Can't load image"
-                                     class="icons z-depth-3">
-                                <img *ngIf="!popService.popularList[i+1].poster_path" alt="Can't load image"
-                                     class="icons z-depth-3"
-                                     src="assets/404PosterNotFound.jpg">
-                                <div>
-                                    <app-stream [imgHeight]="'35px'" [imgWidth]="'35px'"
-                                                [incomingTitle]="popService.popularList[i+1]" class="stream"></app-stream>
-                                </div>
-                            </div>
-                            <div class="col col-txt mt-1 mt-md-0">
-                                <p class="title"><b>{{ i + 2 }}. {{ popService.popularList[i + 1].title ? popService.popularList[i + 1].title : popService.popularList[i + 1].name }}</b>
-                                </p>
-                                <p>{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
-                                <p>
-                    <span *ngIf="popService.popularList[i + 1].vote_average != 0"
-                          class="badge badge-{{ts.getRatingColor(Math.round(popService.popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
-                     {{ Math.round(popService.popularList[i + 1].vote_average * 10) }}</span>
-                                    <span *ngIf="popService.popularList[i + 1].vote_average == 0"
-                                          class="badge badge-secondary animated zoomIn z-depth-3">
-                      NR</span>
-                                </p>
-                            </div>
+                      </div>
+                      <div class="col col-txt mt-1 mt-md-0">
+                        <p class="title"><span class="title-name">{{ i + 1 }}. {{ title.title ? title.title : title.name }}</span></p>
+                        <p>{{ title.release_date ? (title.release_date | date) : (title.first_air_date | date) }}</p>
+                        <p>
+                          @if (title.vote_average != 0) {
+                            <span
+                              class="badge badge-{{ts.getRatingColor(Math.round(title.vote_average*10))}} animated zoomIn z-depth-3">
+                            {{ Math.round(title.vote_average * 10) }}</span>
+                          }
+                          @if (title.vote_average == 0) {
+                            <span
+                              class="badge badge-secondary animated zoomIn z-depth-3">
+                            NR</span>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="hoverable td2">
+                    <div (click)="ts.search(popService.popularList[i+1].id, popService.selectedType)"
+                      class="row">
+                      <div class="col col-img">
+                        @if (popService.popularList[i+1].poster_path) {
+                          <img
+                            [src]="'https://image.tmdb.org/t/p/w154' + popService.popularList[i+1].poster_path"
+                            alt="Can't load image"
+                            class="icons z-depth-3">
+                        }
+                        @if (!popService.popularList[i+1].poster_path) {
+                          <img alt="Can't load image"
+                            class="icons z-depth-3"
+                            src="assets/404PosterNotFound.jpg">
+                          }
+                          <div>
+                            <app-stream [imgHeight]="'35px'" [imgWidth]="'35px'"
+                            [incomingTitle]="popService.popularList[i+1]" class="stream"></app-stream>
+                          </div>
                         </div>
-                    </td>
+                        <div class="col col-txt mt-1 mt-md-0">
+                          <p class="title"><span class="title-name">{{ i + 2 }}. {{ popService.popularList[i + 1].title ? popService.popularList[i + 1].title : popService.popularList[i + 1].name }}</span>
+                        </p>
+                        <p>{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
+                        <p>
+                          @if (popService.popularList[i + 1].vote_average != 0) {
+                            <span
+                              class="badge badge-{{ts.getRatingColor(Math.round(popService.popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
+                            {{ Math.round(popService.popularList[i + 1].vote_average * 10) }}</span>
+                          }
+                          @if (popService.popularList[i + 1].vote_average == 0) {
+                            <span
+                              class="badge badge-secondary animated zoomIn z-depth-3">
+                            NR</span>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
-            </ng-container>
-            </tbody>
+              }
+            }
+          </tbody>
         </table>
+      }
     </div>
-</div>
+  </div>

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {EducationComponent} from './education.component';
 
@@ -6,12 +6,15 @@ describe('EducationComponent', () => {
     let component: EducationComponent;
     let fixture: ComponentFixture<EducationComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [EducationComponent]
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [EducationComponent]
         })
+            .overrideComponent(EducationComponent, {
+                set: {template: ''}
+            })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(EducationComponent);
