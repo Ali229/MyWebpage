@@ -1,63 +1,29 @@
-<div class="pgroup">
+<section class="projects-page">
     <h1>Projects</h1>
-    <div class="p1">
-        <div class="name">Postit</div>
-        <div class="desc">
-            <img class="z-depth-1-half cw" src="./assets/postit.jpg" alt="Postit Picture"><br><br>
-            (Angular, TypeScript, SCSS, HTML5): Designed and implemented a web platform for tax and
-            accounting professionals to automate financial needs including journalizing, posting, adjusting entries &
-            producing income statements.
-        </div>
-        <div class="link"><a href="https://alinaeem.com/postit/" target="_blank">Link</a></div>
+
+    <div class="projects-grid">
+        @for (project of projects; track project.title) {
+            <article class="project-card">
+                @if (project.image) {
+                    <div class="project-card__media" [class.project-card__media--contain]="project.imageFit === 'contain'">
+                        <img
+                            [alt]="project.imageAlt || project.title"
+                            [src]="project.image">
+                    </div>
+                }
+
+                <div class="project-card__content">
+                    <p class="project-card__stack">{{ project.stack }}</p>
+                    <h2>{{ project.title }}</h2>
+                    <p class="project-card__description">{{ project.description }}</p>
+
+                    @if (project.link) {
+                        <a [href]="project.link" class="project-card__link" rel="noopener noreferrer" target="_blank">
+                            {{ project.linkLabel || 'View project' }}
+                        </a>
+                    }
+                </div>
+            </article>
+        }
     </div>
-    <div class="p2">
-        <div class="name">WeTile</div>
-        <div class="desc">
-            <img class="z-depth-3" src="./assets/wetile.jpg" alt="WeTile Picture"><br><br>
-            (Android & C#): Developed a weather app that uses OpenWeatherMap API to get the current weather by utilizing
-            GPS
-            location on mobile devices. Designed widget functionality for both Android and Windows OS platform.
-        </div>
-        <div class="link">
-            <a href="https://github.com/Ali229/WeTile" target="_blank">GitHub Link</a>
-        </div>
-    </div>
-    <div class="p3">
-        <div class="name">ABDebatePRO</div>
-        <div class="desc">
-            <img class="z-depth-1-half cw" src="./assets/abdebatepro.jpg" alt="ABDebate Pro"><br><br>
-            (Java): Implemented the Round Robin algorithm to develop an automated debate scheduler software for a school
-            group
-            project.
-        </div>
-        <div class="link">
-            <a href="https://github.com/Ali229/ABDebatePro" target="_blank">GitHub Link</a>
-        </div>
-    </div>
-    <div class="p4">
-        <div class="name">Appetite</div>
-        <div class="desc">
-            <img class="z-depth-1-half cw" src="./assets/appetite.jpg" alt="Appetite Picture"><br><br>
-            (Unity): Developed a 2D video game by utilizing gyroscope functionality for mobile devices.
-        </div>
-        <div class="link"></div>
-    </div>
-    <div class="p5">
-        <div class="name">ChatWare</div>
-        <div class="desc">
-            <img class="z-depth-1-half cw" src="./assets/chatware.jpg" alt="ChatWare Picture"><br><br>
-            (Java): Developed a social communication Java software that utilizes socket programming & Java-FX.
-        </div>
-        <div class="link">
-            <a href="https://github.com/Ali229/ChatWare" target="_blank">GitHub Link</a>
-        </div>
-    </div>
-    <div class="p6">
-        <div class="name">Simple flashlight</div>
-        <div class="desc">
-            (Android): Developed and launched an Android flashlight application on Google Play. Also added widget
-            functionality. Project is launched on Google Play.
-        </div>
-        <div class="link"><a href="https://alinaeem.com/flashlight" target="_blank">Google Play Link</a></div>
-    </div>
-</div>
+</section>

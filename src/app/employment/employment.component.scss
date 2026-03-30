@@ -1,50 +1,120 @@
-.work1, .work2, .work3 {
-  overflow: hidden;
+.employment-page {
+  margin-top: 0.75rem;
 }
 
-.work2, .work3 {
-  margin-top: 20px;
+.employment-page h1 {
+  margin-bottom: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--app-heading);
 }
 
-h1 {
-  margin-bottom: 30px;
+.employment-list {
+  display: grid;
+  gap: 1.9rem;
 }
 
-.emgroup {
-  margin-top: 15px;
+.employment-entry {
+  padding-left: 1rem;
+  padding-bottom: 1.9rem;
+  border-left: 4px solid var(--app-accent-soft);
+  border-bottom: 1px solid #e6edf4;
 }
 
-.employer {
-  text-align: left;
-  width: 80%;
-  font-size: x-large;
-  float: left;
+.employment-entry:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
-.timeline {
-  width: 20%;
-  float: right;
-  font-size: large;
+.employment-entry__company h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--app-heading);
 }
 
-.job {
-  text-align: left;
-  width: 100%;
-  float: left;
-  font-size: larger;
+.employment-entry__meta,
+.employment-entry__summary {
+  margin: 0.35rem 0 0;
 }
 
-.info {
-  text-align: left;
-  width: 100%;
-  float: left;
-  font-size: large;
+.employment-entry__meta {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--app-accent);
 }
 
-@media screen and (max-width: 1024px) {
-  .employer, .job, .info, .timeline {
-    text-align: left;
-    float: none;
-    width: 100%;
+.employment-entry__summary {
+  font-size: 0.96rem;
+  color: var(--app-text-muted);
+}
+
+.employment-role-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.employment-role {
+  padding-left: 0;
+}
+
+.employment-role__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem 1rem;
+  align-items: start;
+}
+
+.employment-role__header h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--app-heading);
+}
+
+.employment-role__timeline {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: var(--app-accent-dark);
+  white-space: nowrap;
+}
+
+.employment-role__location {
+  margin: 0.35rem 0 0;
+  font-size: 0.94rem;
+  color: var(--app-text-muted);
+}
+
+.employment-role__details {
+  margin: 0.7rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--app-text-muted);
+}
+
+.employment-role__details li + li {
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 767.98px) {
+  .employment-page h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  .employment-entry {
+    padding-left: 0.85rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .employment-role__header {
+    grid-template-columns: 1fr;
+  }
+
+  .employment-role__timeline {
+    white-space: normal;
   }
 }

@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {SkillbarComponent} from '../skillbar/skillbar.component';
 
 @Component({
@@ -6,14 +7,13 @@ import {SkillbarComponent} from '../skillbar/skillbar.component';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [SkillbarComponent]
+    imports: [CommonModule, SkillbarComponent]
 })
-export class HomeComponent implements OnInit {
-
-    constructor() {
-    }
-
-    ngOnInit() {
-    }
-
+export class HomeComponent {
+    highlights = [
+        'Angular + TypeScript',
+        'Workflow-heavy product development',
+        'Full-stack feature delivery',
+        'Technical mentoring'
+    ];
 }

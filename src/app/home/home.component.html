@@ -1,27 +1,40 @@
-<div class="row">
-    <div class="col-md-6 col-sm-12">
-        <img class="z-depth-3" src="./assets/mypic.jpg" alt="My picture">
-    </div>
-    <div class="col-md-6 col-sm-12">
-        <div class="content">
-            <div><h1>About Me</h1></div>
-            <div style="margin-bottom: 5px;">I'm currently enrolled at Kennesaw State University for Software
-                Engineering. I
-                like
-                to write clean code, I
-                enjoy working on Web apps, desktop apps, Android apps & video games. I designed this website using
-                Angular and
-                Bootstrap & I'm hosting this on my home web server using a Raspberry Pi.
-            </div>
-            <div>
-                I work for KSU as a teaching assistant and tutor for Data Structures, Java Programming and Advanced
-                Programming
-                Principles.
-            </div>
-            <div style="margin-top: 8px"><h1>Experienced With</h1></div>
-            <div>
-                <app-skillbar></app-skillbar>
+<section class="home-page">
+    <div class="home-hero">
+        <div class="home-hero__media">
+            <img class="home-portrait z-depth-3" src="./assets/mypic.jpg" alt="Muhammad Ali Naeem">
+        </div>
+
+        <div class="home-hero__content">
+            <p class="home-eyebrow">Software Engineer</p>
+            <h1>Muhammad Ali</h1>
+            <p class="home-lead">
+                I build reliable Angular and TypeScript products with a focus on clean interfaces, strong workflow design,
+                and maintainable code.
+            </p>
+            <p class="home-copy">
+                I currently work at Yardi, shipping features across affordable housing and compliance products, including
+                certification workflows, verification tooling, document systems, and resident-facing experiences.
+            </p>
+            <p class="home-copy">
+                My background spans full-stack product development, technical mentoring, and hands-on work across web,
+                desktop, and mobile projects. I enjoy turning dense business requirements into software that feels clear,
+                fast, and practical for the people using it every day.
+            </p>
+
+            <div class="home-highlights">
+                @for (highlight of highlights; track highlight) {
+                    <span class="home-highlight">{{ highlight }}</span>
+                }
             </div>
         </div>
     </div>
-</div>
+
+    <section class="home-section">
+        <div class="home-section__header">
+            <h2>Core Skills</h2>
+            <p>Current strengths across frontend engineering, product systems, and delivery.</p>
+        </div>
+
+        <app-skillbar></app-skillbar>
+    </section>
+</section>

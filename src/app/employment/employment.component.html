@@ -1,28 +1,38 @@
-<div class="emgroup">
+<section class="employment-page">
     <h1>Employment</h1>
-    <div class="work1">
-        <div class="employer"><b>Kennesaw State University</b></div>
-        <div class="timeline">Jan 2017 — Present</div>
-        <div class="job"><i>Computer Programming Tutor and Teaching Assistant</i></div>
-        <div class="info">• Tutor programming languages including Java, C#, C++, Python, and JavaScript<br>
-            • Assist students in completing their assignments and clarifying concepts
-        </div>
+
+    <div class="employment-list">
+        @for (group of employmentGroups; track group.company) {
+            <article class="employment-entry">
+                <div class="employment-entry__company">
+                    <h2>{{ group.company }}</h2>
+                    <p class="employment-entry__meta">{{ group.type }}</p>
+                    @if (group.summary) {
+                        <p class="employment-entry__summary">{{ group.summary }}</p>
+                    }
+                </div>
+
+                <div class="employment-role-list">
+                    @for (role of group.roles; track role.title + role.timeline) {
+                        <section class="employment-role">
+                            <div class="employment-role__header">
+                                <h3>{{ role.title }}</h3>
+                                <p class="employment-role__timeline">{{ role.timeline }}</p>
+                            </div>
+
+                            @if (role.location) {
+                                <p class="employment-role__location">{{ role.location }}</p>
+                            }
+
+                            <ul class="employment-role__details">
+                                @for (detail of role.details; track detail) {
+                                    <li>{{ detail }}</li>
+                                }
+                            </ul>
+                        </section>
+                    }
+                </div>
+            </article>
+        }
     </div>
-    <div class="work2">
-        <div class="employer"><b>SwordsAxe</b></div>
-        <div class="timeline">Dec 2012 — Present</div>
-        <div class="job"><i>Web Developer</i></div>
-        <div class="info">• Adding new components to the website <br>
-            • Update and revise website content on a weekly-basis<br>
-            • Maintain the website and product catalog<br>
-        </div>
-    </div>
-    <div class="work3">
-        <div class="employer"><b>Burruss Institute of Public Service and Research</b></div>
-        <div class="timeline">Aug 2016 — Jan 2017</div>
-        <div class="job"><i>Data Collector</i></div>
-        <div class="info">• Surveyed residents in different areas using a questionnaire to aggregate data<br>
-            • Entered responses in an automated system and produced reports
-        </div>
-    </div>
-</div>
+</section>

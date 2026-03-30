@@ -1,9 +1,108 @@
-.contact {
-  margin-top: 20px;
+.contact-page {
+  margin-top: 0.75rem;
 }
 
-.contact-icon {
-  margin-right: 10px;
+.contact-page h1 {
+  margin-bottom: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--app-heading);
 }
 
+.contact-intro {
+  max-width: 42rem;
+  margin: 0;
+  font-size: 1.02rem;
+  color: var(--app-text-muted);
+}
 
+.contact-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  padding: 0 1.25rem;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--app-accent);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  box-shadow: 0 14px 28px rgba(63, 114, 155, 0.24);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.contact-cta:hover,
+.contact-cta:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 32px rgba(63, 114, 155, 0.28);
+  background: var(--app-accent-dark);
+  color: #fff;
+}
+
+.contact-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.75rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  min-height: 76px;
+  padding: 1rem 1.1rem;
+  border-left: 4px solid var(--app-accent-soft);
+  border-bottom: 1px solid #e6edf4;
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #edf5fb;
+  color: var(--app-accent);
+  flex-shrink: 0;
+}
+
+.contact-item__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.contact-item__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--app-accent-dark);
+}
+
+.contact-item__value {
+  font-size: 1rem;
+  color: var(--app-heading);
+  word-break: break-word;
+}
+
+a.contact-item:hover .contact-item__value,
+a.contact-item:focus .contact-item__value {
+  color: var(--app-accent);
+}
+
+@media (max-width: 767.98px) {
+  .contact-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-item {
+    align-items: flex-start;
+  }
+}
