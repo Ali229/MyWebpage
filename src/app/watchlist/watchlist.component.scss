@@ -52,6 +52,14 @@ a {
   color: black;
 }
 
+.watchlist-link,
+.watchlist-link:hover,
+.watchlist-link:focus,
+.watchlist-link:active {
+  color: inherit;
+  text-decoration: none;
+}
+
 .overview {
   //height:200px;
   //white-space: nowrap;

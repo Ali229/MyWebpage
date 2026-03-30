@@ -44,7 +44,7 @@
           </a>
           <div class="col-8 p-2">
             <div class="row">
-              <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']">
+              <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']" class="watchlist-link">
                 <h5 class="watchlist-title">
                   <b>{{ title.title ? title.title : title.name }}
                   <span class="year text-muted"> ({{
