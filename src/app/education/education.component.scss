@@ -1,50 +1,97 @@
-.degree2, .degree1 {
-  overflow: hidden;
+.education-page {
+  margin-top: 0.75rem;
 }
 
-.degree2 {
-  margin-top: 20px;
+.education-page h1 {
+  margin-bottom: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--app-heading);
 }
 
-h1 {
-  margin-bottom: 30px;
+.education-list {
+  display: grid;
+  gap: 1.75rem;
 }
 
-.edgroup {
-  margin-top: 15px;
+.education-entry {
+  padding-left: 1rem;
+  padding-bottom: 1.75rem;
+  border-left: 4px solid var(--app-accent-soft);
+  border-bottom: 1px solid #e6edf4;
 }
 
-.degreename {
-  text-align: left;
-  width: 80%;
-  font-size: x-large;
-  float: left;
+.education-entry:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
-.timeline {
-  width: 20%;
-  float: right;
-  font-size: large;
+.education-entry__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem 1rem;
+  align-items: start;
 }
 
-.school {
-  text-align: left;
-  width: 100%;
-  float: left;
-  font-size: larger;
+.education-entry__header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--app-heading);
 }
 
-.GPA {
-  text-align: left;
-  width: 100%;
-  float: left;
-  font-size: large;
+.education-entry__focus {
+  display: inline;
+  font-weight: 700;
+  color: var(--app-accent);
 }
 
-@media screen and (max-width: 1024px) {
-  .degreename, .school, .GPA, .timeline {
-    text-align: left;
-    float: none;
-    width: 100%;
+.education-entry__timeline {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--app-accent-dark);
+  white-space: nowrap;
+}
+
+.education-entry__school,
+.education-entry__meta {
+  margin: 0.55rem 0 0;
+}
+
+.education-entry__school {
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #34465d;
+}
+
+.education-entry__meta {
+  font-size: 0.98rem;
+  color: var(--app-text-muted);
+}
+
+.education-entry__meta-value {
+  font-weight: 700;
+  color: var(--app-heading);
+}
+
+@media (max-width: 767.98px) {
+  .education-page h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  .education-entry {
+    padding-left: 0.85rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .education-entry__header {
+    grid-template-columns: 1fr;
+  }
+
+  .education-entry__timeline {
+    white-space: normal;
   }
 }

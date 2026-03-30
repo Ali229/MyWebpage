@@ -1,4 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --app-accent: #3f729b;
+  --app-accent-dark: #305776;
+  --app-accent-soft: #d7e5f1;
+  --app-heading: #10243d;
+  --app-text-muted: #596a7f;
+}
+
 html, body {
   font-family: 'Roboto', sans-serif;
   color: #212529;
@@ -35,11 +43,11 @@ b, strong {
 }
 
 .unique-color {
-  background-color: #3f729b !important;
+  background-color: var(--app-accent) !important;
 }
 
 .unique-color-dark {
-  background-color: #305776 !important;
+  background-color: var(--app-accent-dark) !important;
 }
 
 .white-text {
