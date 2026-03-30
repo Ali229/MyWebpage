@@ -1,32 +1,64 @@
-<div class="row">
-  <h1 class="col p-0"><b>Settings</b>
-</h1>
-<div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0 mr-2">
-</div>
-<div class="col-auto ml-auto button-col mb-1 mb-sm-0 p-0">
-  <button class="btn btn-dark app-back-button" id="target" routerLink="../movies" type="button">
-    <i aria-hidden="true" class="fas fa-arrow-left"></i>
-    <span>Back</span>
-  </button>
-</div>
-</div>
+<section class="settings-page">
+  <header class="settings-header">
+    <div class="settings-title-row">
+      <h1>Streaming providers</h1>
+      <span class="settings-pill">{{ selectedProvidersCount }} selected</span>
+    </div>
 
-@if (this.auth.settingsLoaded) {
-  <div class="mt-4">
-    <h6 class="text-muted">Select Streaming Providers</h6>
-    @for (provider of auth.providers; track provider) {
-      <div class="provider-option">
-        <label [for]="provider.id">
-          <input [(ngModel)]="provider.selected" [id]="provider.id" [name]="provider.id" type="checkbox">
-          <span> {{ provider.name }}</span>
-        </label>
-        <img [alt]="provider.name + ' Icon'" [src]="provider.icon">
-      </div>
-    }
-    <button (click)="updateSettings()" class="btn btn-dark" type="button">
-      Save
+    <button class="btn btn-dark app-back-button" id="target" routerLink="../movies" type="button">
+        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+        <span>Back</span>
     </button>
-  </div>
-} @else {
-  <div class="spinner-border" role="status" style="width: 8rem; height: 8rem;"></div>
-}
+  </header>
+
+  @if (auth.settingsLoaded) {
+    <section class="settings-panel settings-panel--primary">
+      <div class="panel-heading">
+        <div class="provider-actions">
+          <button (click)="selectAllProviders()" class="panel-action" type="button">Select all</button>
+          <button (click)="clearProviders()" class="panel-action panel-action--ghost" type="button">Clear all</button>
+        </div>
+      </div>
+
+      <div class="provider-grid">
+        @for (provider of auth.providers; track provider.id) {
+          <label class="provider-card" [class.is-selected]="provider.selected" [for]="'provider-' + provider.id">
+            <input
+              [(ngModel)]="provider.selected"
+              [id]="'provider-' + provider.id"
+              [name]="'provider-' + provider.id"
+              class="provider-card__checkbox"
+              type="checkbox">
+
+            <span class="provider-card__icon">
+              <img [alt]="provider.name + ' icon'" [src]="provider.icon">
+            </span>
+
+            <span class="provider-card__content">
+              <span class="provider-card__title">{{ provider.name }}</span>
+            </span>
+
+            <span class="provider-card__state">
+              <i aria-hidden="true" [class]="provider.selected ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+            </span>
+          </label>
+        }
+      </div>
+
+      <div class="settings-footer">
+        <button
+          (click)="updateSettings()"
+          [disabled]="!hasChanges || !auth.settingsLoaded"
+          class="settings-save-button"
+          type="button">
+          Save changes
+        </button>
+      </div>
+    </section>
+  } @else {
+    <div class="settings-loading" role="status">
+      <div aria-hidden="true" class="spinner-border settings-loading__spinner"></div>
+      <p>Loading your provider preferences...</p>
+    </div>
+  }
+</section>
