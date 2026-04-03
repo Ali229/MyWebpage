@@ -1,28 +1,35 @@
 @if (auth.user.uid) {
-  <div>
-    <div class="profile">
-      <details class="profile-dropdown">
-        <summary class="dropdown-toggle profile-toggle">
-          <img (error)="onImageError()" [src]="auth.user.photoURL" alt="" class="rounded-circle hoverable">
-          @if (showIcon) {
-            <i class="fas fa-user fa-lg mt-3"></i>
-          }
-        </summary>
-        <div class="dropdown-menu show">
-          <h6 class="dropdown-header">{{auth.user.displayName }}</h6>
-          <a class="dropdown-item" routerLink="../watchlist">Watchlist ({{ auth.watchlist.length }})</a>
-          <a class="dropdown-item" routerLink="../lovelist">Love List</a>
-          <a class="dropdown-item" routerLink="../settings">Settings</a>
-          <div class="divider dropdown-divider"></div>
-          <a (click)="auth.signOut()" class="dropdown-item">Logout</a>
-        </div>
-      </details>
+  <details #menu class="profile-dropdown">
+    <summary [attr.aria-label]="displayName + ' menu'" class="profile-toggle">
+      <span class="avatar-shell">
+        @if (auth.user.photoURL && !showIcon) {
+          <img (error)="onImageError()" [src]="auth.user.photoURL" [alt]="displayName + ' avatar'" class="avatar-image">
+        } @else {
+          <span class="avatar-fallback">{{ avatarInitial }}</span>
+        }
+      </span>
+    </summary>
+
+    <div class="profile-menu">
+      <p class="profile-menu__heading">{{ displayName }}</p>
+      <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/watchlist">
+        <span>Watchlist</span>
+        <span class="menu-chip">{{ auth.watchlist.length }}</span>
+      </a>
+          <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
+            <span>Lovelist</span>
+          </a>
+      <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings">
+        <span>Settings</span>
+      </a>
+      <button (click)="signOut(menu)" class="profile-menu__item profile-menu__item--logout" type="button">
+        <span>Logout</span>
+      </button>
     </div>
-  </div>
+  </details>
 } @else {
-  @if (!auth.user.uid) {
-    <button (click)="auth.googleSignin()" class="btn btn-dark" id="target" type="button">
-      Connect With Google
-    </button>
-  }
+  <button (click)="auth.googleSignin()" class="connect-btn" id="target" type="button">
+    <i aria-hidden="true" class="fab fa-google"></i>
+    <span>Connect with Google</span>
+  </button>
 }

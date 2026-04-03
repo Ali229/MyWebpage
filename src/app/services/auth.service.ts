@@ -11,6 +11,7 @@ import {firebaseAuth, firestore} from '../firebase.config';
 export class AuthService {
     watchlist: Title[] = [];
     empty = false;
+    watchlistLoaded = false;
     moviesCount = 0;
     tvCount = 0;
     settingsLoaded = false;
@@ -30,6 +31,8 @@ export class AuthService {
         displayName: '', email: '', myCustomData: '', photoURL: ''
     };
     public bShowStreamableOnly = false;
+    private authStateReadySubject = new BehaviorSubject<boolean>(false);
+    public authStateReady$ = this.authStateReadySubject.asObservable();
     private _bShowStreamableCheckBox = new BehaviorSubject<boolean>(false);
     public bShowStreamableCheckbox$ = this._bShowStreamableCheckBox.asObservable();
 
@@ -55,11 +58,13 @@ export class AuthService {
                     photoURL: ''
                 };
                 this.watchlist = [];
+                this.watchlistLoaded = true;
                 this.moviesCount = 0;
                 this.tvCount = 0;
                 this.empty = false;
                 this._bShowStreamableCheckBox.next(true);
             }
+            this.authStateReadySubject.next(true);
         });
     }
 
@@ -101,30 +106,41 @@ export class AuthService {
     }
 
     async getWatchlist() {
+        this.watchlistLoaded = false;
         if (this.user.uid) {
+            try {
+                this.watchlist = [];
+                this.empty = false;
+                const watchlistQuery = query(
+                    collection(firestore, 'users', this.user.uid, 'watchlist'),
+                    orderBy('watchlistAddDate')
+                );
+                const snapshot = await getDocs(watchlistQuery);
+                let x = 0;
+                this.moviesCount = 0;
+                this.tvCount = 0;
+                for (const item of snapshot.docs) {
+                    this.watchlist.push(item.data() as Title);
+                    this.watchlist[x].watchlistDocId = item.id;
+                    if (this.watchlist[x].media_type === 'movie') {
+                        this.moviesCount++;
+                    } else if (this.watchlist[x].media_type === 'tv') {
+                        this.tvCount++;
+                    }
+                    x++;
+                }
+                if (this.watchlist.length === 0) {
+                    this.empty = true;
+                }
+            } finally {
+                this.watchlistLoaded = true;
+            }
+        } else {
             this.watchlist = [];
-            this.empty = false;
-            const watchlistQuery = query(
-                collection(firestore, 'users', this.user.uid, 'watchlist'),
-                orderBy('watchlistAddDate')
-            );
-            const snapshot = await getDocs(watchlistQuery);
-            let x = 0;
             this.moviesCount = 0;
             this.tvCount = 0;
-            for (const item of snapshot.docs) {
-                this.watchlist.push(item.data() as Title);
-                this.watchlist[x].watchlistDocId = item.id;
-                if (this.watchlist[x].media_type === 'movie') {
-                    this.moviesCount++;
-                } else if (this.watchlist[x].media_type === 'tv') {
-                    this.tvCount++;
-                }
-                x++;
-            }
-            if (this.watchlist.length === 0) {
-                this.empty = true;
-            }
+            this.empty = false;
+            this.watchlistLoaded = true;
         }
     }
 

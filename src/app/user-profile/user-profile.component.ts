@@ -16,7 +16,24 @@ export class UserProfileComponent {
     constructor(public auth: AuthService) {
     }
 
+    get displayName(): string {
+        return this.auth.user.displayName || this.auth.user.email || 'Profile';
+    }
+
+    get avatarInitial(): string {
+        return this.displayName.charAt(0).toUpperCase();
+    }
+
     onImageError() {
         this.showIcon = true;
+    }
+
+    closeMenu(menu: HTMLDetailsElement) {
+        menu.open = false;
+    }
+
+    signOut(menu: HTMLDetailsElement) {
+        this.closeMenu(menu);
+        this.auth.signOut();
     }
 }

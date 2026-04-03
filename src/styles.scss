@@ -37,6 +37,14 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
+.subpage-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.5vw, 2.45rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: #10243d;
+}
+
 b, strong {
   font-weight: 500;
 }

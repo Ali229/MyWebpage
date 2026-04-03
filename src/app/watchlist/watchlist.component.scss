@@ -1,23 +1,124 @@
-h1 {
-  margin-bottom: 30px;
-}
-
 .watchlist-header {
-  margin-bottom: 1rem;
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
 }
 
-.watchlist-controls {
+.watchlist-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.watchlist-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.watchlist-top-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-left: auto;
 }
 
-.watchlist-controls .custom-select {
-  height: 50px;
+.watchlist-filter {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
 }
 
-.watchlist-controls app-back-button {
-  flex: 0 0 auto;
+.watchlist-filter-menu {
+  position: relative;
+  margin: 0;
+}
+
+.watchlist-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  box-sizing: border-box;
+  min-height: 42px;
+  min-width: 205px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid #cad5e0;
+  border-radius: 14px;
+  background: #fff;
+  color: #23384c;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1;
+  list-style: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.watchlist-filter-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.watchlist-filter-trigger:focus-visible,
+.watchlist-filter-menu[open] .watchlist-filter-trigger {
+  border-color: #9eacba;
+  box-shadow: 0 0 0 2px rgba(158, 172, 186, 0.25);
+}
+
+.watchlist-filter-trigger__caret {
+  color: #647588;
+  font-size: 0.72rem;
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.watchlist-filter-menu[open] .watchlist-filter-trigger__caret {
+  transform: rotate(180deg);
+}
+
+.watchlist-filter-options {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 22;
+  min-width: 220px;
+  padding: 0.45rem;
+  border: 1px solid #d3dfec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 16px 30px rgba(16, 36, 61, 0.2);
+}
+
+.watchlist-filter-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #1b4e74;
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.watchlist-filter-option:hover,
+.watchlist-filter-option:focus {
+  background: #edf5fb;
+  color: #164669;
+}
+
+.watchlist-filter-option.is-active {
+  background: #e2eff9;
+  color: #164669;
 }
 
 .poster {
@@ -89,23 +190,43 @@ a {
 
 // Extra small devices (portrait phones, less than 576px)
 @media (max-width: 575.98px) {
-  h1 {
-    margin-bottom: 5px;
+  .watchlist-header {
+    margin-bottom: 1.2rem;
   }
-  .watchlist-controls {
-    display: block;
-    width: 100%;
+
+  .watchlist-top {
+    align-items: flex-start;
   }
-  .watchlist-controls .custom-select,
-  .watchlist-controls app-back-button {
+
+  .watchlist-top-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     width: 100%;
-    margin-right: 0;
     margin-left: 0;
   }
-  .watchlist-controls app-back-button {
-    display: block;
-    margin-top: 0.5rem;
+
+  .watchlist-filter {
+    width: 100%;
+    min-width: 0;
   }
+
+  .watchlist-filter-menu {
+    width: 100%;
+  }
+
+  .watchlist-filter-trigger {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .watchlist-filter-options {
+    left: 0;
+    right: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
   .badge {
     font-size: 20px;
     padding: 10px
@@ -141,9 +262,3 @@ a {
   }
 }
 
-@media (min-width: 767px) {
-  .custom-select {
-    margin: .375rem;
-    margin-right: 10px;
-  }
-}

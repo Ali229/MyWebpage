@@ -5,16 +5,17 @@ import { HttpClient } from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
-import {skip} from 'rxjs/operators';
+import {finalize, skip} from 'rxjs/operators';
 import {PopularService} from '../services/popular.service';
 import {StreamComponent} from '../stream/stream.component';
+import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 
 @Component({
     selector: 'app-popular',
     templateUrl: './popular.component.html',
     styleUrls: ['./popular.component.scss'],
     standalone: true,
-    imports: [CommonModule, StreamComponent]
+    imports: [CommonModule, StreamComponent, PageLoaderComponent]
 })
 export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
@@ -24,8 +25,9 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.toggleMediaType(this.popService.selectedType);
         this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.pipe(skip(1)).subscribe(value => {
-            this.toggleMediaType('movie');
+            this.toggleMediaType(this.popService.selectedType);
         });
     }
 
@@ -34,11 +36,14 @@ export class PopularComponent implements OnInit, OnDestroy {
         const selectedList = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
         if (selectedList.length === 0) {
             this.fetchMostPopular();
+        } else {
+            this.popService.loadingPopular = false;
         }
         this.popService.popularList = selectedList;
     }
 
     fetchMostPopular() {
+        this.popService.loadingPopular = true;
         console.log('Fetching Most Popular...');
         const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
         const regionOrLang = this.popService.selectedType === 'movie' ? 'region=us' :
@@ -55,7 +60,11 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         const apiUrl = `https://api.themoviedb.org/3/discover/${this.popService.selectedType}?` + watchProvidersParam + `&watch_region=US&sort_by=popularity.desc` +
             `&api_key=${apiKey}&${regionOrLang}`;
-        this.http.get(apiUrl).subscribe((response: any) => {
+        this.http.get(apiUrl).pipe(
+            finalize(() => {
+                this.popService.loadingPopular = false;
+            })
+        ).subscribe((response: any) => {
             response.results.forEach((title: Title) => {
                 if (this.popService.selectedType === 'movie') {
                     this.popService.popularMovies.push(title);

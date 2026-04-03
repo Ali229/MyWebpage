@@ -11,6 +11,5 @@ import {RouterModule} from '@angular/router';
 })
 export class BackButtonComponent {
     @Input() to: string | readonly (string | number)[] = '/movies';
-    @Input() label = 'Back';
     @Input() ariaLabel = 'Go back';
 }

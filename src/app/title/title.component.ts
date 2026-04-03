@@ -6,6 +6,7 @@ import {TitleService} from '../services/title.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {StreamComponent} from '../stream/stream.component';
+import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 
 
 @Component({
@@ -13,7 +14,7 @@ import {StreamComponent} from '../stream/stream.component';
     templateUrl: './title.component.html',
     styleUrls: ['./title.component.scss'],
     standalone: true,
-    imports: [CommonModule, StreamComponent]
+    imports: [CommonModule, StreamComponent, PageLoaderComponent]
 })
 export class TitleComponent implements OnInit, OnDestroy {
 

@@ -8,6 +8,7 @@ export class PopularService {
   public popularList: Title[] = [];
   public popularMovies: Title[] = [];
   public popularTVShows: Title[] = [];
+  public loadingPopular = false;
   selectedType = 'movie';
   constructor() { }
 }

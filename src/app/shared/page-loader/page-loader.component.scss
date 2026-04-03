@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.page-loader {
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.page-loader__spinner {
+  color: #2f7aaa;
+  border-width: 0.28rem;
+}

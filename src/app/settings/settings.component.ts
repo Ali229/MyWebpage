@@ -4,6 +4,8 @@ import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {BackButtonComponent} from '../shared/back-button/back-button.component';
+import {UserProfileComponent} from '../user-profile/user-profile.component';
+import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 
 interface ProviderOption {
     id: number;
@@ -17,7 +19,7 @@ interface ProviderOption {
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule, BackButtonComponent]
+    imports: [CommonModule, FormsModule, RouterModule, BackButtonComponent, UserProfileComponent, PageLoaderComponent]
 })
 export class SettingsComponent implements DoCheck {
     private initialSelectionSnapshot = '';

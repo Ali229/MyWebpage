@@ -1,22 +1,17 @@
 <section class="settings-page">
   <header class="settings-header">
     <div class="settings-title-row">
-      <h1>Streaming providers</h1>
-      <span class="settings-pill">{{ selectedProvidersCount }} selected</span>
+      <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
+      <h1 class="subpage-title">Streaming providers</h1>
     </div>
 
-    <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
+    <div class="settings-header-actions">
+      <app-user-profile></app-user-profile>
+    </div>
   </header>
 
   @if (auth.settingsLoaded) {
     <section class="settings-panel settings-panel--primary">
-      <div class="panel-heading">
-        <div class="provider-actions">
-          <button (click)="selectAllProviders()" class="panel-action" type="button">Select all</button>
-          <button (click)="clearProviders()" class="panel-action panel-action--ghost" type="button">Clear all</button>
-        </div>
-      </div>
-
       <div class="provider-grid">
         @for (provider of auth.providers; track provider.id) {
           <label class="provider-card" [class.is-selected]="provider.selected" [for]="'provider-' + provider.id">
@@ -54,9 +49,6 @@
       </div>
     </section>
   } @else {
-    <div class="settings-loading" role="status">
-      <div aria-hidden="true" class="spinner-border settings-loading__spinner"></div>
-      <p>Loading your provider preferences...</p>
-    </div>
+    <app-page-loader [minHeight]="'360px'" [spinnerSize]="'4.5rem'"></app-page-loader>
   }
 </section>

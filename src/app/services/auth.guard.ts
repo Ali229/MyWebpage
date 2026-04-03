@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthService} from './auth.service';
-import {map, take, tap} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -15,11 +15,10 @@ export class AuthGuard  {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-        if (this.auth.user && this.auth.user.uid) {
-            return true;
-        } else {
-            this.router.navigate(['/movies']); // Navigate to movies page if not logged in
-            return false;
-        }
+        return this.auth.authStateReady$.pipe(
+            filter(isReady => isReady),
+            take(1),
+            map(() => this.auth.user && this.auth.user.uid ? true : this.router.createUrlTree(['/movies']))
+        );
     }
 }

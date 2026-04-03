@@ -1,6 +1,6 @@
 .lovelist-page {
   display: grid;
-  gap: 1rem;
+  gap: 1.6rem;
 }
 
 .lovelist-header {
@@ -10,9 +10,22 @@
   gap: 1rem;
 }
 
-.lovelist-header h1 {
-  margin: 0;
-  font-size: clamp(1.65rem, 3.2vw, 2.2rem);
-  font-weight: 600;
-  color: #10243d;
+.lovelist-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+@media (max-width: 767.98px) {
+  .lovelist-page {
+    gap: 1.2rem;
+  }
+
+  .lovelist-header {
+    align-items: flex-start;
+  }
+
+  .lovelist-heading {
+    flex-wrap: wrap;
+  }
 }

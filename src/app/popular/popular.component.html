@@ -7,7 +7,9 @@
 
 <div class="tab-content" id="pills-tabContent">
   <div (click)="scrollToElement()" [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
-    @if (popService.popularList) {
+    @if (popService.loadingPopular) {
+      <app-page-loader [minHeight]="'320px'" [spinnerSize]="'4.5rem'"></app-page-loader>
+    } @else {
       <table class="table table-borderless table-striped" striped="true">
         <tbody>
           @for (title of popService.popularList| slice:0:20; track title; let i = $index) {
@@ -92,8 +94,8 @@
                 </tr>
               }
             }
-          </tbody>
-        </table>
-      }
-    </div>
+        </tbody>
+      </table>
+    }
   </div>
+</div>

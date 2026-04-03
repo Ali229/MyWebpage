@@ -1,6 +1,7 @@
 import {BehaviorSubject} from 'rxjs';
 
 export function createAuthServiceStub() {
+    const authStateReady$ = new BehaviorSubject(true);
     const streamableOnly$ = new BehaviorSubject(true);
 
     return {
@@ -18,6 +19,7 @@ export function createAuthServiceStub() {
         providers: [],
         settingsLoaded: true,
         bShowStreamableOnly: false,
+        authStateReady$: authStateReady$.asObservable(),
         bShowStreamableCheckbox$: streamableOnly$.asObservable(),
         getWatchlisted: jasmine.createSpy('getWatchlisted').and.returnValue(false),
         addToWatchlist: jasmine.createSpy('addToWatchlist'),

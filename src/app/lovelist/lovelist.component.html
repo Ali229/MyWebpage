@@ -1,8 +1,15 @@
-<section class="lovelist-page">
-  <header class="lovelist-header">
-    <h1>Love list</h1>
-    <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
-  </header>
+@if (auth.authStateReady$ | async) {
+  <section class="lovelist-page">
+    <header class="lovelist-header">
+      <div class="lovelist-heading">
+        <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
+        <h1 class="subpage-title">Lovelist</h1>
+      </div>
+      <app-user-profile></app-user-profile>
+    </header>
 
-  <p>Work in progress</p>
-</section>
+    <p>Work in progress</p>
+  </section>
+} @else {
+  <app-page-loader [minHeight]="'360px'" [spinnerSize]="'4.5rem'"></app-page-loader>
+}

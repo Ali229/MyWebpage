@@ -1,12 +1,10 @@
-<div style="text-align: center;">
-  @if (ts.loading) {
-    <span class="spinner-border" style="width: 8rem; height: 8rem;" role="status"></span>
-  }
-</div>
+@if (ts.loading) {
+  <app-page-loader [minHeight]="'50vh'" [spinnerSize]="'5.25rem'"></app-page-loader>
+}
 @if (!ts.error) {
   <div>
-    @if (title) {
-      <div [hidden]="ts.loading" class="mt-2">
+    @if (title && !ts.loading) {
+      <div class="mt-2">
         <div class="row ml-md-3">
           <div class="col-12 col-md-4 animated zoomIn text-light">
             <div class="row">
@@ -43,7 +41,7 @@
                     }
                   </div>
                   <div class="col-auto ml-auto p-0"
-                    [attr.title]="auth.user.uid ? 'Add to love list' : 'Login to add this title to your love list'">
+                    [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
                     <div class="love">
                       <i class="fas fa-heart"></i>
                     </div>
