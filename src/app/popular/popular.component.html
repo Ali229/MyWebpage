@@ -36,7 +36,7 @@
                       </div>
                       <div class="col col-txt mt-1 mt-md-0">
                         <p class="title"><span class="title-name">{{ i + 1 }}. {{ title.title ? title.title : title.name }}</span></p>
-                        <p>{{ title.release_date ? (title.release_date | date) : (title.first_air_date | date) }}</p>
+                        <p class="popular-meta-date">{{ title.release_date ? (title.release_date | date) : (title.first_air_date | date) }}</p>
                         <p>
                           @if (title.vote_average != 0) {
                             <span
@@ -75,7 +75,7 @@
                         <div class="col col-txt mt-1 mt-md-0">
                           <p class="title"><span class="title-name">{{ i + 2 }}. {{ popService.popularList[i + 1].title ? popService.popularList[i + 1].title : popService.popularList[i + 1].name }}</span>
                         </p>
-                        <p>{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
+                        <p class="popular-meta-date">{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
                         <p>
                           @if (popService.popularList[i + 1].vote_average != 0) {
                             <span

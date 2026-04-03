@@ -60,7 +60,7 @@
                 src="assets/404PosterNotFound.jpg">
               }
             </a>
-            <div class="col-8 p-2 watchlist-content">
+            <div class="col-8 p-2">
               <div class="row">
                 <a (click)="ts.search(title.id, title.media_type)" [routerLink]="['/movies']" class="watchlist-link">
                   <h5 class="watchlist-title">
@@ -72,7 +72,7 @@
                   </h5>
                 </a>
                   </div>
-                  <div class="row d-none d-sm-block">
+                  <div class="row d-none d-sm-block watchlist-meta">
                     @if (title.certification) {
                       <span><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
                     }
@@ -131,7 +131,7 @@
                         </a>
                       </div>
                     </div>
-                    <div class="row mt-lg-3 watchlist-stream-row">
+                    <div class="row mt-lg-3">
                       <app-stream [incomingTitle]="title"></app-stream>
                     </div>
                   </div>

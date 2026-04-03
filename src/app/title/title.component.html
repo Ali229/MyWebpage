@@ -5,8 +5,8 @@
   <div>
     @if (title && !ts.loading) {
       <div class="mt-2">
-        <div class="row ml-md-3">
-          <div class="col-12 col-md-4 animated zoomIn text-light">
+        <div class="row title-layout">
+          <div class="col-12 col-md-auto title-poster-col animated zoomIn text-light">
             <div class="row">
               @if (title.poster_path) {
                 <img class="poster"
@@ -59,9 +59,9 @@
                 </div>
                 <app-stream class="stream"></app-stream>
               </div>
-              <div class="col-12 col-md-8 bodyText">
-                <div class="ml-1 ml-md-3 mt-2 mt-md-0">
-                    <div class="row">
+              <div class="col-12 col-md bodyText title-details-col">
+                <div class="title-content-wrap mt-2 mt-md-0">
+                    <div class="row title-heading-row">
                       <h2 class="title-heading">
                       <b>{{ title.title ? title.title : title.name }}
                       <span class="year text-muted"> ({{
@@ -70,7 +70,7 @@
                       }})</span></b>
                     </h2>
                   </div>
-                  <div class="row">
+                  <div class="row title-meta">
                     @if (title.certification) {
                       <span><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
                     }
@@ -105,29 +105,29 @@
                       <div class="row">
                         @if (title.tagline) {
                           <div>
-                            <div class="mt-2 text-muted font-italic">{{ title.tagline }}</div>
+                        <div class="mt-2 text-muted font-italic title-tagline">{{ title.tagline }}</div>
                           </div>
                         }
                       </div>
                       <div class="row">
                         @if (title.overview) {
                           <div>
-                            <h3 class="mt-2"><b>Plot</b></h3>
-                            <div>{{ title.overview }}</div>
+                            <h3 class="section-heading"><b>Plot</b></h3>
+                            <div class="title-section-body">{{ title.overview }}</div>
                           </div>
                         }
                       </div>
                       <div class="row">
                         @if (title.awards) {
                           <div>
-                            <h3 class="mt-4"><b>Awards</b></h3>
-                            <div>{{ title.awards }}</div>
+                            <h3 class="section-heading section-heading--spaced"><b>Awards</b></h3>
+                            <div class="title-section-body">{{ title.awards }}</div>
                           </div>
                         }
                       </div>
                       <div class="row">
                         @if (title.vote_average) {
-                          <h3 class="mt-4"><b>Ratings</b></h3>
+                          <h3 class="section-heading section-heading--spaced"><b>Ratings</b></h3>
                         }
                         <table class="ratings table table-borderless">
                           <tbody>

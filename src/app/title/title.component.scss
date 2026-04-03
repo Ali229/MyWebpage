@@ -2,6 +2,41 @@
   text-align: left;
 }
 
+.title-layout {
+  margin-left: 0;
+  align-items: flex-start;
+  --bs-gutter-x: 0.85rem;
+}
+
+.title-content-wrap {
+  margin-left: 0.2rem;
+}
+
+.title-content-wrap > .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.title-poster-col {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-details-col {
+  min-width: 0;
+}
+
+.title-poster-col > .row {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  max-width: 300px;
+}
+
 .icon {
   width: 100px;
   height: 100px;
@@ -19,7 +54,9 @@
 }
 
 .poster-buttons {
+  width: 100%;
   max-width: 300px;
+  margin: 0 auto;
   background-color: #3F729B;
   border-radius: 0 0 5px 5px;
   color: white;
@@ -88,10 +125,11 @@
 .year {
   font-size: 1.3rem;
   font-weight: inherit;
+  color: #5f6f81 !important;
 }
 
 .title-heading {
-  margin-bottom: 0;
+  margin-bottom: 0.15rem;
   font-size: 2rem;
   line-height: 1.2;
 }
@@ -102,6 +140,35 @@
 
 b {
   font-weight: bold;
+}
+
+.title-meta {
+  margin-top: 0.1rem;
+  margin-bottom: 0.55rem;
+  color: #5f6f81;
+  font-weight: 400;
+}
+
+.title-meta .text-muted {
+  color: #5f6f81 !important;
+}
+
+.title-tagline {
+  color: #778494 !important;
+  font-weight: 400;
+}
+
+.title-section-body {
+  color: #35485d;
+  font-weight: 400;
+}
+
+.section-heading {
+  margin: 0.35rem 0 0.5rem;
+}
+
+.section-heading--spaced {
+  margin-top: 1.25rem;
 }
 
 .ratings.table {
@@ -121,12 +188,38 @@ b {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  width: 100%;
   max-width: 300px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
+  .title-layout {
+    --bs-gutter-x: 0.78rem;
+  }
+
+  .title-poster-col {
+    width: min(300px, 100%);
+    align-items: flex-start;
+    padding-right: 0.15rem;
+  }
+
+  .title-poster-col > .row {
+    max-width: 100%;
+  }
+
+  .title-details-col {
+    padding-left: 3rem;
+  }
+
+  .poster-buttons,
   .stream {
-    margin-left: -15px;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .title-content-wrap {
+    margin-left: 0;
   }
 }
 
@@ -151,12 +244,28 @@ b {
   border: 0;
 }
 
-@media (max-width: 767px) and (min-width: 350px) {
+@media (max-width: 767px) {
+  .title-poster-col {
+    width: 100%;
+  }
+
+  .title-heading-row {
+    justify-content: center;
+  }
+
+  .title-heading {
+    text-align: center;
+  }
+
   .poster {
     margin: 0 auto;
     display: block;
   }
-  .poster-buttons, .stream {
+
+  .poster-buttons,
+  .stream {
+    width: 100%;
+    max-width: 300px;
     margin: 0 auto;
   }
 }
