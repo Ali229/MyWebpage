@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  font-weight: 300;
+}
+
 .nav-justified {
   margin-top: 10px;
   border-radius: 10px;
@@ -56,6 +61,12 @@ td {
   border-radius: 0 10px 10px 0;
 }
 
+.popular-meta-date {
+  margin-top: 0.1rem;
+  color: #5f6f81;
+  font-weight: 300;
+}
+
 .title {
   font-size: 1rem;
   line-height: 1.2;
@@ -65,12 +76,6 @@ td {
 
 .title-name {
   font-weight: 600;
-}
-
-.popular-meta-date {
-  margin-top: 0.1rem;
-  color: #5f6f81;
-  font-weight: 400;
 }
 
 .row {

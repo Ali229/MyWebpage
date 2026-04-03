@@ -1,5 +1,6 @@
 :host {
   display: block;
+  font-weight: 300;
 }
 
 .movies-search-form {
@@ -57,7 +58,7 @@
   background: transparent;
   color: #23384c;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1;
   list-style: none;
   cursor: pointer;
@@ -112,7 +113,7 @@
   background: transparent;
   color: #1b4e74;
   font-size: 0.92rem;
-  font-weight: 500;
+  font-weight: 300;
   text-align: left;
   cursor: pointer;
   transition: background-color 0.16s ease, color 0.16s ease;
@@ -137,7 +138,7 @@
   background: #ffffff;
   color: #1f3348;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .movies-search-input {
@@ -161,7 +162,7 @@
   background: #edf5fb;
   color: #1f557d;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 300;
   transition: background-color 0.18s ease, color 0.18s ease;
 }
 
@@ -177,6 +178,13 @@
 }
 
 .movies-search-profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+}
+
+.movies-search-profile > app-user-profile {
   display: inline-flex;
   align-items: center;
 }
@@ -250,7 +258,7 @@
 .streamable-toggle__label {
   color: #1f3348;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 300;
 }
 
 .streamable-toggle__input:checked + .streamable-toggle__track {

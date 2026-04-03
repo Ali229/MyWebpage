@@ -1,9 +1,16 @@
+:host {
+  display: block;
+  font-weight: 300;
+}
+
 .bodyText {
   text-align: left;
+  font-weight: 300;
 }
 
 .title-layout {
   margin-left: 0;
+  margin-right: 0;
   align-items: flex-start;
   --bs-gutter-x: 0.85rem;
 }
@@ -24,6 +31,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-left: 0;
 }
 
 .title-details-col {
@@ -92,6 +100,7 @@
 
 .poster-action--watchlist {
   min-width: 118px;
+  font-weight: 300;
 }
 
 .poster-action--icon {
@@ -124,7 +133,7 @@
 
 .year {
   font-size: 1.3rem;
-  font-weight: inherit;
+  font-weight: 300;
   color: #5f6f81 !important;
 }
 
@@ -146,7 +155,7 @@ b {
   margin-top: 0.1rem;
   margin-bottom: 0.55rem;
   color: #5f6f81;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .title-meta .text-muted {
@@ -155,12 +164,12 @@ b {
 
 .title-tagline {
   color: #778494 !important;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .title-section-body {
   color: #35485d;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .section-heading {

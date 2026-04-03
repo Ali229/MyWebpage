@@ -1,6 +1,7 @@
 .lovelist-page {
   display: grid;
   gap: 1.6rem;
+  font-weight: 300;
 }
 
 .lovelist-header {
@@ -13,7 +14,7 @@
 .lovelist-heading {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 1rem;
 }
 
 .lovelist-empty {
@@ -72,7 +73,7 @@
   background: #edf5fb;
   color: #1b4e74;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 300;
   text-decoration: none;
   transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
 }
