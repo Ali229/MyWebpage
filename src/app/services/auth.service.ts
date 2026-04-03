@@ -47,8 +47,12 @@ export class AuthService {
                     photoURL: user.photoURL || ''
                 };
                 this.getWatchlist();
-                this.loadSettings();
-                this.loadStreamableOnlySetting();
+                Promise.all([
+                    this.loadSettings(),
+                    this.loadStreamableOnlySetting()
+                ]).finally(() => {
+                    this._bShowStreamableCheckBox.next(true);
+                });
             } else {
                 this.user = {
                     uid: null,
@@ -275,7 +279,6 @@ export class AuthService {
                     const data = streamableDoc.data();
                     this.bShowStreamableOnly = data ? data.showStreamableOnly : false;
                 }
-                this._bShowStreamableCheckBox.next(true);
             } catch (error) {
                 this.toastr.error(String(error), 'Error loading providers list');
             }

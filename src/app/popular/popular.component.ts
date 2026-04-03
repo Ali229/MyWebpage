@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
-import {finalize, skip} from 'rxjs/operators';
+import {finalize} from 'rxjs/operators';
 import {PopularService} from '../services/popular.service';
 import {StreamComponent} from '../stream/stream.component';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
@@ -25,8 +25,10 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.toggleMediaType(this.popService.selectedType);
-        this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.pipe(skip(1)).subscribe(value => {
+        this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.subscribe(value => {
+            if (!value) {
+                return;
+            }
             this.popService.popularMovies = [];
             this.popService.popularTVShows = [];
             this.popService.popularList = [];
