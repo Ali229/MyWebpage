@@ -1,35 +1,37 @@
-@if (auth.user.uid) {
-  <details #menu class="profile-dropdown">
-    <summary [attr.aria-label]="displayName + ' menu'" class="profile-toggle">
-      <span class="avatar-shell">
-        @if (auth.user.photoURL && !showIcon) {
-          <img (error)="onImageError()" [src]="auth.user.photoURL" [alt]="displayName + ' avatar'" class="avatar-image">
-        } @else {
-          <span class="avatar-fallback">{{ avatarInitial }}</span>
-        }
-      </span>
-    </summary>
+@if (auth.authStateReady$ | async) {
+  @if (auth.user.uid) {
+    <details #menu class="profile-dropdown">
+      <summary [attr.aria-label]="displayName + ' menu'" class="profile-toggle">
+        <span class="avatar-shell">
+          @if (auth.user.photoURL && !showIcon) {
+            <img (error)="onImageError()" [src]="auth.user.photoURL" [alt]="displayName + ' avatar'" class="avatar-image">
+          } @else {
+            <span class="avatar-fallback">{{ avatarInitial }}</span>
+          }
+        </span>
+      </summary>
 
-    <div class="profile-menu">
-      <p class="profile-menu__heading">{{ displayName }}</p>
-      <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/watchlist">
-        <span>Watchlist</span>
-        <span class="menu-chip">{{ auth.watchlist.length }}</span>
-      </a>
-          <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
-            <span>Lovelist</span>
-          </a>
-      <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings">
-        <span>Settings</span>
-      </a>
-      <button (click)="signOut(menu)" class="profile-menu__item profile-menu__item--logout" type="button">
-        <span>Logout</span>
-      </button>
-    </div>
-  </details>
-} @else {
-  <button (click)="auth.googleSignin()" class="connect-btn" id="target" type="button">
-    <i aria-hidden="true" class="fab fa-google"></i>
-    <span>Connect with Google</span>
-  </button>
+      <div class="profile-menu">
+        <p class="profile-menu__heading">{{ displayName }}</p>
+        <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/watchlist">
+          <span>Watchlist</span>
+          <span class="menu-chip">{{ auth.watchlist.length }}</span>
+        </a>
+            <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
+              <span>Lovelist</span>
+            </a>
+        <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings">
+          <span>Settings</span>
+        </a>
+        <button (click)="signOut(menu)" class="profile-menu__item profile-menu__item--logout" type="button">
+          <span>Logout</span>
+        </button>
+      </div>
+    </details>
+  } @else {
+    <button (click)="auth.googleSignin()" class="connect-btn" id="target" type="button">
+      <i aria-hidden="true" class="fab fa-google"></i>
+      <span>Connect with Google</span>
+    </button>
+  }
 }

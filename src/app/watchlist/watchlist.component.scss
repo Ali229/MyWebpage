@@ -157,8 +157,8 @@
   width: 100%;
 }
 
-a {
-  color: black;
+.main-row a {
+  color: #10243d;
 }
 
 .watchlist-link,
@@ -169,17 +169,35 @@ a {
   text-decoration: none;
 }
 
+.watchlist-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #6c757d;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.watchlist-icon-btn--link {
+  text-decoration: none;
+}
+
+.watchlist-icon-btn:hover,
+.watchlist-icon-btn:focus-visible {
+  background: #edf5fb;
+  color: #1d344a;
+}
+
+.watchlist-icon-btn:focus-visible {
+  outline: 2px solid rgba(63, 114, 155, 0.35);
+  outline-offset: 1px;
+}
+
 .overview {
-  //height:200px;
-  //white-space: nowrap;
-  //overflow: hidden;
-  //height: 150px;
-  //text-overflow: ellipsis;
-
-  //height: 2.5em;
-  //overflow: hidden;
-  //text-overflow: ellipsis;
-
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -242,23 +260,11 @@ a {
     font-size: 40px;
     padding: 20px
   }
-  :not(h1) {
-    font-size: 0.85em;
-  }
 }
-
-.fas {
-  color: #6c757d;
-}
-
-.fas:hover {
-  color: black;
-}
-
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-  :not(h1) {
-    font-size: 0.96em;
+  .watchlist-title {
+    font-size: 1rem;
   }
 }
 

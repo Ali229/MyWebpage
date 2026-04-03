@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, HostListener, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {AuthService} from '../services/auth.service';
@@ -11,6 +11,7 @@ import {AuthService} from '../services/auth.service';
     imports: [CommonModule, RouterModule]
 })
 export class UserProfileComponent {
+    @ViewChild('menu') menuRef: ElementRef<HTMLDetailsElement>;
     showIcon = false;
 
     constructor(public auth: AuthService) {
@@ -35,5 +36,18 @@ export class UserProfileComponent {
     signOut(menu: HTMLDetailsElement) {
         this.closeMenu(menu);
         this.auth.signOut();
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const menu = this.menuRef?.nativeElement;
+        if (!menu || !menu.open) {
+            return;
+        }
+
+        const target = event.target as Node | null;
+        if (target && !menu.contains(target)) {
+            menu.open = false;
+        }
     }
 }

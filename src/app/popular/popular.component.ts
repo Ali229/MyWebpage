@@ -27,6 +27,9 @@ export class PopularComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.toggleMediaType(this.popService.selectedType);
         this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.pipe(skip(1)).subscribe(value => {
+            this.popService.popularMovies = [];
+            this.popService.popularTVShows = [];
+            this.popService.popularList = [];
             this.toggleMediaType(this.popService.selectedType);
         });
     }

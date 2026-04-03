@@ -1,15 +1,21 @@
 .container {
-  padding: 50px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
-  margin: auto;
-  border-radius: 10px;
+  max-width: min(1360px, calc(100% - 2.2rem));
+  margin: 1.2rem auto 2rem;
+  padding: clamp(1.15rem, 2.5vw, 2rem);
+  border: 1px solid #dbe6f1;
+  border-radius: 18px;
+  background: #f8fbff;
+  box-shadow: 0 14px 34px rgba(16, 36, 61, 0.14);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1199.98px) {
   .container {
-    box-shadow: none;
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem;
+    border: 0;
     border-radius: 0;
-    max-width: 1140px;
-    padding: 20px;
+    box-shadow: none;
+    background: transparent;
   }
 }

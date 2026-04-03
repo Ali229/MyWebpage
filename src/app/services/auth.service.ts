@@ -254,7 +254,8 @@ export class AuthService {
                     showStreamableOnly: StreamableOnly
                 };
                 await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'showStreamableOnly'), data);
-                location.reload();
+                this.bShowStreamableOnly = StreamableOnly;
+                this._bShowStreamableCheckBox.next(true);
             } catch (error) {
                 this.toastr.error(String(error), 'Error saving streamable only settings');
             }

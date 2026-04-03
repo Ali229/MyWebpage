@@ -111,17 +111,17 @@
                     }
                     <div class="row mt-lg-3">
                       <div class="col-4 col-sm-1">
-                        <a (click)="remove(title.id)">
+                        <button (click)="remove(title.id)" aria-label="Remove from watchlist" class="watchlist-icon-btn" type="button">
                           <i class="fas fa-bookmark fa-lg amber-text"></i>
-                        </a>
+                        </button>
                       </div>
                       <div class="col-4 col-sm-1">
-                        <a>
+                        <button aria-label="Add to Lovelist" class="watchlist-icon-btn" type="button">
                           <i class="fas fa-heart fa-lg"></i>
-                        </a>
+                        </button>
                       </div>
                       <div class="col-4 col-sm-1">
-                        <a [href]="title.trailer" target="_blank">
+                        <a [href]="title.trailer" aria-label="Play trailer" class="watchlist-icon-btn watchlist-icon-btn--link" rel="noopener noreferrer" target="_blank">
                           <i class="fas fa-play fa-lg"></i>
                         </a>
                       </div>

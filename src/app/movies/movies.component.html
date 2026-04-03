@@ -1,48 +1,91 @@
 <div id="target"></div>
 @if (isPhone) {
   <div class="mobile-movies-header">
-    <h1 class="mobile-page-title"><b>Movies</b></h1>
+    <h1 class="mobile-page-title">Movies</h1>
     <app-user-profile class="mobile-user-profile"></app-user-profile>
   </div>
 }
-<form>
-  <div class="row mb-4 search-row">
-    <div class="col">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <select [(ngModel)]="ts.selectedOption" class="browser-default custom-select" name="sel">
-            <option value="">All</option>
-            <option value="movie">Movie</option>
-            <option value="tv">TV</option>
-          </select>
-        </div>
-        <input #searchInput [(ngModel)]="ts.title"
-          aria-label="Search for movies or TV shows" class="form-control" name="movname"
-          placeholder="Search for movies or TV shows" type="text">
-          <input [(ngModel)]="ts.year" aria-describedby="button-addon2" aria-label="Year"
-            class="form-control col-md-2"
-            name="movyear" placeholder="Year" type="text">
-          <div class="input-group-append">
-            <button (click)="ts.multiSearch()" [disabled]="!ts.title" class="btn btn-outline-dark m-0 px-3 py-2"
-              id="button-addon2" type="submit"> Search
+<form (submit)="ts.multiSearch(); $event.preventDefault()" class="movies-search-form">
+  <div class="movies-search-layout">
+    <div class="movies-search-bar">
+      <div class="movies-search-filter">
+        <details #moviesTypeMenu class="movies-search-filter-menu">
+          <summary [attr.aria-label]="'Filter by media type: ' + mediaTypeLabel" class="movies-search-filter-trigger">
+            <span>{{ mediaTypeLabel }}</span>
+            <i aria-hidden="true" class="fas fa-chevron-down movies-search-filter-trigger__caret"></i>
+          </summary>
+
+          <div class="movies-search-filter-options">
+            <button
+              (click)="setMediaType('', moviesTypeMenu)"
+              [class.is-active]="ts.selectedOption === ''"
+              class="movies-search-filter-option"
+              type="button">
+              All
+            </button>
+            <button
+              (click)="setMediaType('movie', moviesTypeMenu)"
+              [class.is-active]="ts.selectedOption === 'movie'"
+              class="movies-search-filter-option"
+              type="button">
+              Movie
+            </button>
+            <button
+              (click)="setMediaType('tv', moviesTypeMenu)"
+              [class.is-active]="ts.selectedOption === 'tv'"
+              class="movies-search-filter-option"
+              type="button">
+              TV
             </button>
           </div>
-        </div>
+        </details>
       </div>
-      @if (!isPhone) {
-        <div class="col-auto ml-auto not-phone-user">
-          <app-user-profile></app-user-profile>
-        </div>
-      }
+
+      <input #searchInput [(ngModel)]="ts.title"
+        aria-label="Search for movies or TV shows"
+        class="movies-search-input"
+        name="movname"
+        placeholder="Search for movies or TV shows"
+        type="text">
+
+      <input [(ngModel)]="ts.year"
+        aria-label="Year"
+        class="movies-search-year"
+        inputmode="numeric"
+        maxlength="4"
+        name="movyear"
+        placeholder="Year"
+        type="text">
+
+      <button [disabled]="!ts.title" class="movies-search-button" id="button-addon2" type="submit">
+        Search
+      </button>
     </div>
-  </form>
-  <app-title></app-title>
-  <div class="pop">
-    <h2><b><span style="font-size: 130%;color: #3F729B;">|</span> Popular</b></h2>
-    @if (showStreamableCheckBox) {
-      <h5 class="streamable" title="Set any streaming services you have in settings">
-        <input [(ngModel)]="auth.bShowStreamableOnly" (ngModelChange)="auth.saveStreamableOnlySetting(auth.bShowStreamableOnly)"  class="checkbox"
-        type="checkbox"> Streamable</h5>
-      }
+
+    @if (!isPhone) {
+      <div class="movies-search-profile">
+        <app-user-profile></app-user-profile>
+      </div>
+    }
+  </div>
+</form>
+
+<app-title></app-title>
+
+<div class="popular-header">
+  <h2 class="popular-header__title">Popular</h2>
+  @if (showStreamableCheckBox) {
+    <label class="streamable-toggle" title="Set any streaming services you have in settings">
+      <input
+        [(ngModel)]="auth.bShowStreamableOnly"
+        (ngModelChange)="auth.saveStreamableOnlySetting(auth.bShowStreamableOnly)"
+        class="streamable-toggle__input"
+        type="checkbox">
+      <span aria-hidden="true" class="streamable-toggle__track">
+        <span class="streamable-toggle__thumb"></span>
+      </span>
+      <span class="streamable-toggle__label">Streamable</span>
+    </label>
+  }
     </div>
-    <app-popular></app-popular>
+<app-popular></app-popular>

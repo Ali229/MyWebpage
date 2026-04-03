@@ -25,6 +25,22 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     constructor(public ts: TitleService, public auth: AuthService) {
     }
 
+    get mediaTypeLabel(): string {
+        if (this.ts.selectedOption === 'movie') {
+            return 'Movie';
+        }
+        if (this.ts.selectedOption === 'tv') {
+            return 'TV';
+        }
+
+        return 'All';
+    }
+
+    setMediaType(type: '' | 'movie' | 'tv', menu: HTMLDetailsElement) {
+        this.ts.selectedOption = type;
+        menu.open = false;
+    }
+
     ngOnInit() {
         // Subscribe to window resize events to update the isPhone value
         window.addEventListener('resize', this.onResize.bind(this));

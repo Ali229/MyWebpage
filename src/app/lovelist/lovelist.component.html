@@ -8,7 +8,20 @@
       <app-user-profile></app-user-profile>
     </header>
 
-    <p>Work in progress</p>
+    <section class="lovelist-empty">
+      <span aria-hidden="true" class="lovelist-empty__icon">
+        <i class="fas fa-heart"></i>
+      </span>
+      <h2>Your Lovelist Is Coming Soon</h2>
+      <p>
+        We are refreshing this page to match the new movie experience. You can keep exploring titles now,
+        and we can wire full Lovelist actions next.
+      </p>
+      <div class="lovelist-empty__actions">
+        <a class="lovelist-empty__button" routerLink="/watchlist">Open Watchlist</a>
+        <a class="lovelist-empty__button lovelist-empty__button--secondary" routerLink="/movies">Browse Movies</a>
+      </div>
+    </section>
   </section>
 } @else {
   <app-page-loader [minHeight]="'360px'" [spinnerSize]="'4.5rem'"></app-page-loader>

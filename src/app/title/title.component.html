@@ -26,35 +26,38 @@
                 <div class="row poster-buttons z-depth-3">
                   <div class="col-auto p-0">
                     @if (!auth.getWatchlisted(title.id)) {
-                      <div class="watchlist"
+                      <button class="poster-action poster-action--watchlist"
                         (click)="auth.addToWatchlist(title)"
+                        type="button"
                         title="Add to watchlist">
-                        <span class="unselectable"><i class="fas fa-bookmark"></i>&nbsp;&nbsp;Watchlist</span>
-                      </div>
+                        <span class="unselectable"><i class="fas fa-bookmark"></i><span>Watchlist</span></span>
+                      </button>
                     }
                     @if (auth.getWatchlisted(title.id)) {
-                      <div class="watchlist"
+                      <button class="poster-action poster-action--watchlist"
                         (click)="auth.removeFromWatchlist(title.id)"
+                        type="button"
                         title="Remove from watchlist">
-                        <span class="unselectable"><i class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                      </div>
+                        <span class="unselectable"><i class="fas fa-bookmark amber-text"></i><span>Added</span></span>
+                      </button>
                     }
                   </div>
                   <div class="col-auto ml-auto p-0"
                     [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
-                    <div class="love">
+                    <button class="poster-action poster-action--icon"
+                      type="button">
                       <i class="fas fa-heart"></i>
-                    </div>
+                      <span class="sr-only">Add to Lovelist</span>
+                    </button>
                   </div>
-                  <div class="col-auto p-0" title="Play trailer">
-                    <a [href]="title.trailer" target="_blank" style="color:white">
-                      <div class="trailer">
-                        <i class="fas fa-play"></i>
-                      </div>
+                  <div class="col-auto p-0">
+                    <a [href]="title.trailer" class="poster-action poster-action--icon poster-action--link" rel="noopener noreferrer" target="_blank" title="Play trailer">
+                      <i class="fas fa-play"></i>
+                      <span class="sr-only">Play trailer</span>
                     </a>
                   </div>
                 </div>
-                <app-stream class="row stream"></app-stream>
+                <app-stream class="stream"></app-stream>
               </div>
               <div class="col-12 col-md-8 bodyText">
                 <div class="ml-1 ml-md-3 mt-2 mt-md-0">
