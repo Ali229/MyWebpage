@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {AuthService} from '../services/auth.service';
+import {BackButtonComponent} from '../shared/back-button/back-button.component';
 
 interface ProviderOption {
     id: number;
@@ -16,7 +17,7 @@ interface ProviderOption {
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule]
+    imports: [CommonModule, FormsModule, RouterModule, BackButtonComponent]
 })
 export class SettingsComponent implements DoCheck {
     private initialSelectionSnapshot = '';

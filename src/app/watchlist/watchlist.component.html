@@ -17,10 +17,7 @@
           <span> ({{ auth.tvCount }})</span>
         }</option>
       </select>
-      <button class="btn btn-dark app-back-button" id="target" routerLink="../movies" type="button">
-        <i aria-hidden="true" class="fas fa-arrow-left"></i>
-        <span>Back</span>
-      </button>
+      <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
     </div>
   </div>
 </div>

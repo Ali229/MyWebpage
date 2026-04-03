@@ -6,13 +6,14 @@ import {TitleService} from '../services/title.service';
 import {AuthService} from '../services/auth.service';
 import {Title} from '../models/title.model';
 import {StreamComponent} from '../stream/stream.component';
+import {BackButtonComponent} from '../shared/back-button/back-button.component';
 
 @Component({
     selector: 'app-watchlist',
     templateUrl: './watchlist.component.html',
     styleUrls: ['./watchlist.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule, StreamComponent]
+    imports: [CommonModule, FormsModule, RouterModule, StreamComponent, BackButtonComponent]
 })
 export class WatchlistComponent {
     selectedType = 'All';
