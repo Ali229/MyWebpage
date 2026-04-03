@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TitleService} from '../services/title.service';
@@ -17,7 +17,8 @@ import {UserProfileComponent} from '../user-profile/user-profile.component';
 })
 
 export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
-    @ViewChild('searchInput') searchInput: ElementRef;
+    @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+    @ViewChild('moviesTypeMenu') moviesTypeMenuRef: ElementRef<HTMLDetailsElement>;
     isPhone: boolean = window.innerWidth <= 767.98; // Check if the screen width is less than or equal to your breakpoint
     private showStreamableCheckBoxSub: Subscription;
     public showStreamableCheckBox = false;
@@ -65,5 +66,18 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     onResize() {
         // Update the isPhone value when the window is resized
         this.isPhone = window.innerWidth <= 767.98;
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const menu = this.moviesTypeMenuRef?.nativeElement;
+        if (!menu || !menu.open) {
+            return;
+        }
+
+        const target = event.target as Node | null;
+        if (target && !menu.contains(target)) {
+            menu.open = false;
+        }
     }
 }

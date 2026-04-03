@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, HostListener, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {TitleService} from '../services/title.service';
@@ -19,6 +19,7 @@ type WatchlistType = 'All' | 'movie' | 'tv';
     imports: [CommonModule, RouterModule, StreamComponent, BackButtonComponent, UserProfileComponent, PageLoaderComponent]
 })
 export class WatchlistComponent {
+    @ViewChild('typeMenu') typeMenuRef: ElementRef<HTMLDetailsElement>;
     selectedType: WatchlistType = 'All';
     readonly removingIds = new Set<number>();
     private readonly removeAnimationMs = 280;
@@ -63,5 +64,18 @@ export class WatchlistComponent {
             return this.auth.watchlist;
         }
         return this.auth.watchlist.filter(title => title.media_type === this.selectedType);
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const menu = this.typeMenuRef?.nativeElement;
+        if (!menu || !menu.open) {
+            return;
+        }
+
+        const target = event.target as Node | null;
+        if (target && !menu.contains(target)) {
+            menu.open = false;
+        }
     }
 }
