@@ -121,15 +121,42 @@
   color: #164669;
 }
 
+.watchlist-poster-link {
+  display: flex;
+  align-items: stretch;
+}
+
 .poster {
   width: 100%;
-  max-width: 300px;
+  height: clamp(210px, 21vw, 270px);
+  max-width: none;
+  object-fit: cover;
   border-radius: 10px 0 0 10px;
+}
+
+.watchlist-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.watchlist-stream-row {
+  margin-top: auto;
 }
 
 .main-row {
   background-color: rgba(0, 0, 0, 0.05);
   border-radius: 10px;
+  margin-bottom: 1rem;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.main-row.is-removing {
+  animation: watchlistCardFlyOut 0.28s ease forwards;
+  pointer-events: none;
+}
+
+.main-row:last-of-type {
+  margin-bottom: -1rem;
 }
 
 .certifications {
@@ -197,6 +224,11 @@
   outline-offset: 1px;
 }
 
+.watchlist-icon-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .overview {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -252,6 +284,16 @@
   h5 {
     font-size: 0.8rem;
   }
+
+  .watchlist-poster-link {
+    display: block;
+  }
+
+  .poster {
+    height: auto;
+    max-width: 300px;
+    max-height: none;
+  }
 }
 
 // Small devices (landscape phones, 576px and upto 768px)
@@ -265,6 +307,17 @@
 @media (min-width: 768px) and (max-width: 991.98px) {
   .watchlist-title {
     font-size: 1rem;
+  }
+}
+
+@keyframes watchlistCardFlyOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(140px) scale(0.98);
   }
 }
 

@@ -20,15 +20,26 @@ type WatchlistType = 'All' | 'movie' | 'tv';
 })
 export class WatchlistComponent {
     selectedType: WatchlistType = 'All';
-    filteredList: Title[] = [];
+    readonly removingIds = new Set<number>();
+    private readonly removeAnimationMs = 280;
 
-    constructor(public auth: AuthService, public ts: TitleService) {
-        this.changeMediaType(this.selectedType);
-    }
+    constructor(public auth: AuthService, public ts: TitleService) {}
 
-    async remove(id) {
-        await this.auth.removeFromWatchlist(id);
-        this.changeMediaType(this.selectedType);
+    async remove(id: number) {
+        if (this.removingIds.has(id)) {
+            return;
+        }
+
+        const scrollY = window.scrollY;
+        this.removingIds.add(id);
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, this.removeAnimationMs));
+            await this.auth.removeFromWatchlist(id);
+        } finally {
+            this.removingIds.delete(id);
+            requestAnimationFrame(() => window.scrollTo({top: scrollY}));
+        }
     }
 
     get selectedTypeLabel(): string {
@@ -44,19 +55,13 @@ export class WatchlistComponent {
 
     setSelectedType(selectedType: WatchlistType, menu: HTMLDetailsElement) {
         this.selectedType = selectedType;
-        this.changeMediaType(selectedType);
         menu.open = false;
     }
 
-    changeMediaType(selectedType: WatchlistType) {
-        if (selectedType === 'All') {
-            return this.filteredList = this.auth.watchlist;
+    get displayedList(): Title[] {
+        if (this.selectedType === 'All') {
+            return this.auth.watchlist;
         }
-        this.filteredList = [];
-        for (const title of this.auth.watchlist) {
-            if (title.media_type === selectedType) {
-                this.filteredList.push(title);
-            }
-        }
+        return this.auth.watchlist.filter(title => title.media_type === this.selectedType);
     }
 }

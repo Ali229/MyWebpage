@@ -166,25 +166,27 @@ export class AuthService {
 
     async removeFromWatchlist(id) {
         if (this.user.uid) {
-            for (const title of this.watchlist) {
-                if (title.id === id) {
-                    const watchlistRef = doc(
-                        firestore,
-                        'users',
-                        this.user.uid,
-                        'watchlist',
-                        title.watchlistDocId || this.getWatchlistDocId(title)
-                    );
-                    const existing = await getDoc(watchlistRef);
+            const title = this.watchlist.find(item => item.id === id);
+            if (!title) {
+                return;
+            }
 
-                    if (existing.exists()) {
-                        await deleteDoc(watchlistRef);
-                        this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
-                        return this.getWatchlist();
-                    } else {
-                        this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
-                    }
-                }
+            const watchlistRef = doc(
+                firestore,
+                'users',
+                this.user.uid,
+                'watchlist',
+                title.watchlistDocId || this.getWatchlistDocId(title)
+            );
+            const existing = await getDoc(watchlistRef);
+
+            if (existing.exists()) {
+                await deleteDoc(watchlistRef);
+                this.watchlist = this.watchlist.filter(item => item.id !== id);
+                this.recalculateWatchlistMeta();
+                this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
+            } else {
+                this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
             }
         } else {
             this.toastr.info('Please login to use the watchlist feature');
@@ -284,5 +286,18 @@ export class AuthService {
 
     private getWatchlistDocId(title: Title) {
         return `${title.media_type || 'title'}_${title.id}`;
+    }
+
+    private recalculateWatchlistMeta() {
+        this.moviesCount = 0;
+        this.tvCount = 0;
+        for (const item of this.watchlist) {
+            if (item.media_type === 'movie') {
+                this.moviesCount++;
+            } else if (item.media_type === 'tv') {
+                this.tvCount++;
+            }
+        }
+        this.empty = this.watchlist.length === 0;
     }
 }
