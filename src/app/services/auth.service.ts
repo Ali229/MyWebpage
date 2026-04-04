@@ -211,7 +211,7 @@ export class AuthService {
         return false;
     }
 
-    async saveSettings() {
+    async saveSettings(): Promise<boolean> {
         if (this.user.uid) {
             try {
                 const selectedProviderIds = Array.from(new Set(
@@ -225,12 +225,14 @@ export class AuthService {
 
                 await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'providerIds'), data);
                 this.toastr.success('Providers list saved successfully!');
-                location.reload();
+                return true;
             } catch (error) {
                 this.toastr.error(String(error), 'Error saving providers list');
+                return false;
             }
         } else {
             this.toastr.info('Please login to use settings feature');
+            return false;
         }
     }
 

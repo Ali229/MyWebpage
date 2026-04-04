@@ -68,21 +68,21 @@
 
 .settings-save-button {
   min-width: 180px;
-  border: 0;
-  background: linear-gradient(135deg, #f3c46c 0%, #e6b654 100%);
-  color: #10243d;
-  box-shadow: 0 14px 28px rgba(10, 21, 36, 0.16);
+  border: 1px solid var(--app-accent-dark);
+  background: linear-gradient(135deg, var(--app-accent) 0%, var(--app-accent-dark) 100%);
+  color: #fff;
+  box-shadow: 0 14px 28px rgba(63, 114, 155, 0.24);
 }
 
 .settings-save-button:hover:not(:disabled),
 .settings-save-button:focus:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(16, 36, 61, 0.12);
+  box-shadow: 0 12px 24px rgba(48, 87, 118, 0.3);
 }
 
 .settings-save-button:disabled {
   cursor: not-allowed;
-  opacity: 0.72;
+  opacity: 0.56;
   box-shadow: none;
 }
 

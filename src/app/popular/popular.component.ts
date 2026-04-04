@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
-import {finalize} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {PopularService} from '../services/popular.service';
 import {StreamComponent} from '../stream/stream.component';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
@@ -47,11 +47,12 @@ export class PopularComponent implements OnInit, OnDestroy {
         this.popService.popularList = selectedList;
     }
 
-    fetchMostPopular() {
+    async fetchMostPopular() {
         this.popService.loadingPopular = true;
         console.log('Fetching Most Popular...');
         const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
-        const regionOrLang = this.popService.selectedType === 'movie' ? 'region=us' : 'with_original_language=en';
+        const selectedType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
+        const currentYear = new Date().getFullYear();
         let watchProvidersParam = '';
         if (this.auth.user.uid && this.auth.bShowStreamableOnly) {
             const selectedProviders = Array.from(new Set(
@@ -64,22 +65,37 @@ export class PopularComponent implements OnInit, OnDestroy {
                 watchProvidersParam = 'with_watch_providers=' + selectedProviders.join('|');
             }
         }
-        const apiUrl = `https://api.themoviedb.org/3/discover/${this.popService.selectedType}?` + watchProvidersParam + `&watch_region=US&sort_by=popularity.desc` +
-            `&api_key=${apiKey}&${regionOrLang}`;
-        this.http.get(apiUrl).pipe(
-            finalize(() => {
-                this.popService.loadingPopular = false;
-            })
-        ).subscribe((response: any) => {
-            response.results.forEach((title: Title) => {
-                if (this.popService.selectedType === 'movie') {
-                    this.popService.popularMovies.push(title);
-                } else {
-                    this.popService.popularTVShows.push(title);
+
+        try {
+            if (selectedType === 'movie') {
+                const movieUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam);
+                const response: any = await this.http.get(movieUrl).pipe(take(1)).toPromise();
+                this.popService.popularMovies.length = 0;
+                this.popService.popularMovies.push(...(response.results || []));
+            } else {
+                const tvCurrentYearUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam, currentYear);
+                const currentYearResponse: any = await this.http.get(tvCurrentYearUrl).pipe(take(1)).toPromise();
+                const currentYearResults: Title[] = currentYearResponse.results || [];
+
+                let mergedTvResults = [...currentYearResults];
+                if (mergedTvResults.length < 20) {
+                    const tvFallbackUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam);
+                    const fallbackResponse: any = await this.http.get(tvFallbackUrl).pipe(take(1)).toPromise();
+                    const fallbackResults: Title[] = fallbackResponse.results || [];
+                    mergedTvResults = this.mergeById(currentYearResults, fallbackResults, 20);
                 }
-            });
+
+                this.popService.popularTVShows.length = 0;
+                this.popService.popularTVShows.push(...mergedTvResults);
+            }
+
+            this.popService.popularList = selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
             this.getProviders();
-        });
+        } catch (error) {
+            console.error('Failed to fetch popular titles', error);
+        } finally {
+            this.popService.loadingPopular = false;
+        }
     }
 
     getProviders() {
@@ -143,5 +159,44 @@ export class PopularComponent implements OnInit, OnDestroy {
         if (this.showStreamableCheckBoxSub) {
             this.showStreamableCheckBoxSub.unsubscribe();
         }
+    }
+
+    private buildDiscoverUrl(type: 'movie' | 'tv', apiKey: string, watchProvidersParam: string, year?: number) {
+        const params = new URLSearchParams();
+        if (watchProvidersParam) {
+            const [key, value] = watchProvidersParam.split('=');
+            if (key && value) {
+                params.set(key, value);
+            }
+        }
+        params.set('watch_region', 'US');
+        params.set('sort_by', 'popularity.desc');
+        params.set('api_key', apiKey);
+
+        if (type === 'movie') {
+            params.set('region', 'us');
+        } else {
+            params.set('with_original_language', 'en');
+            if (year) {
+                params.set('first_air_date_year', year.toString());
+            }
+        }
+
+        return `https://api.themoviedb.org/3/discover/${type}?${params.toString()}`;
+    }
+
+    private mergeById(primary: Title[], fallback: Title[], limit: number): Title[] {
+        const seen = new Set(primary.map(title => title.id));
+        const merged = [...primary];
+        for (const title of fallback) {
+            if (merged.length >= limit) {
+                break;
+            }
+            if (!seen.has(title.id)) {
+                seen.add(title.id);
+                merged.push(title);
+            }
+        }
+        return merged;
     }
 }
