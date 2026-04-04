@@ -151,18 +151,18 @@
   border-radius: 10px;
   margin-left: 0;
   margin-right: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   max-width: 100%;
   transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.main-row + .main-row {
+  margin-top: 1rem;
 }
 
 .main-row.is-removing {
   animation: watchlistCardFlyOut 0.28s ease forwards;
   pointer-events: none;
-}
-
-.main-row:last-of-type {
-  margin-bottom: 0;
 }
 
 .certifications {

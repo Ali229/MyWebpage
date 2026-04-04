@@ -8,6 +8,18 @@
   box-shadow: 0 14px 34px rgba(48, 37, 23, 0.12);
 }
 
+.container.container--tight-bottom {
+  padding-bottom: 0.5rem;
+}
+
+.container.container--settings-bottom {
+  padding-bottom: 0.85rem;
+}
+
+.container.container--watchlist-bottom {
+  padding-bottom: 1rem;
+}
+
 @media (max-width: 1199.98px) {
   .container {
     max-width: 100%;

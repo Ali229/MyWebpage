@@ -53,6 +53,14 @@ td {
 
 }
 
+.table {
+  margin-bottom: 0;
+}
+
+.table tbody tr:last-child td {
+  padding-bottom: 0;
+}
+
 .td1 {
   border-radius: 10px 0 0 10px;
 }

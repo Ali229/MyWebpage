@@ -14,24 +14,29 @@
 }
 
 .settings-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title actions";
+  align-items: start;
   gap: 1rem;
 }
 
 .settings-header-actions {
+  grid-area: actions;
   display: inline-flex;
   align-items: center;
+  justify-self: end;
+  align-self: start;
   gap: 0.65rem;
 }
 
 .settings-title-row {
+  grid-area: title;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
 }
 
 .settings-panel,
@@ -191,19 +196,31 @@
     gap: 1.2rem;
   }
 
+  .settings-header,
+  .settings-panel {
+    width: min(100%, 360px);
+    margin-inline: auto;
+  }
+
   .settings-header {
-    align-items: flex-start;
+    position: relative;
+    display: block;
+    min-height: 44px;
   }
 
   .settings-title-row {
-    width: auto;
+    width: 100%;
     justify-content: flex-start;
+    min-width: 0;
+    padding-right: 3.5rem;
   }
 
   .settings-header-actions {
-    width: auto;
-    justify-content: flex-end;
-    margin-left: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-left: 0;
+    justify-self: auto;
   }
 
   .settings-panel {
@@ -213,6 +230,8 @@
 
   .settings-footer {
     justify-content: stretch;
+    width: 100%;
+    margin-top: 1rem;
   }
 
   .provider-grid {

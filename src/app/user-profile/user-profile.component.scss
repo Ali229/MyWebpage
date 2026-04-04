@@ -166,3 +166,23 @@
 .connect-btn i {
   font-size: 0.9rem;
 }
+
+@media (max-width: 575.98px) {
+  .connect-btn {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    gap: 0;
+  }
+
+  .connect-btn span {
+    display: none;
+  }
+
+  .connect-btn i {
+    font-size: 1rem;
+  }
+}
