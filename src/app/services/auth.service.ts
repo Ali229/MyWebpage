@@ -20,11 +20,14 @@ export class AuthService {
         {id: 337, name: 'Disney+', icon: 'assets/disney.webp', selected: false},
         {id: 15, name: 'Hulu', icon: 'assets/hulu.png', selected: false},
         {id: 9, name: 'Amazon Prime Video', icon: 'assets/prime.jpg', selected: false},
-        {id: 188, name: 'Youtube', icon: 'assets/youtube.png', selected: false},
+        {id: 188, name: 'YouTube Premium', icon: 'assets/youtube.png', selected: false},
         {id: 350, name: 'Apple', icon: 'assets/apple.png', selected: false},
-        {id: 299, name: 'Sling', icon: 'assets/sling.png', selected: false},
         {id: 386, name: 'Peacock', icon: 'assets/peacock.svg', selected: false},
         {id: 1899, name: 'Max', icon: 'assets/max.webp', selected: false},
+        {id: 2303, name: 'Paramount+', icon: 'assets/paramount-plus.jpg', selected: false},
+        {id: 43, name: 'STARZ', icon: 'assets/starz.jpg', selected: false},
+        {id: 526, name: 'AMC+', icon: 'assets/amc-plus.jpg', selected: false},
+        {id: 34, name: 'MGM+', icon: 'assets/mgm-plus.jpg', selected: false},
     ];
     public user: User = {
         uid: null,
@@ -211,10 +214,13 @@ export class AuthService {
     async saveSettings() {
         if (this.user.uid) {
             try {
-                const data = {
-                    providerIds: this.providers
+                const selectedProviderIds = Array.from(new Set(
+                    this.providers
                         .filter(provider => provider.selected)
-                        .map(provider => provider.id)
+                        .flatMap(provider => this.getProviderIds(provider))
+                ));
+                const data = {
+                    providerIds: selectedProviderIds
                 };
 
                 await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'providerIds'), data);
@@ -238,7 +244,7 @@ export class AuthService {
                     const data = settingsDoc.data();
                     const selectedProviderIds = data ? data.providerIds || [] : [];
                     this.providers.forEach(provider => {
-                        provider.selected = selectedProviderIds.includes(provider.id);
+                        provider.selected = this.getProviderIds(provider).some(providerId => selectedProviderIds.includes(providerId));
                     });
                 } else {
                     this.providers.forEach(provider => provider.selected = false);
@@ -302,5 +308,9 @@ export class AuthService {
             }
         }
         this.empty = this.watchlist.length === 0;
+    }
+
+    private getProviderIds(provider: { id: number; ids?: number[] }): number[] {
+        return provider.ids && provider.ids.length ? provider.ids : [provider.id];
     }
 }

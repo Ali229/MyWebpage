@@ -142,12 +142,18 @@ export class TitleService {
                     data.onYoutube = true;
                 } else if (stream.provider_id === 350) {
                     data.onApple = true;
-                } else if (stream.provider_id === 299) {
-                    data.onSling = true;
                 } else if (stream.provider_id === 386) {
                     data.onPeacock = true;
                 } else if (stream.provider_id === 1899) {
                     data.onMax = true;
+                } else if (stream.provider_id === 2303) {
+                    data.onParamount = true;
+                } else if (stream.provider_id === 43) {
+                    data.onStarz = true;
+                } else if (stream.provider_id === 526) {
+                    data.onAmc = true;
+                } else if (stream.provider_id === 34) {
+                    data.onMgm = true;
                 }
             }
             this.titleSubject$.next(data);

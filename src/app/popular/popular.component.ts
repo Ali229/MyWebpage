@@ -51,13 +51,14 @@ export class PopularComponent implements OnInit, OnDestroy {
         this.popService.loadingPopular = true;
         console.log('Fetching Most Popular...');
         const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
-        const regionOrLang = this.popService.selectedType === 'movie' ? 'region=us' :
-            'with_original_language=en&first_air_date_year=' + new Date().getFullYear();
+        const regionOrLang = this.popService.selectedType === 'movie' ? 'region=us' : 'with_original_language=en';
         let watchProvidersParam = '';
         if (this.auth.user.uid && this.auth.bShowStreamableOnly) {
-            const selectedProviders = this.auth.providers
-                .filter(provider => provider.selected)
-                .map(provider => provider.id);
+            const selectedProviders = Array.from(new Set(
+                this.auth.providers
+                    .filter(provider => provider.selected)
+                    .map(provider => provider.id)
+            ));
 
             if (selectedProviders.length > 0) {
                 watchProvidersParam = 'with_watch_providers=' + selectedProviders.join('|');
@@ -113,12 +114,18 @@ export class PopularComponent implements OnInit, OnDestroy {
                     title.onYoutube = true;
                 } else if (stream.provider_id === 350) {
                     title.onApple = true;
-                } else if (stream.provider_id === 299) {
-                    title.onSling = true;
                 } else if (stream.provider_id === 386) {
                     title.onPeacock = true;
                 } else if (stream.provider_id === 1899) {
                     title.onMax = true;
+                } else if (stream.provider_id === 2303) {
+                    title.onParamount = true;
+                } else if (stream.provider_id === 43) {
+                    title.onStarz = true;
+                } else if (stream.provider_id === 526) {
+                    title.onAmc = true;
+                } else if (stream.provider_id === 34) {
+                    title.onMgm = true;
                 }
             }
             return title;

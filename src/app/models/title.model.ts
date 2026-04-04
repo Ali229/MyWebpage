@@ -51,7 +51,10 @@ export interface Title {
     onAmazon: boolean;
     onYoutube: boolean;
     onApple: boolean;
-    onSling: boolean;
     onPeacock: boolean;
     onMax: boolean;
+    onParamount: boolean;
+    onStarz: boolean;
+    onAmc: boolean;
+    onMgm: boolean;
 }
