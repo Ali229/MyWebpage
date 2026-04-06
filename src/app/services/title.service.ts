@@ -11,11 +11,23 @@ interface Language {
     'name': string;
 }
 
+export interface SimilarTitle {
+    id: number;
+    media_type: string;
+    poster_path: string;
+    vote_average: number;
+    release_date: string;
+    first_air_date: string;
+    title: string;
+    name: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class TitleService {
     loading = false;
+    loadingMoreLikeThis = false;
     selectedOption = '';
     type = '';
     title: string;
@@ -23,6 +35,7 @@ export class TitleService {
     error: boolean;
     errorTitle: string;
     languages: Language[];
+    moreLikeThis: SimilarTitle[] = [];
 
     constructor(private http: HttpClient) {
         this.languages = languagesData;
@@ -54,6 +67,8 @@ export class TitleService {
     search(id, type) {
         this.loading = true;
         this.error = false;
+        this.loadingMoreLikeThis = true;
+        this.moreLikeThis = [];
 
         // Cancel the previous HTTP request when a new one is initiated
         if (this.currentSearchSubscription) {
@@ -72,7 +87,35 @@ export class TitleService {
                 this.titleSubject$.next(data);
                 this.searchOMDBRatings(data);
                 this.searchStreams(data);
+                this.searchMoreLikeThis(data);
                 this.loading = false;
+            });
+    }
+
+    searchMoreLikeThis(data: Title) {
+        const mediaType = data.media_type;
+        const currentTitleId = data.id;
+        this.http.get(`https://api.themoviedb.org/3/${mediaType}/${currentTitleId}/recommendations?api_key=e84ac8af3c49ad3253e0369ec64dfbff&language=en-US&page=1`)
+            .pipe(take(1))
+            .subscribe((response: any) => {
+                if (this.titleSubject$.value?.id !== currentTitleId) {
+                    return;
+                }
+                const results = Array.isArray(response.results) ? response.results : [];
+                this.moreLikeThis = results
+                    .filter(item => item && item.id !== currentTitleId)
+                    .slice(0, 3)
+                    .map(item => ({
+                        ...item,
+                        media_type: mediaType,
+                        vote_average: item.vote_average ? Math.round(item.vote_average * 10) : 0
+                    }));
+                this.loadingMoreLikeThis = false;
+            }, () => {
+                if (this.titleSubject$.value?.id === currentTitleId) {
+                    this.moreLikeThis = [];
+                    this.loadingMoreLikeThis = false;
+                }
             });
     }
 

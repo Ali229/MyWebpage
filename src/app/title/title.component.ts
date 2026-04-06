@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../services/auth.service';
 import {Title} from '../models/title.model';
-import {TitleService} from '../services/title.service';
+import {SimilarTitle, TitleService} from '../services/title.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {StreamComponent} from '../stream/stream.component';
@@ -32,5 +32,21 @@ export class TitleComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.terminate$.next();
         this.terminate$.complete();
+    }
+
+    openMoreLikeThis(similarTitle: SimilarTitle) {
+        const mediaType = similarTitle?.media_type || this.title?.media_type;
+        if (!similarTitle?.id || !mediaType) {
+            return;
+        }
+        this.ts.search(similarTitle.id, mediaType);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    getMoreLikeThisRatingColor(score: number): string {
+        if (!score || score <= 0) {
+            return 'secondary';
+        }
+        return this.ts.getRatingColor(score) || 'secondary';
     }
 }

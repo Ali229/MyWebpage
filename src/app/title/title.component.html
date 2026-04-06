@@ -126,55 +126,99 @@
                         }
                       </div>
                       <div class="row">
-                        @if (title.vote_average) {
-                          <h3 class="section-heading section-heading--spaced"><b>Ratings</b></h3>
-                        }
-                        <table class="ratings table table-borderless">
-                          <tbody>
-                            @if (title.vote_average > 0) {
-                              <tr>
-                                <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                                <td><span
-                                  class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
-                                {{ title.vote_average }}</span></td>
-                              </tr>
-                            }
-                            @if (title.imdbScore) {
-                              <tr>
-                                <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
-                                <td><span
-                                  class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
-                                {{ title.imdbScore }}</span></td>
-                              </tr>
-                            }
-                            @if (title.rottenScore) {
-                              <tr>
-                                <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
-                                <td><span
-                                  class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
-                                {{ title.rottenScore }}</span></td>
-                              </tr>
-                            }
-                            @if (title.metaScore) {
-                              <tr>
-                                <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
-                                <td><span
-                                  class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
-                                {{ title.metaScore }}</span></td>
-                              </tr>
-                            }
-                            @if (title.averageScore !== 0 && title.scoreCount > 1) {
-                              <tr>
-                                <td><img class="icon" src="assets/avg.png" alt="Can't load image"
-                                style="border-radius: 15px;"></td>
-                                <td><span
-                                  class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
-                                {{ title.averageScore }}</span></td>
-                              </tr>
-                            }
-                          </tbody>
-                        </table>
+                        <div class="ratings-panel">
+                          @if (title.vote_average) {
+                            <h3 class="section-heading section-heading--spaced"><b>Ratings</b></h3>
+                          }
+                          <table class="ratings table table-borderless">
+                            <tbody>
+                              @if (title.vote_average > 0) {
+                                <tr>
+                                  <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
+                                  <td><span
+                                    class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
+                                  {{ title.vote_average }}</span></td>
+                                </tr>
+                              }
+                              @if (title.imdbScore) {
+                                <tr>
+                                  <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
+                                  <td><span
+                                    class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
+                                  {{ title.imdbScore }}</span></td>
+                                </tr>
+                              }
+                              @if (title.rottenScore) {
+                                <tr>
+                                  <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
+                                  <td><span
+                                    class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
+                                  {{ title.rottenScore }}</span></td>
+                                </tr>
+                              }
+                              @if (title.metaScore) {
+                                <tr>
+                                  <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
+                                  <td><span
+                                    class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
+                                  {{ title.metaScore }}</span></td>
+                                </tr>
+                              }
+                              @if (title.averageScore !== 0 && title.scoreCount > 1) {
+                                <tr>
+                                  <td><img class="icon" src="assets/avg.png" alt="Can't load image"
+                                  style="border-radius: 15px;"></td>
+                                  <td><span
+                                    class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
+                                  {{ title.averageScore }}</span></td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
+                      @if (ts.moreLikeThis.length > 0 || ts.loadingMoreLikeThis) {
+                        <div class="row">
+                          <div class="more-like-panel">
+                            <h3 class="section-heading section-heading--spaced"><b>More like this</b></h3>
+                            @if (ts.loadingMoreLikeThis) {
+                              <div class="more-like-loading">Loading recommendations...</div>
+                            }
+                            @if (!ts.loadingMoreLikeThis && ts.moreLikeThis.length > 0) {
+                              <div class="more-like-grid">
+                                @for (similarTitle of ts.moreLikeThis; track similarTitle.id) {
+                                  <button
+                                    (click)="openMoreLikeThis(similarTitle)"
+                                    [attr.title]="'Open ' + (similarTitle.title ? similarTitle.title : similarTitle.name)"
+                                    class="more-like-card"
+                                    type="button">
+                                    @if (similarTitle.poster_path) {
+                                      <img
+                                        [src]="'https://image.tmdb.org/t/p/w154' + similarTitle.poster_path"
+                                        alt="Can't load image"
+                                        class="more-like-card__poster">
+                                    } @else {
+                                      <img
+                                        alt="Can't load image"
+                                        class="more-like-card__poster"
+                                        src="assets/404PosterNotFound.jpg">
+                                    }
+                                    <span class="more-like-card__content">
+                                      <span class="more-like-card__title">{{ similarTitle.title ? similarTitle.title : similarTitle.name }}</span>
+                                      <span class="more-like-card__date">{{ similarTitle.release_date ? (similarTitle.release_date | date) : (similarTitle.first_air_date | date) }}</span>
+                                      <span
+                                        [ngClass]="'more-like-card__rating--' + getMoreLikeThisRatingColor(similarTitle.vote_average)"
+                                        class="more-like-card__rating">
+                                        {{ similarTitle.vote_average > 0 ? similarTitle.vote_average : 'NR' }}
+                                      </span>
+                                    </span>
+                                  </button>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>
