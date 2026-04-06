@@ -4,14 +4,71 @@
   align-items: center;
 }
 
-img {
+.stream-logo {
   display: block;
-  border-radius: 5px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 4px;
+  background: linear-gradient(150deg, #f7faff 0%, #eaf1fa 100%);
+  border: 1px solid #c5d1e0;
+  box-shadow: 0 8px 16px rgba(16, 36, 61, 0.16);
   margin-top: 10px;
   margin-right: 5px;
+  object-fit: contain;
   transition: transform 0.18s ease;
 }
 
-img:hover {
+.stream-logo--hulu {
+  border-color: #6ea281;
+  background: linear-gradient(145deg, #193429 0%, #0f211a 100%);
+}
+
+.stream-logo--prime {
+  border-color: #7fa8d3;
+  background: linear-gradient(145deg, #d7ebff 0%, #bfdfff 100%);
+}
+
+.stream-logo--youtube {
+  border-color: #ca7979;
+  background: linear-gradient(145deg, #fff1f1 0%, #ffdede 100%);
+}
+
+.stream-logo--apple {
+  border-color: #9ca5b4;
+  background: linear-gradient(145deg, #f6f8fb 0%, #e8edf4 100%);
+}
+
+.stream-logo--paramount {
+  border-color: #88b2f0;
+  background: linear-gradient(145deg, #e9f2ff 0%, #d6e8ff 100%);
+}
+
+.stream-logo--starz {
+  border-color: #8aacb0;
+  background: linear-gradient(145deg, #e8f8f9 0%, #d7f0f2 100%);
+}
+
+.stream-logo--mgm {
+  border-color: #c9a96b;
+  background: linear-gradient(145deg, #2d2632 0%, #1f1a25 100%);
+}
+
+.stream-logo--amc {
+  padding: 3px;
+  border-color: #6f7991;
+  background: linear-gradient(145deg, #24314b 0%, #151f32 100%);
+}
+
+.stream-logo--netflix,
+.stream-logo--disney,
+.stream-logo--peacock,
+.stream-logo--max {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.stream-logo:hover {
   transform: translateY(-1px);
 }

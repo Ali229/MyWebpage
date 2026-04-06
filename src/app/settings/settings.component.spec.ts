@@ -14,7 +14,7 @@ describe('SettingsComponent', () => {
         authService.providers = [
             {id: 8, name: 'Netflix', icon: 'assets/netflix.svg', selected: true},
             {id: 337, name: 'Disney+', icon: 'assets/disney.webp', selected: false},
-            {id: 15, name: 'Hulu', icon: 'assets/hulu.png', selected: false}
+            {id: 15, name: 'Hulu', icon: 'assets/hulu.svg', selected: false}
         ];
 
         await TestBed.configureTestingModule({

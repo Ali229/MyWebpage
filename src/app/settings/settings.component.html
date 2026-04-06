@@ -23,7 +23,7 @@
               class="provider-card__checkbox"
               type="checkbox">
 
-            <span class="provider-card__icon">
+            <span class="provider-card__icon" [attr.data-provider-id]="provider.id">
               <img [alt]="provider.name + ' icon'" [src]="provider.icon">
             </span>
 

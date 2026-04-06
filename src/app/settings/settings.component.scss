@@ -143,12 +143,64 @@
   width: 64px;
   height: 64px;
   min-height: 64px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  padding: 0.4rem;
+  border: 1px solid #c5d1e0;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #f7faff 0%, #eaf1fa 100%);
+  box-shadow: 0 10px 18px rgba(16, 36, 61, 0.16);
   flex-shrink: 0;
   overflow: hidden;
+}
+
+.provider-card__icon[data-provider-id="15"] {
+  border-color: #6ea281;
+  background: linear-gradient(145deg, #193429 0%, #0f211a 100%);
+}
+
+.provider-card__icon[data-provider-id="9"] {
+  border-color: #7fa8d3;
+  background: linear-gradient(145deg, #d7ebff 0%, #bfdfff 100%);
+}
+
+.provider-card__icon[data-provider-id="188"] {
+  border-color: #ca7979;
+  background: linear-gradient(145deg, #fff1f1 0%, #ffdede 100%);
+}
+
+.provider-card__icon[data-provider-id="350"] {
+  border-color: #9ca5b4;
+  background: linear-gradient(145deg, #f6f8fb 0%, #e8edf4 100%);
+}
+
+.provider-card__icon[data-provider-id="2303"] {
+  border-color: #88b2f0;
+  background: linear-gradient(145deg, #e9f2ff 0%, #d6e8ff 100%);
+}
+
+.provider-card__icon[data-provider-id="43"] {
+  border-color: #8aacb0;
+  background: linear-gradient(145deg, #e8f8f9 0%, #d7f0f2 100%);
+}
+
+.provider-card__icon[data-provider-id="34"] {
+  border-color: #c9a96b;
+  background: linear-gradient(145deg, #2d2632 0%, #1f1a25 100%);
+}
+
+.provider-card__icon[data-provider-id="526"] {
+  padding: 0.28rem;
+  border-color: #6f7991;
+  background: linear-gradient(145deg, #24314b 0%, #151f32 100%);
+}
+
+.provider-card__icon[data-provider-id="8"],
+.provider-card__icon[data-provider-id="337"],
+.provider-card__icon[data-provider-id="386"],
+.provider-card__icon[data-provider-id="1899"] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .provider-card__icon img {
