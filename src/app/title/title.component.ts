@@ -34,6 +34,31 @@ export class TitleComponent implements OnInit, OnDestroy {
         this.terminate$.complete();
     }
 
+    onToggleWatchlist() {
+        if (!this.title?.id) {
+            return;
+        }
+
+        // Avoid false-state flicker actions while the saved watchlist is still loading.
+        if (this.auth.user.uid && !this.auth.watchlistLoaded) {
+            return;
+        }
+
+        if (this.auth.getWatchlisted(this.title.id)) {
+            this.auth.removeFromWatchlist(this.title.id);
+        } else {
+            this.auth.addToWatchlist(this.title);
+        }
+    }
+
+    isWatchlistLoading(): boolean {
+        return !!this.auth.user.uid && !this.auth.watchlistLoaded;
+    }
+
+    isWatchlisted(): boolean {
+        return !!this.title?.id && this.auth.watchlistLoaded && this.auth.getWatchlisted(this.title.id);
+    }
+
     openMoreLikeThis(similarTitle: SimilarTitle) {
         const mediaType = similarTitle?.media_type || this.title?.media_type;
         if (!similarTitle?.id || !mediaType) {
