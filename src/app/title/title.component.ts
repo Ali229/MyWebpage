@@ -67,11 +67,4 @@ export class TitleComponent implements OnInit, OnDestroy {
         this.ts.search(similarTitle.id, mediaType);
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
-
-    getMoreLikeThisRatingColor(score: number): string {
-        if (!score || score <= 0) {
-            return 'secondary';
-        }
-        return this.ts.getRatingColor(score) || 'secondary';
-    }
 }

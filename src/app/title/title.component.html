@@ -206,8 +206,8 @@
                                       <span class="more-like-card__title">{{ similarTitle.title ? similarTitle.title : similarTitle.name }}</span>
                                       <span class="more-like-card__date">{{ similarTitle.release_date ? (similarTitle.release_date | date) : (similarTitle.first_air_date | date) }}</span>
                                       <span
-                                        [ngClass]="'more-like-card__rating--' + getMoreLikeThisRatingColor(similarTitle.vote_average)"
-                                        class="more-like-card__rating">
+                                        [ngClass]="similarTitle.vote_average > 0 ? ('badge-' + ts.getRatingColor(similarTitle.vote_average)) : 'badge-secondary'"
+                                        class="more-like-card__rating badge">
                                         {{ similarTitle.vote_average > 0 ? similarTitle.vote_average : 'NR' }}
                                       </span>
                                     </span>

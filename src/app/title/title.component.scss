@@ -294,24 +294,20 @@ b {
   text-align: center;
 }
 
-.more-like-card__rating--success {
-  background: #e8f4eb;
-  color: #1f7a3d;
-}
-
-.more-like-card__rating--warning {
-  background: #ffe9b0;
-  color: #8c6200;
-}
-
-.more-like-card__rating--danger {
-  background: #f8cdd3;
-  color: #92233a;
-}
-
-.more-like-card__rating--secondary {
-  background: #eef2f7;
-  color: #6b7d92;
+.more-like-card__rating.badge {
+  width: fit-content;
+  height: auto;
+  min-width: 50px;
+  margin-left: 0;
+  padding: 0.12rem 0.55rem;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  border-radius: 999px;
+  box-shadow: 0 6px 12px rgba(16, 36, 61, 0.12);
 }
 
 .more-like-loading {
