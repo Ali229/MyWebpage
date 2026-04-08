@@ -84,23 +84,25 @@
   justify-content: center;
   min-height: 42px;
   padding: 0.5rem 0.75rem;
-  border: 0;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   background: transparent;
   color: #ffffff;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.16s ease, transform 0.16s ease;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.16s ease;
 }
 
 .poster-action .unselectable {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 0.45rem;
 }
 
 .poster-action--watchlist {
-  min-width: 118px;
+  width: 128px;
   font-weight: 300;
 }
 
@@ -111,9 +113,10 @@
 
 .poster-action:hover,
 .poster-action:focus-visible {
-  background-color: #467eab;
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: #8fb2d0;
+  box-shadow: 0 10px 20px rgba(16, 36, 61, 0.14);
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .poster-action:focus-visible {
@@ -128,7 +131,6 @@
 .poster-action:disabled {
   cursor: not-allowed;
   opacity: 0.66;
-  transform: none;
   background: transparent;
 }
 
@@ -230,14 +232,13 @@ b {
   background: #ffffff;
   text-align: left;
   cursor: pointer;
-  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .more-like-card:hover,
 .more-like-card:focus-visible {
   border-color: #8fb2d0;
   box-shadow: 0 10px 20px rgba(16, 36, 61, 0.14);
-  transform: translateY(-1px);
 }
 
 .more-like-card:focus-visible {

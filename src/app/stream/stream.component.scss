@@ -2,6 +2,7 @@
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
+  cursor: default;
 }
 
 .stream-logo {
@@ -15,7 +16,7 @@
   margin-top: 10px;
   margin-right: 5px;
   object-fit: contain;
-  transition: transform 0.18s ease;
+  cursor: default;
 }
 
 .stream-logo--hulu {
@@ -69,6 +70,3 @@
   box-shadow: none;
 }
 
-.stream-logo:hover {
-  transform: translateY(-1px);
-}

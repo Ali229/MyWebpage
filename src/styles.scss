@@ -78,12 +78,11 @@ b, strong {
 }
 
 .hoverable {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .hoverable:hover {
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
-  transform: translateY(-1px);
 }
 
 .btn-rounded {

@@ -220,11 +220,11 @@
   justify-content: center;
   width: 2.2rem;
   height: 2.2rem;
-  border: 0;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   background: transparent;
   color: #6c757d;
-  transition: background-color 0.16s ease, color 0.16s ease;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease;
 }
 
 .watchlist-icon-btn--link {
@@ -234,6 +234,8 @@
 .watchlist-icon-btn:hover,
 .watchlist-icon-btn:focus-visible {
   background: #edf5fb;
+  border-color: #8fb2d0;
+  box-shadow: 0 10px 20px rgba(16, 36, 61, 0.14);
   color: #1d344a;
 }
 
