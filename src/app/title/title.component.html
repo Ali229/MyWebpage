@@ -38,7 +38,7 @@
                         (click)="auth.removeFromWatchlist(title.id)"
                         type="button"
                         title="Remove from watchlist">
-                        <span class="unselectable"><i class="fas fa-bookmark amber-text"></i><span>Added</span></span>
+                        <span class="unselectable"><i class="fas fa-bookmark amber-text"></i>&nbsp;&nbsp;Added&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                       </button>
                     }
                   </div>
@@ -196,11 +196,15 @@
                                       <img
                                         [src]="'https://image.tmdb.org/t/p/w154' + similarTitle.poster_path"
                                         alt="Can't load image"
+                                        decoding="async"
+                                        loading="lazy"
                                         class="more-like-card__poster">
                                     } @else {
                                       <img
                                         alt="Can't load image"
                                         class="more-like-card__poster"
+                                        decoding="async"
+                                        loading="lazy"
                                         src="assets/404PosterNotFound.jpg">
                                     }
                                     <span class="more-like-card__content">

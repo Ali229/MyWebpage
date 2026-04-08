@@ -22,11 +22,15 @@
                         <img
                           [src]="'https://image.tmdb.org/t/p/w154' + title.poster_path"
                           alt="Can't load image"
+                          decoding="async"
+                          loading="lazy"
                           class="icons z-depth-3">
                       }
                       @if (!title.poster_path) {
                         <img alt="Can't load image"
+                          decoding="async"
                           class="icons z-depth-3"
+                          loading="lazy"
                           src="assets/404PosterNotFound.jpg">
                         }
                         <div>
@@ -60,11 +64,15 @@
                           <img
                             [src]="'https://image.tmdb.org/t/p/w154' + popService.popularList[i+1].poster_path"
                             alt="Can't load image"
+                            decoding="async"
+                            loading="lazy"
                             class="icons z-depth-3">
                         }
                         @if (!popService.popularList[i+1].poster_path) {
                           <img alt="Can't load image"
+                            decoding="async"
                             class="icons z-depth-3"
+                            loading="lazy"
                             src="assets/404PosterNotFound.jpg">
                           }
                           <div>

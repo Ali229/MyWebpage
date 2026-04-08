@@ -8,7 +8,9 @@
                     <div class="project-card__media" [class.project-card__media--contain]="project.imageFit === 'contain'">
                         <img
                             [alt]="project.imageAlt || project.title"
-                            [src]="project.image">
+                            [src]="project.image"
+                            decoding="async"
+                            loading="lazy">
                     </div>
                 }
 

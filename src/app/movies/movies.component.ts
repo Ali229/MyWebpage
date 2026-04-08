@@ -52,8 +52,6 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     }
 
     ngOnInit() {
-        // Subscribe to window resize events to update the isPhone value
-        window.addEventListener('resize', this.onResize.bind(this));
         this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.subscribe(value => {
             this.showStreamableCheckBox = value;
         });
@@ -107,8 +105,8 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
         }
     }
 
+    @HostListener('window:resize')
     onResize() {
-        // Update the isPhone value when the window is resized
         this.isPhone = window.innerWidth <= 767.98;
     }
 

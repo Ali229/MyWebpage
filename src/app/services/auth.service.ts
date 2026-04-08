@@ -38,6 +38,8 @@ export class AuthService {
     public authStateReady$ = this.authStateReadySubject.asObservable();
     private _bShowStreamableCheckBox = new BehaviorSubject<boolean>(false);
     public bShowStreamableCheckbox$ = this._bShowStreamableCheckBox.asObservable();
+    private watchlistChangedSubject = new BehaviorSubject<number>(0);
+    public watchlistChanged$ = this.watchlistChangedSubject.asObservable();
 
     constructor(private toastr: ToastrService) {
         onAuthStateChanged(firebaseAuth, user => {
@@ -69,6 +71,7 @@ export class AuthService {
                 this.moviesCount = 0;
                 this.tvCount = 0;
                 this.empty = false;
+                this.emitWatchlistChanged();
                 this._bShowStreamableCheckBox.next(true);
             }
             this.authStateReadySubject.next(true);
@@ -141,6 +144,7 @@ export class AuthService {
                 }
             } finally {
                 this.watchlistLoaded = true;
+                this.emitWatchlistChanged();
             }
         } else {
             this.watchlist = [];
@@ -148,6 +152,7 @@ export class AuthService {
             this.tvCount = 0;
             this.empty = false;
             this.watchlistLoaded = true;
+            this.emitWatchlistChanged();
         }
     }
 
@@ -191,6 +196,7 @@ export class AuthService {
                 await deleteDoc(watchlistRef);
                 this.watchlist = this.watchlist.filter(item => item.id !== id);
                 this.recalculateWatchlistMeta();
+                this.emitWatchlistChanged();
                 this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
             } else {
                 this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
@@ -310,6 +316,10 @@ export class AuthService {
             }
         }
         this.empty = this.watchlist.length === 0;
+    }
+
+    private emitWatchlistChanged() {
+        this.watchlistChangedSubject.next(this.watchlistChangedSubject.value + 1);
     }
 
     private getProviderIds(provider: { id: number; ids?: number[] }): number[] {

@@ -20,6 +20,7 @@ import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
+    private readonly providerRequestConcurrency = 5;
 
     constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
@@ -100,14 +101,68 @@ export class PopularComponent implements OnInit, OnDestroy {
 
     getProviders() {
         const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
+        const providerType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
         const titles = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
+        this.popService.pruneProviderCache();
 
-        titles.forEach((title: Title) => {
-            const watchProvidersUrl = `https://api.themoviedb.org/3/${this.popService.selectedType}/${title.id}/watch/providers?api_key=${apiKey}`;
-            this.http.get(watchProvidersUrl).subscribe((response: any) => {
-                title = this.searchStreams(response, title);
-            });
-        });
+        if (titles.length === 0) {
+            return;
+        }
+
+        const queue = [...titles];
+        const workerCount = Math.min(this.providerRequestConcurrency, queue.length);
+        for (let i = 0; i < workerCount; i++) {
+            void this.runProviderWorker(queue, providerType, apiKey);
+        }
+    }
+
+    private async runProviderWorker(queue: Title[], providerType: 'movie' | 'tv', apiKey: string) {
+        while (queue.length > 0) {
+            const title = queue.shift();
+            if (!title) {
+                continue;
+            }
+            await this.populateProvidersForTitle(title, providerType, apiKey);
+        }
+    }
+
+    private async populateProvidersForTitle(title: Title, providerType: 'movie' | 'tv', apiKey: string) {
+        const cacheKey = `${providerType}:${title.id}`;
+        const cachedProviders = this.popService.getCachedProviders(cacheKey);
+        if (cachedProviders) {
+            this.applyProviders(title, cachedProviders);
+            return;
+        }
+
+        const watchProvidersUrl = `https://api.themoviedb.org/3/${providerType}/${title.id}/watch/providers?api_key=${apiKey}`;
+        try {
+            const response: any = await this.http.get(watchProvidersUrl).pipe(take(1)).toPromise();
+            this.popService.cacheProviders(cacheKey, response);
+            this.applyProviders(title, response);
+        } catch (error) {
+            this.resetStreamFlags(title);
+        }
+    }
+
+    private applyProviders(title: Title, response: any) {
+        this.resetStreamFlags(title);
+        this.searchStreams(response, title);
+    }
+
+    private resetStreamFlags(title: Title) {
+        title.streams = [];
+        title.onNetflix = false;
+        title.onDisney = false;
+        title.onHulu = false;
+        title.onAmazon = false;
+        title.onYoutube = false;
+        title.onApple = false;
+        title.onPeacock = false;
+        title.onMax = false;
+        title.onParamount = false;
+        title.onStarz = false;
+        title.onAmc = false;
+        title.onMgm = false;
     }
 
     searchStreams(response: any, title: Title): Title {

@@ -17,6 +17,7 @@
           <label class="provider-card" [class.is-selected]="provider.selected" [for]="'provider-' + provider.id">
             <input
               [(ngModel)]="provider.selected"
+              (ngModelChange)="onProviderSelectionChanged()"
               [attr.aria-label]="provider.name"
               [id]="'provider-' + provider.id"
               [name]="'provider-' + provider.id"

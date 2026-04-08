@@ -53,17 +53,24 @@
         @if (title.poster_path) {
           <img alt="Can't load image"
             class="poster"
+            decoding="async"
+            loading="lazy"
             onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'"
             src="{{'https://image.tmdb.org/t/p/w500/' + title.poster_path}}">
           }
           @if (!title.poster_path && title.omdbPoster) {
             <img alt="Can't load image" class="poster"
-              onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'" src="{{title.omdbPoster}}">
+              decoding="async"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'"
+              src="{{title.omdbPoster}}">
             }
             @if (!title.poster_path && !title.omdbPoster) {
               <img alt="Can't load image" class="poster"
+                decoding="async"
+                loading="lazy"
                 src="assets/404PosterNotFound.jpg">
-              }
+            }
             </a>
             <div class="col-8 p-2">
               <div class="row">
