@@ -103,18 +103,16 @@ export class PopularComponent implements OnInit, OnDestroy {
         const titles = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
 
         titles.forEach((title: Title) => {
-            const watchProvidersUrl = `https://api.themoviedb.org/3/${this.popService.selectedType}/${title.id}?api_key=${apiKey}&append_to_response=watch/providers`;
+            const watchProvidersUrl = `https://api.themoviedb.org/3/${this.popService.selectedType}/${title.id}/watch/providers?api_key=${apiKey}`;
             this.http.get(watchProvidersUrl).subscribe((response: any) => {
-                if (this.popService.selectedType === 'movie') {
-                    title.release_date = response.release_date;
-                }
                 title = this.searchStreams(response, title);
             });
         });
     }
 
     searchStreams(response: any, title: Title): Title {
-        const providers = response['watch/providers'];
+        // Supports both TMDB details responses (append_to_response) and dedicated watch/providers responses.
+        const providers = response['watch/providers'] || response;
         if (providers && providers.results && providers.results.US && providers.results.US.flatrate) {
             title.streams = providers.results.US.flatrate;
             for (const stream of title.streams) {
