@@ -96,14 +96,23 @@
 .poster-action .unselectable {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
   gap: 0.45rem;
 }
 
 .poster-action--watchlist {
   width: 128px;
   font-weight: 300;
+  justify-content: flex-start;
+  padding-left: 0.7rem;
+}
+
+.poster-action--watchlist .unselectable {
+  justify-content: flex-start;
+}
+
+.poster-action--watchlist .fa-bookmark {
+  width: 1rem;
+  text-align: center;
 }
 
 .poster-action--icon {

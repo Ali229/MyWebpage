@@ -25,22 +25,15 @@
                 </div>
                 <div class="row poster-buttons z-depth-3">
                   <div class="col-auto p-0">
-                    @if (!auth.getWatchlisted(title.id)) {
-                      <button class="poster-action poster-action--watchlist"
-                        (click)="auth.addToWatchlist(title)"
-                        type="button"
-                        title="Add to watchlist">
-                        <span class="unselectable"><i class="fas fa-bookmark"></i><span>Watchlist</span></span>
-                      </button>
-                    }
-                    @if (auth.getWatchlisted(title.id)) {
-                      <button class="poster-action poster-action--watchlist"
-                        (click)="auth.removeFromWatchlist(title.id)"
-                        type="button"
-                        title="Remove from watchlist">
-                        <span class="unselectable"><i class="fas fa-bookmark amber-text"></i><span>Added</span></span>
-                      </button>
-                    }
+                    <button class="poster-action poster-action--watchlist"
+                      (click)="auth.getWatchlisted(title.id) ? auth.removeFromWatchlist(title.id) : auth.addToWatchlist(title)"
+                      type="button"
+                      [attr.title]="auth.getWatchlisted(title.id) ? 'Remove from watchlist' : 'Add to watchlist'">
+                      <span class="unselectable">
+                        <i class="fas fa-bookmark" [class.amber-text]="auth.getWatchlisted(title.id)"></i>
+                        <span>{{ auth.getWatchlisted(title.id) ? 'Added' : 'Watchlist' }}</span>
+                      </span>
+                    </button>
                   </div>
                   <div class="col-auto ml-auto p-0"
                     [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
