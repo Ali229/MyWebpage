@@ -44,6 +44,7 @@ export interface Title {
 
     rottenImage: string;
     omdbPoster: string;
+    ratingsHydrated: boolean;
     popularTmdbScore: number;
     popularMoviesDatabaseScore: number;
     popularCombinedScore: number;

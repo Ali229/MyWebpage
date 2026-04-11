@@ -135,7 +135,7 @@
                                   {{ title.vote_average }}</span></td>
                                 </tr>
                               }
-                              @if (title.imdbScore && !title.imdb232Score) {
+                              @if (title.ratingsHydrated && title.imdbScore && !title.imdb232Score) {
                                 <tr>
                                   <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
                                   <td><span
@@ -143,7 +143,7 @@
                                   {{ title.imdbScore }}</span></td>
                                 </tr>
                               }
-                              @if (title.imdb232Score) {
+                              @if (title.ratingsHydrated && title.imdb232Score) {
                                 <tr>
                                   <td><img class="icon" src="assets/imdb.svg" alt="Can't load image" title="IMDb232"></td>
                                   <td><span
@@ -151,7 +151,7 @@
                                   {{ title.imdb232Score }}</span></td>
                                 </tr>
                               }
-                              @if (title.rottenScore) {
+                              @if (title.ratingsHydrated && title.rottenScore) {
                                 <tr>
                                   <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
                                   <td><span
@@ -159,7 +159,7 @@
                                   {{ title.rottenScore }}</span></td>
                                 </tr>
                               }
-                              @if (title.metaScore) {
+                              @if (title.ratingsHydrated && title.metaScore) {
                                 <tr>
                                   <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
                                   <td><span
@@ -167,7 +167,7 @@
                                   {{ title.metaScore }}</span></td>
                                 </tr>
                               }
-                              @if (title.averageScore !== 0 && title.scoreCount > 1) {
+                              @if (title.ratingsHydrated && title.averageScore !== 0 && title.scoreCount > 1) {
                                 <tr>
                                   <td><img class="icon" src="assets/avg.png" alt="Can't load image"
                                   style="border-radius: 15px;"></td>

@@ -96,11 +96,12 @@ export class TitleService {
                 data.runtimeText = this.getRuntime(data);
                 data.media_type = type;
                 data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
+                data.ratingsHydrated = false;
+                this.updateAggregateScore(data);
                 this.titleSubject$.next(data);
-                this.searchOMDBRatings(data);
-                this.searchIMDb232Ratings(data);
                 this.searchStreams(data);
                 this.searchMoreLikeThis(data);
+                void this.hydrateRatings(data);
                 this.loading = false;
             });
     }
@@ -136,69 +137,86 @@ export class TitleService {
             });
     }
 
-    searchOMDBRatings(data) {
+    private async hydrateRatings(data: Title): Promise<void> {
+        await Promise.allSettled([
+            this.searchOMDBRatings(data),
+            this.searchIMDb232Ratings(data)
+        ]);
+
+        data.ratingsHydrated = true;
+        this.updateAggregateScore(data);
+
+        // Ignore stale async responses after switching to a new title.
+        if (this.titleSubject$.value?.id !== data.id || this.titleSubject$.value?.media_type !== data.media_type) {
+            return;
+        }
+        this.titleSubject$.next(data);
+    }
+
+    private async searchOMDBRatings(data: Title): Promise<void> {
         if (!data?.external_ids?.imdb_id) {
             return;
         }
+
         const omdbUrl = `https://www.omdbapi.com/?apikey=${this.omdbApiKey}&type=&i=${data.external_ids.imdb_id}`;
-        this.http.get(omdbUrl)
-            .subscribe((response: any) => {
-                const ratings = Array.isArray(response?.Ratings) ? response.Ratings : [];
-                for (const rating of ratings) {
-                    if (rating.Source === 'Internet Movie Database') {
-                        data.imdbScore = parseFloat(rating.Value) * 10;
-                    } else if (rating.Source === 'Rotten Tomatoes') {
-                        data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-                        if (data.rottenScore) {
-                            if (data.rottenScore >= 50) {
-                                data.rottenImage = 'tomato_full.png';
-                            } else if (data.rottenScore < 50) {
-                                data.rottenImage = 'tomato_rotten.png';
-                            }
+        try {
+            const response: any = await this.http.get(omdbUrl).pipe(take(1)).toPromise();
+            const ratings = Array.isArray(response?.Ratings) ? response.Ratings : [];
+            for (const rating of ratings) {
+                if (rating.Source === 'Internet Movie Database') {
+                    data.imdbScore = parseFloat(rating.Value) * 10;
+                } else if (rating.Source === 'Rotten Tomatoes') {
+                    data.rottenScore = parseFloat(rating.Value.replace('%', ''));
+                    if (data.rottenScore) {
+                        if (data.rottenScore >= 50) {
+                            data.rottenImage = 'tomato_full.png';
+                        } else if (data.rottenScore < 50) {
+                            data.rottenImage = 'tomato_rotten.png';
                         }
-                    } else if (rating.Source === 'Metacritic') {
-                            data.metaScore = parseFloat(rating.Value);
                     }
+                } else if (rating.Source === 'Metacritic') {
+                    data.metaScore = parseFloat(rating.Value);
                 }
-                if (response.Poster !== 'N/A') {
-                    data.omdbPoster = response.Poster;
-                }
-                if (response.Awards !== 'N/A') {
-                    data.awards = response.Awards;
-                }
-                this.updateAggregateScore(data);
-                this.titleSubject$.next(data);
-            });
+            }
+
+            if (response.Poster !== 'N/A') {
+                data.omdbPoster = response.Poster;
+            }
+            if (response.Awards !== 'N/A') {
+                data.awards = response.Awards;
+            }
+        } catch (error) {
+            // Keep TMDb data when OMDb is unavailable.
+        }
     }
 
-    searchIMDb232Ratings(data: Title) {
+    private async searchIMDb232Ratings(data: Title): Promise<void> {
         const imdbId = data?.external_ids?.imdb_id;
         if (!imdbId || !this.rapidApiKey) {
             return;
         }
 
         const imdb232Url = `https://${this.imdb232Host}/api/title/get-ratings?tt=${imdbId}`;
-        this.http.get(imdb232Url, {
-            headers: {
-                'x-rapidapi-key': this.rapidApiKey,
-                'x-rapidapi-host': this.imdb232Host
-            }
-        })
-            .subscribe((response: any) => {
-                const summary = response?.data?.title?.ratingsSummary;
-                const aggregateRating = Number(summary?.aggregateRating);
-                const voteCount = Number(summary?.voteCount);
-                if (!Number.isFinite(aggregateRating) || aggregateRating <= 0) {
-                    return;
+        try {
+            const response: any = await this.http.get(imdb232Url, {
+                headers: {
+                    'x-rapidapi-key': this.rapidApiKey,
+                    'x-rapidapi-host': this.imdb232Host
                 }
+            }).pipe(take(1)).toPromise();
 
-                data.imdb232Score = Math.round(aggregateRating * 10);
-                data.imdb232Votes = Number.isFinite(voteCount) ? voteCount : null;
-                this.updateAggregateScore(data);
-                this.titleSubject$.next(data);
-            }, () => {
-                // Keep OMDb/TMDb ratings even when RapidAPI data is unavailable.
-            });
+            const summary = response?.data?.title?.ratingsSummary;
+            const aggregateRating = Number(summary?.aggregateRating);
+            const voteCount = Number(summary?.voteCount);
+            if (!Number.isFinite(aggregateRating) || aggregateRating <= 0) {
+                return;
+            }
+
+            data.imdb232Score = Math.round(aggregateRating * 10);
+            data.imdb232Votes = Number.isFinite(voteCount) ? voteCount : null;
+        } catch (error) {
+            // Keep OMDb/TMDb ratings even when RapidAPI data is unavailable.
+        }
     }
 
     searchStreams(data: Title) {
