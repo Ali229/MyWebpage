@@ -79,7 +79,7 @@ export class TitleService {
             .pipe(take(1)).subscribe(data => {
                 data.vote_average = Math.round(data.vote_average * 10);
                 data.certification = this.getCertification(data, type);
-                data.trailer = this.getTrailer(data);
+                data.trailer = this.getTrailer(data, type);
                 data.language = this.getLanguage(data);
                 data.runtimeText = this.getRuntime(data);
                 data.media_type = type;
@@ -230,18 +230,92 @@ export class TitleService {
         return '';
     }
 
-    getTrailer(data) {
-        let secondaryVideo;
-        for (const video of data.videos.results) {
-            secondaryVideo = 'https://www.youtube.com/watch?v=' + video.key;
-            if (video.name.toLowerCase().includes('trailer')) {
-                return 'https://www.youtube.com/watch?v=' + video.key;
+    getTrailer(data, mediaType?: 'movie' | 'tv') {
+        const videos = Array.isArray(data?.videos?.results) ? data.videos.results : [];
+        const youtubeVideos = videos.filter(video => video?.site === 'YouTube' && !!video?.key);
+        const nonGameVideos = youtubeVideos.filter(video => !this.isLikelyGameVideo(video));
+        const trailerCandidates = nonGameVideos.length ? nonGameVideos : youtubeVideos;
+
+        const selectedVideo = this.pickBestTrailerVideo(trailerCandidates);
+        if (selectedVideo) {
+            return `https://www.youtube.com/watch?v=${selectedVideo.key}`;
+        }
+
+        const title = data?.title || data?.name || '';
+        const mediaHint = mediaType === 'tv' ? 'tv show' : 'movie';
+        const query = `${title} ${mediaHint} official trailer`;
+        return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+    }
+
+    private pickBestTrailerVideo(videos: any[]) {
+        if (!videos.length) {
+            return null;
+        }
+
+        const rankVideo = (video: any): number => {
+            const name = (video?.name || '').toLowerCase();
+            const type = (video?.type || '').toLowerCase();
+
+            let score = 0;
+            if (type === 'trailer') {
+                score += 100;
+            } else if (type === 'teaser') {
+                score += 60;
+            } else if (type === 'clip') {
+                score += 30;
+            } else if (type === 'featurette') {
+                score += 20;
             }
-        }
-        if (secondaryVideo) {
-            return secondaryVideo;
-        }
-        return 'https://www.youtube.com/results?search_query=' + (data.title ? data.title : data.name) + ' Trailer';
+
+            if (name.includes('trailer')) {
+                score += 40;
+            }
+            if (name.includes('official')) {
+                score += 15;
+            }
+            if (video?.official) {
+                score += 20;
+            }
+            if (video?.iso_639_1 === 'en') {
+                score += 8;
+            }
+            if (video?.iso_3166_1 === 'US') {
+                score += 6;
+            }
+
+            return score;
+        };
+
+        const publishedAt = (video: any): number => {
+            const timestamp = Date.parse(video?.published_at || '');
+            return Number.isNaN(timestamp) ? 0 : timestamp;
+        };
+
+        const [bestVideo] = [...videos].sort((a, b) => {
+            const scoreDiff = rankVideo(b) - rankVideo(a);
+            if (scoreDiff !== 0) {
+                return scoreDiff;
+            }
+            return publishedAt(b) - publishedAt(a);
+        });
+
+        return bestVideo || null;
+    }
+
+    private isLikelyGameVideo(video: any): boolean {
+        const value = `${video?.name || ''} ${video?.type || ''}`.toLowerCase();
+        const gameKeywords = [
+            'gameplay',
+            'fortnite',
+            'xbox',
+            'playstation',
+            'ps5',
+            'nintendo',
+            'switch',
+            'steam'
+        ];
+
+        return gameKeywords.some(keyword => value.includes(keyword));
     }
 
     getLanguage(data) {
