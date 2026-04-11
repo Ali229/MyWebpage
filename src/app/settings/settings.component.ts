@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {BackButtonComponent} from '../shared/back-button/back-button.component';
 import {UserProfileComponent} from '../user-profile/user-profile.component';
@@ -25,13 +25,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     private initialSelectionSnapshot = '';
     private currentSelectionSnapshot = '';
     private initialSelectionCaptured = false;
-    private readonly fallbackReturnUrl = '/movies';
-    private readonly returnUrl: string;
+    private readonly returnUrl = '/movies';
     private settingsPollHandle: number | null = null;
 
 
-    constructor(public auth: AuthService, private route: ActivatedRoute, private router: Router) {
-        this.returnUrl = this.resolveReturnUrl();
+    constructor(public auth: AuthService, private router: Router) {
     }
 
     get selectedProviders(): ProviderOption[] {
@@ -117,14 +115,4 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.initialSelectionCaptured = true;
     }
 
-    private resolveReturnUrl(): string {
-        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-        if (!returnUrl || !returnUrl.startsWith('/')) {
-            return this.fallbackReturnUrl;
-        }
-        if (returnUrl.startsWith('/settings')) {
-            return this.fallbackReturnUrl;
-        }
-        return returnUrl;
-    }
 }

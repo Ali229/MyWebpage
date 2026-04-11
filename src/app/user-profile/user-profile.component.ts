@@ -1,6 +1,6 @@
 import {Component, ElementRef, HostListener, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Router, RouterModule} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 
 @Component({
@@ -14,11 +14,7 @@ export class UserProfileComponent {
     @ViewChild('menu') menuRef: ElementRef<HTMLDetailsElement>;
     showIcon = false;
 
-    constructor(public auth: AuthService, private router: Router) {
-    }
-
-    get currentUrl(): string {
-        return this.router.url || '/movies';
+    constructor(public auth: AuthService) {
     }
 
     get displayName(): string {

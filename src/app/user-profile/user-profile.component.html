@@ -20,7 +20,7 @@
             <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
               <span>Lovelist</span>
             </a>
-        <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings" [queryParams]="{ returnUrl: currentUrl }">
+        <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings">
           <span>Settings</span>
         </a>
         <button (click)="signOut(menu)" class="profile-menu__item profile-menu__item--logout" type="button">

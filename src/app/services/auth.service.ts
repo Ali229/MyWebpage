@@ -232,7 +232,7 @@ export class AuthService {
                 };
 
                 await setDoc(doc(firestore, 'users', this.user.uid, 'settings', 'providerIds'), data);
-                this.toastr.success('Providers list saved successfully!');
+                this.toastr.success('Providers updated');
                 return true;
             } catch (error) {
                 this.toastr.error(String(error), 'Error saving providers list');
