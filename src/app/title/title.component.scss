@@ -286,27 +286,28 @@ b {
 }
 
 .more-like-card__rating {
-  width: fit-content;
+  width: 50px;
   min-width: 50px;
-  padding: 0.12rem 0.55rem;
-  border-radius: 999px;
+  height: 50px;
+  padding: 0;
+  border-radius: 10px;
   font-weight: 700;
   text-align: center;
 }
 
 .more-like-card__rating.badge {
-  width: fit-content;
-  height: auto;
+  width: 50px;
+  height: 50px;
   min-width: 50px;
   margin-left: 0;
-  padding: 0.12rem 0.55rem;
-  font-size: 1rem;
+  padding: 0;
+  font-size: 1.05rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   align-self: flex-start;
-  border-radius: 999px;
+  border-radius: 10px;
   box-shadow: 0 6px 12px rgba(16, 36, 61, 0.12);
 }
 
