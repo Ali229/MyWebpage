@@ -46,3 +46,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Local API keys and scratch artifacts
+/src/app/config/api.config.ts

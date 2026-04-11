@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">IMDb</title>
+  <desc id="desc">Vector IMDb logo with flat yellow background and black wordmark.</desc>
+
+  <rect x="0" y="0" width="900" height="900" fill="#e4b721"/>
+  <text
+    x="450"
+    y="585"
+    text-anchor="middle"
+    font-size="350"
+    font-weight="700"
+    letter-spacing="-6"
+    font-family="'Arial Narrow', Arial, Helvetica, sans-serif"
+    fill="#000000">IMDb</text>
+</svg>

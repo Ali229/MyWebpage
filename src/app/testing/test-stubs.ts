@@ -50,7 +50,14 @@ export function createPopularServiceStub() {
         popularList: [],
         popularMovies: [],
         popularTVShows: [],
-        selectedType: 'movie'
+        selectedType: 'movie',
+        loadingPopular: false,
+        pruneProviderCache: jasmine.createSpy('pruneProviderCache'),
+        getCachedProviders: jasmine.createSpy('getCachedProviders').and.returnValue(null),
+        cacheProviders: jasmine.createSpy('cacheProviders'),
+        pruneRatingCache: jasmine.createSpy('pruneRatingCache'),
+        getCachedRating: jasmine.createSpy('getCachedRating').and.returnValue(null),
+        cacheRating: jasmine.createSpy('cacheRating')
     };
 }
 

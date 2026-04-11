@@ -34,6 +34,8 @@ export interface Title {
     // Other ratings
     metaScore: number;
     imdbScore: number;
+    imdb232Score: number;
+    imdb232Votes: number;
     rottenScore: number;
 
     scoreCount: number;
@@ -42,6 +44,9 @@ export interface Title {
 
     rottenImage: string;
     omdbPoster: string;
+    popularTmdbScore: number;
+    popularMoviesDatabaseScore: number;
+    popularCombinedScore: number;
 
     // Streams
     'watch/providers': any;

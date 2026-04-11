@@ -42,12 +42,12 @@
                         <p class="title"><span class="title-name">{{ i + 1 }}. {{ title.title ? title.title : title.name }}</span></p>
                         <p class="popular-meta-date">{{ title.release_date ? (title.release_date | date) : (title.first_air_date | date) }}</p>
                         <p>
-                          @if (title.vote_average != 0) {
+                          @if (getPopularDisplayScore(title) > 0) {
                             <span
-                              class="badge badge-{{ts.getRatingColor(Math.round(title.vote_average*10))}} animated zoomIn z-depth-3">
-                            {{ Math.round(title.vote_average * 10) }}</span>
+                              class="badge badge-{{ts.getRatingColor(getPopularDisplayScore(title))}} animated zoomIn z-depth-3">
+                            {{ getPopularDisplayScore(title) }}</span>
                           }
-                          @if (title.vote_average == 0) {
+                          @if (getPopularDisplayScore(title) == 0) {
                             <span
                               class="badge badge-secondary animated zoomIn z-depth-3">
                             NR</span>
@@ -85,12 +85,12 @@
                         </p>
                         <p class="popular-meta-date">{{ popService.popularList[i + 1].release_date ? (popService.popularList[i + 1].release_date | date) : (popService.popularList[i + 1].first_air_date | date) }}</p>
                         <p>
-                          @if (popService.popularList[i + 1].vote_average != 0) {
+                          @if (getPopularDisplayScore(popService.popularList[i + 1]) > 0) {
                             <span
-                              class="badge badge-{{ts.getRatingColor(Math.round(popService.popularList[i + 1].vote_average*10))}} animated zoomIn z-depth-3">
-                            {{ Math.round(popService.popularList[i + 1].vote_average * 10) }}</span>
+                              class="badge badge-{{ts.getRatingColor(getPopularDisplayScore(popService.popularList[i + 1]))}} animated zoomIn z-depth-3">
+                            {{ getPopularDisplayScore(popService.popularList[i + 1]) }}</span>
                           }
-                          @if (popService.popularList[i + 1].vote_average == 0) {
+                          @if (getPopularDisplayScore(popService.popularList[i + 1]) == 0) {
                             <span
                               class="badge badge-secondary animated zoomIn z-depth-3">
                             NR</span>

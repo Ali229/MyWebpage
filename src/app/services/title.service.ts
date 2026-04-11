@@ -4,6 +4,7 @@ import {Title} from '../models/title.model';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 import languagesData from '../../assets/languages.json';
+import {apiConfig} from '../config/api.config';
 
 interface Language {
     'iso_639_1': string;
@@ -26,6 +27,11 @@ export interface SimilarTitle {
     providedIn: 'root'
 })
 export class TitleService {
+    private readonly tmdbApiKey = apiConfig.tmdbApiKey;
+    private readonly omdbApiKey = apiConfig.omdbApiKey;
+    private readonly rapidApiKey = apiConfig.rapidApiKey;
+    private readonly imdb232Host = apiConfig.rapidApiHosts.imdb232;
+
     loading = false;
     loadingMoreLikeThis = false;
     selectedOption = '';
@@ -48,7 +54,10 @@ export class TitleService {
     multiSearch() {
         this.loading = true;
         this.error = false;
-        this.http.get('https://api.themoviedb.org/3/search/multi?api_key=e84ac8af3c49ad3253e0369ec64dfbff&query=' + this.title)
+        const multiSearchUrl = this.buildTmdbUrl('/search/multi', {
+            query: this.title
+        });
+        this.http.get(multiSearchUrl)
             .subscribe((response: any) => {
                 for (const result of response.results) {
                     if (result.media_type !== 'person' &&
@@ -75,7 +84,10 @@ export class TitleService {
             this.currentSearchSubscription.unsubscribe();
         }
 
-        this.currentSearchSubscription = this.http.get<Title>('https://api.themoviedb.org/3/' + type + '/' + id + '?api_key=e84ac8af3c49ad3253e0369ec64dfbff&append_to_response=videos,external_ids,release_dates,content_ratings,watch/providers')
+        const detailsUrl = this.buildTmdbUrl(`/${type}/${id}`, {
+            append_to_response: 'videos,external_ids,release_dates,content_ratings,watch/providers'
+        });
+        this.currentSearchSubscription = this.http.get<Title>(detailsUrl)
             .pipe(take(1)).subscribe(data => {
                 data.vote_average = Math.round(data.vote_average * 10);
                 data.certification = this.getCertification(data, type);
@@ -86,6 +98,7 @@ export class TitleService {
                 data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
                 this.titleSubject$.next(data);
                 this.searchOMDBRatings(data);
+                this.searchIMDb232Ratings(data);
                 this.searchStreams(data);
                 this.searchMoreLikeThis(data);
                 this.loading = false;
@@ -95,7 +108,11 @@ export class TitleService {
     searchMoreLikeThis(data: Title) {
         const mediaType = data.media_type;
         const currentTitleId = data.id;
-        this.http.get(`https://api.themoviedb.org/3/${mediaType}/${currentTitleId}/recommendations?api_key=e84ac8af3c49ad3253e0369ec64dfbff&language=en-US&page=1`)
+        const recommendationsUrl = this.buildTmdbUrl(`/${mediaType}/${currentTitleId}/recommendations`, {
+            language: 'en-US',
+            page: '1'
+        });
+        this.http.get(recommendationsUrl)
             .pipe(take(1))
             .subscribe((response: any) => {
                 if (this.titleSubject$.value?.id !== currentTitleId) {
@@ -120,52 +137,68 @@ export class TitleService {
     }
 
     searchOMDBRatings(data) {
-        if (data.external_ids.imdb_id) {
-            this.http.get('https://www.omdbapi.com/?apikey=faec32e6&type=&i=' + data.external_ids.imdb_id)
-                .subscribe((response: any) => {
-                    data.totalScore = 0;
-                    data.averageScore = 0;
-                    data.scoreCount = 0;
-                    for (const rating of response.Ratings) {
-                        if (rating.Source === 'Internet Movie Database') {
-                            data.imdbScore = parseFloat(rating.Value) * 10;
-                            if (data.imdbScore) {
-                                data.totalScore += data.imdbScore;
-                                data.scoreCount++;
-                            }
-                        } else if (rating.Source === 'Rotten Tomatoes') {
-                            data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-                            if (data.rottenScore) {
-                                data.totalScore += data.rottenScore;
-                                data.scoreCount++;
-                                if (data.rottenScore >= 50) {
-                                    data.rottenImage = 'tomato_full.png';
-                                } else if (data.rottenScore < 50) {
-                                    data.rottenImage = 'tomato_rotten.png';
-                                }
-                            }
-                        } else if (rating.Source === 'Metacritic') {
-                                data.metaScore = parseFloat(rating.Value);
-                                if (data.metaScore) {
-                                data.totalScore += data.metaScore;
-                                data.scoreCount++;
+        if (!data?.external_ids?.imdb_id) {
+            return;
+        }
+        const omdbUrl = `https://www.omdbapi.com/?apikey=${this.omdbApiKey}&type=&i=${data.external_ids.imdb_id}`;
+        this.http.get(omdbUrl)
+            .subscribe((response: any) => {
+                const ratings = Array.isArray(response?.Ratings) ? response.Ratings : [];
+                for (const rating of ratings) {
+                    if (rating.Source === 'Internet Movie Database') {
+                        data.imdbScore = parseFloat(rating.Value) * 10;
+                    } else if (rating.Source === 'Rotten Tomatoes') {
+                        data.rottenScore = parseFloat(rating.Value.replace('%', ''));
+                        if (data.rottenScore) {
+                            if (data.rottenScore >= 50) {
+                                data.rottenImage = 'tomato_full.png';
+                            } else if (data.rottenScore < 50) {
+                                data.rottenImage = 'tomato_rotten.png';
                             }
                         }
+                    } else if (rating.Source === 'Metacritic') {
+                            data.metaScore = parseFloat(rating.Value);
                     }
-                    if (data.vote_average) {
-                        data.totalScore += data.vote_average;
-                        data.scoreCount++;
-                    }
-                    data.averageScore = Math.round(data.totalScore / data.scoreCount);
-                    if (response.Poster !== 'N/A') {
-                        data.omdbPoster = response.Poster;
-                    }
-                    if (response.Awards !== 'N/A') {
-                        data.awards = response.Awards;
-                    }
-                    this.titleSubject$.next(data);
-                });
+                }
+                if (response.Poster !== 'N/A') {
+                    data.omdbPoster = response.Poster;
+                }
+                if (response.Awards !== 'N/A') {
+                    data.awards = response.Awards;
+                }
+                this.updateAggregateScore(data);
+                this.titleSubject$.next(data);
+            });
+    }
+
+    searchIMDb232Ratings(data: Title) {
+        const imdbId = data?.external_ids?.imdb_id;
+        if (!imdbId || !this.rapidApiKey) {
+            return;
         }
+
+        const imdb232Url = `https://${this.imdb232Host}/api/title/get-ratings?tt=${imdbId}`;
+        this.http.get(imdb232Url, {
+            headers: {
+                'x-rapidapi-key': this.rapidApiKey,
+                'x-rapidapi-host': this.imdb232Host
+            }
+        })
+            .subscribe((response: any) => {
+                const summary = response?.data?.title?.ratingsSummary;
+                const aggregateRating = Number(summary?.aggregateRating);
+                const voteCount = Number(summary?.voteCount);
+                if (!Number.isFinite(aggregateRating) || aggregateRating <= 0) {
+                    return;
+                }
+
+                data.imdb232Score = Math.round(aggregateRating * 10);
+                data.imdb232Votes = Number.isFinite(voteCount) ? voteCount : null;
+                this.updateAggregateScore(data);
+                this.titleSubject$.next(data);
+            }, () => {
+                // Keep OMDb/TMDb ratings even when RapidAPI data is unavailable.
+            });
     }
 
     searchStreams(data: Title) {
@@ -200,6 +233,40 @@ export class TitleService {
                 }
             }
             this.titleSubject$.next(data);
+        }
+    }
+
+    private buildTmdbUrl(path: string, params: Record<string, string> = {}) {
+        const queryParams = new URLSearchParams({
+            api_key: this.tmdbApiKey,
+            ...params
+        });
+        return `https://api.themoviedb.org/3${path}?${queryParams.toString()}`;
+    }
+
+    private updateAggregateScore(data: Title) {
+        data.totalScore = 0;
+        data.averageScore = 0;
+        data.scoreCount = 0;
+
+        const addScore = (value: number) => {
+            const parsed = Number(value);
+            if (Number.isFinite(parsed) && parsed > 0) {
+                data.totalScore += parsed;
+                data.scoreCount++;
+            }
+        };
+
+        // Keep IMDb as a single source in the average: prefer OMDb IMDb, fallback to IMDb232.
+        const imdbScoreForAverage = Number(data.imdbScore) > 0 ? data.imdbScore : data.imdb232Score;
+
+        addScore(data.vote_average);
+        addScore(imdbScoreForAverage);
+        addScore(data.rottenScore);
+        addScore(data.metaScore);
+
+        if (data.scoreCount > 0) {
+            data.averageScore = Math.round(data.totalScore / data.scoreCount);
         }
     }
 

@@ -6,9 +6,10 @@ import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {PopularService} from '../services/popular.service';
+import {PopularRatingSnapshot, PopularService} from '../services/popular.service';
 import {StreamComponent} from '../stream/stream.component';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
+import {apiConfig} from '../config/api.config';
 
 @Component({
     selector: 'app-popular',
@@ -21,6 +22,10 @@ export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
     private readonly providerRequestConcurrency = 5;
+    private readonly ratingRequestConcurrency = 4;
+    private readonly tmdbApiKey = apiConfig.tmdbApiKey;
+    private readonly rapidApiKey = apiConfig.rapidApiKey;
+    private readonly moviesDatabaseHost = apiConfig.rapidApiHosts.moviesDatabase;
 
     constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
@@ -51,7 +56,6 @@ export class PopularComponent implements OnInit, OnDestroy {
     async fetchMostPopular() {
         this.popService.loadingPopular = true;
         console.log('Fetching Most Popular...');
-        const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
         const selectedType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
         const currentYear = new Date().getFullYear();
         let watchProvidersParam = '';
@@ -69,18 +73,18 @@ export class PopularComponent implements OnInit, OnDestroy {
 
         try {
             if (selectedType === 'movie') {
-                const movieUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam);
+                const movieUrl = this.buildDiscoverUrl(selectedType, watchProvidersParam);
                 const response: any = await this.http.get(movieUrl).pipe(take(1)).toPromise();
                 this.popService.popularMovies.length = 0;
                 this.popService.popularMovies.push(...(response.results || []));
             } else {
-                const tvCurrentYearUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam, currentYear);
+                const tvCurrentYearUrl = this.buildDiscoverUrl(selectedType, watchProvidersParam, currentYear);
                 const currentYearResponse: any = await this.http.get(tvCurrentYearUrl).pipe(take(1)).toPromise();
                 const currentYearResults: Title[] = currentYearResponse.results || [];
 
                 let mergedTvResults = [...currentYearResults];
                 if (mergedTvResults.length < 20) {
-                    const tvFallbackUrl = this.buildDiscoverUrl(selectedType, apiKey, watchProvidersParam);
+                    const tvFallbackUrl = this.buildDiscoverUrl(selectedType, watchProvidersParam);
                     const fallbackResponse: any = await this.http.get(tvFallbackUrl).pipe(take(1)).toPromise();
                     const fallbackResults: Title[] = fallbackResponse.results || [];
                     mergedTvResults = this.mergeById(currentYearResults, fallbackResults, 20);
@@ -91,6 +95,7 @@ export class PopularComponent implements OnInit, OnDestroy {
             }
 
             this.popService.popularList = selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
+            await this.enrichPopularRatings(selectedType, this.popService.popularList);
             this.getProviders();
         } catch (error) {
             console.error('Failed to fetch popular titles', error);
@@ -100,7 +105,6 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     getProviders() {
-        const apiKey = 'e84ac8af3c49ad3253e0369ec64dfbff';
         const providerType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
         const titles = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
         this.popService.pruneProviderCache();
@@ -112,21 +116,21 @@ export class PopularComponent implements OnInit, OnDestroy {
         const queue = [...titles];
         const workerCount = Math.min(this.providerRequestConcurrency, queue.length);
         for (let i = 0; i < workerCount; i++) {
-            void this.runProviderWorker(queue, providerType, apiKey);
+            void this.runProviderWorker(queue, providerType);
         }
     }
 
-    private async runProviderWorker(queue: Title[], providerType: 'movie' | 'tv', apiKey: string) {
+    private async runProviderWorker(queue: Title[], providerType: 'movie' | 'tv') {
         while (queue.length > 0) {
             const title = queue.shift();
             if (!title) {
                 continue;
             }
-            await this.populateProvidersForTitle(title, providerType, apiKey);
+            await this.populateProvidersForTitle(title, providerType);
         }
     }
 
-    private async populateProvidersForTitle(title: Title, providerType: 'movie' | 'tv', apiKey: string) {
+    private async populateProvidersForTitle(title: Title, providerType: 'movie' | 'tv') {
         const cacheKey = `${providerType}:${title.id}`;
         const cachedProviders = this.popService.getCachedProviders(cacheKey);
         if (cachedProviders) {
@@ -134,7 +138,7 @@ export class PopularComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const watchProvidersUrl = `https://api.themoviedb.org/3/${providerType}/${title.id}/watch/providers?api_key=${apiKey}`;
+        const watchProvidersUrl = this.buildTmdbUrl(`/${providerType}/${title.id}/watch/providers`);
         try {
             const response: any = await this.http.get(watchProvidersUrl).pipe(take(1)).toPromise();
             this.popService.cacheProviders(cacheKey, response);
@@ -201,6 +205,22 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
     }
 
+    getPopularDisplayScore(title: Title): number {
+        const combinedScore = this.normalizeScore(title?.popularCombinedScore);
+        if (combinedScore > 0) {
+            return combinedScore;
+        }
+        return this.getTmdbDisplayScore(title);
+    }
+
+    getTmdbDisplayScore(title: Title): number {
+        const cachedTmdbScore = this.normalizeScore(title?.popularTmdbScore);
+        if (cachedTmdbScore > 0) {
+            return cachedTmdbScore;
+        }
+        return this.toPercentScore(title?.vote_average);
+    }
+
     scrollToElement() {
         const target = document.getElementById('target');
         if (target) {
@@ -214,7 +234,142 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
     }
 
-    private buildDiscoverUrl(type: 'movie' | 'tv', apiKey: string, watchProvidersParam: string, year?: number) {
+    private async enrichPopularRatings(type: 'movie' | 'tv', titles: Title[]) {
+        this.popService.pruneRatingCache();
+        if (titles.length === 0) {
+            return;
+        }
+
+        const queue = [...titles];
+        const workerCount = Math.min(this.ratingRequestConcurrency, queue.length);
+        const workers: Promise<void>[] = [];
+        for (let i = 0; i < workerCount; i++) {
+            workers.push(this.runRatingWorker(queue, type));
+        }
+        await Promise.all(workers);
+    }
+
+    private async runRatingWorker(queue: Title[], type: 'movie' | 'tv') {
+        while (queue.length > 0) {
+            const title = queue.shift();
+            if (!title) {
+                continue;
+            }
+            await this.populateRatingsForTitle(title, type);
+        }
+    }
+
+    private async populateRatingsForTitle(title: Title, type: 'movie' | 'tv') {
+        const tmdbScore = this.toPercentScore(title.vote_average);
+        title.popularTmdbScore = tmdbScore;
+        title.popularMoviesDatabaseScore = null;
+        title.popularCombinedScore = tmdbScore;
+
+        if (!this.rapidApiKey) {
+            return;
+        }
+
+        const cacheKey = `${type}:${title.id}`;
+        const cachedRating = this.popService.getCachedRating(cacheKey);
+        if (cachedRating) {
+            this.applyRatingSnapshot(title, cachedRating, tmdbScore);
+            return;
+        }
+
+        const imdbId = await this.fetchImdbId(type, title.id);
+        if (!imdbId) {
+            return;
+        }
+
+        const moviesDatabaseScore = await this.fetchMoviesDatabaseScore(imdbId);
+        const combinedScore = this.calculateCombinedScore(tmdbScore, moviesDatabaseScore);
+        const snapshot: PopularRatingSnapshot = {
+            imdbId,
+            moviesDatabaseScore,
+            combinedScore,
+            tmdbScore
+        };
+
+        this.popService.cacheRating(cacheKey, snapshot);
+        this.applyRatingSnapshot(title, snapshot, tmdbScore);
+    }
+
+    private applyRatingSnapshot(title: Title, snapshot: PopularRatingSnapshot, fallbackTmdbScore: number) {
+        const tmdbScore = this.normalizeScore(snapshot?.tmdbScore) || fallbackTmdbScore;
+        const moviesDatabaseScore = this.normalizeScore(snapshot?.moviesDatabaseScore);
+        const combinedScore = this.normalizeScore(snapshot?.combinedScore);
+
+        title.popularTmdbScore = tmdbScore;
+        title.popularMoviesDatabaseScore = moviesDatabaseScore > 0 ? moviesDatabaseScore : null;
+        title.popularCombinedScore = combinedScore > 0 ? combinedScore : tmdbScore;
+    }
+
+    private async fetchImdbId(type: 'movie' | 'tv', id: number): Promise<string> {
+        const externalIdsUrl = this.buildTmdbUrl(`/${type}/${id}/external_ids`);
+        try {
+            const response: any = await this.http.get(externalIdsUrl).pipe(take(1)).toPromise();
+            const imdbId = response?.imdb_id;
+            if (typeof imdbId === 'string' && imdbId.startsWith('tt')) {
+                return imdbId;
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    private async fetchMoviesDatabaseScore(imdbId: string): Promise<number> {
+        const url = `https://${this.moviesDatabaseHost}/titles/${imdbId}/ratings`;
+        try {
+            const response: any = await this.http.get(url, {
+                headers: {
+                    'x-rapidapi-key': this.rapidApiKey,
+                    'x-rapidapi-host': this.moviesDatabaseHost
+                }
+            }).pipe(take(1)).toPromise();
+
+            const rawRating = Number(response?.results?.averageRating);
+            if (!Number.isFinite(rawRating) || rawRating <= 0) {
+                return null;
+            }
+            return Math.round(rawRating * 10);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    private calculateCombinedScore(tmdbScore: number, moviesDatabaseScore: number): number {
+        const scoreSources = [tmdbScore, moviesDatabaseScore].filter(score => this.normalizeScore(score) > 0);
+        if (scoreSources.length === 0) {
+            return 0;
+        }
+        const total = scoreSources.reduce((sum, score) => sum + score, 0);
+        return Math.round(total / scoreSources.length);
+    }
+
+    private toPercentScore(value: number): number {
+        if (!Number.isFinite(value) || value <= 0) {
+            return 0;
+        }
+        return Math.round(value * 10);
+    }
+
+    private normalizeScore(value: number): number {
+        if (!Number.isFinite(value) || value <= 0) {
+            return 0;
+        }
+        return Math.round(value);
+    }
+
+    private buildTmdbUrl(path: string, params: Record<string, string> = {}) {
+        const queryParams = new URLSearchParams({
+            api_key: this.tmdbApiKey,
+            ...params
+        });
+        return `https://api.themoviedb.org/3${path}?${queryParams.toString()}`;
+    }
+
+    private buildDiscoverUrl(type: 'movie' | 'tv', watchProvidersParam: string, year?: number) {
         const params = new URLSearchParams();
         if (watchProvidersParam) {
             const [key, value] = watchProvidersParam.split('=');
@@ -224,7 +379,6 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         params.set('watch_region', 'US');
         params.set('sort_by', 'popularity.desc');
-        params.set('api_key', apiKey);
 
         if (type === 'movie') {
             params.set('region', 'us');
@@ -235,7 +389,7 @@ export class PopularComponent implements OnInit, OnDestroy {
             }
         }
 
-        return `https://api.themoviedb.org/3/discover/${type}?${params.toString()}`;
+        return this.buildTmdbUrl(`/discover/${type}`, Object.fromEntries(params.entries()));
     }
 
     private mergeById(primary: Title[], fallback: Title[], limit: number): Title[] {
