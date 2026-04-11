@@ -166,8 +166,10 @@ export class AuthService {
                 title.watchlistAddDate = new Date();
                 title.watchlistDocId = watchlistDocId;
                 await setDoc(watchlistRef, title);
+                this.watchlist.push(title);
+                this.recalculateWatchlistMeta();
+                this.emitWatchlistChanged();
                 this.toastr.success(titleName + ' added to watchlist');
-                return this.getWatchlist();
             } else {
                 this.toastr.info(titleName + ' is already in your watchlist');
             }
