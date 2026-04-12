@@ -28,7 +28,7 @@ export class PopularService {
   public loadingPopular = false;
   selectedType = 'movie';
   private readonly providerCacheTtlMs = 10 * 60 * 1000;
-  private readonly ratingCacheTtlMs = 30 * 60 * 1000;
+  private readonly ratingCacheTtlMs = 2 * 60 * 60 * 1000;
   private readonly providerCache = new Map<string, ProviderCacheEntry>();
   private readonly ratingCache = new Map<string, RatingCacheEntry>();
 

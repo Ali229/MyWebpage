@@ -21,8 +21,8 @@ import {apiConfig} from '../config/api.config';
 export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
-    private readonly providerRequestConcurrency = 5;
-    private readonly ratingRequestConcurrency = 4;
+    private readonly providerRequestConcurrency = 10;
+    private readonly ratingRequestConcurrency = 10;
     private readonly tmdbApiKey = apiConfig.tmdbApiKey;
     private readonly rapidApiKey = apiConfig.rapidApiKey;
     private readonly moviesDatabaseHost = apiConfig.rapidApiHosts.moviesDatabase;
