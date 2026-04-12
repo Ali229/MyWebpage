@@ -222,7 +222,10 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     scrollToElement() {
-        const target = document.getElementById('target');
+        const isPhone = window.innerWidth <= 767.98;
+        const mobileTarget = document.getElementById('title-target');
+        const desktopTarget = document.getElementById('target');
+        const target = isPhone ? (mobileTarget || desktopTarget) : desktopTarget;
         if (target) {
             target.scrollIntoView({behavior: 'smooth'});
         }
