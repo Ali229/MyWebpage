@@ -12,6 +12,20 @@ interface Language {
     'name': string;
 }
 
+interface OmdbRatingPayload {
+    imdbScore: number;
+    rottenScore: number;
+    metaScore: number;
+    rottenImage: string;
+    omdbPoster: string;
+    awards: string;
+}
+
+interface Imdb232RatingPayload {
+    imdb232Score: number;
+    imdb232Votes: number;
+}
+
 export interface SimilarTitle {
     id: number;
     media_type: string;
@@ -97,6 +111,12 @@ export class TitleService {
                 data.media_type = type;
                 data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
                 data.ratingsHydrated = false;
+                data.imdbScore = null;
+                data.imdb232Score = null;
+                data.imdb232Votes = null;
+                data.rottenScore = null;
+                data.metaScore = null;
+                data.rottenImage = null;
                 this.updateAggregateScore(data);
                 this.titleSubject$.next(data);
                 this.searchStreams(data);
@@ -138,10 +158,29 @@ export class TitleService {
     }
 
     private async hydrateRatings(data: Title): Promise<void> {
-        await Promise.allSettled([
-            this.searchOMDBRatings(data),
-            this.searchIMDb232Ratings(data)
+        const [omdbResult, imdb232Result] = await Promise.allSettled([
+            this.fetchOMDBRatings(data),
+            this.fetchIMDb232Ratings(data)
         ]);
+
+        const emptyOmdbPayload: OmdbRatingPayload = {
+            imdbScore: null,
+            rottenScore: null,
+            metaScore: null,
+            rottenImage: null,
+            omdbPoster: null,
+            awards: null
+        };
+        const emptyImdb232Payload: Imdb232RatingPayload = {
+            imdb232Score: null,
+            imdb232Votes: null
+        };
+
+        const omdbPayload = omdbResult.status === 'fulfilled' ? omdbResult.value : emptyOmdbPayload;
+        const imdb232Payload = imdb232Result.status === 'fulfilled' ? imdb232Result.value : emptyImdb232Payload;
+
+        this.applyOMDBRatings(data, omdbPayload);
+        this.applyIMDb232Ratings(data, imdb232Payload);
 
         data.ratingsHydrated = true;
         this.updateAggregateScore(data);
@@ -153,47 +192,64 @@ export class TitleService {
         this.titleSubject$.next(data);
     }
 
-    private async searchOMDBRatings(data: Title): Promise<void> {
+    private async fetchOMDBRatings(data: Title): Promise<OmdbRatingPayload> {
+        const emptyPayload: OmdbRatingPayload = {
+            imdbScore: null,
+            rottenScore: null,
+            metaScore: null,
+            rottenImage: null,
+            omdbPoster: null,
+            awards: null
+        };
         if (!data?.external_ids?.imdb_id) {
-            return;
+            return emptyPayload;
         }
 
         const omdbUrl = `https://www.omdbapi.com/?apikey=${this.omdbApiKey}&type=&i=${data.external_ids.imdb_id}`;
         try {
             const response: any = await this.http.get(omdbUrl).pipe(take(1)).toPromise();
+            const payload: OmdbRatingPayload = {
+                ...emptyPayload
+            };
             const ratings = Array.isArray(response?.Ratings) ? response.Ratings : [];
             for (const rating of ratings) {
                 if (rating.Source === 'Internet Movie Database') {
-                    data.imdbScore = parseFloat(rating.Value) * 10;
+                    payload.imdbScore = parseFloat(rating.Value) * 10;
                 } else if (rating.Source === 'Rotten Tomatoes') {
-                    data.rottenScore = parseFloat(rating.Value.replace('%', ''));
-                    if (data.rottenScore) {
-                        if (data.rottenScore >= 50) {
-                            data.rottenImage = 'tomato_full.png';
-                        } else if (data.rottenScore < 50) {
-                            data.rottenImage = 'tomato_rotten.png';
+                    payload.rottenScore = parseFloat(rating.Value.replace('%', ''));
+                    if (payload.rottenScore) {
+                        if (payload.rottenScore >= 50) {
+                            payload.rottenImage = 'tomato_full.png';
+                        } else if (payload.rottenScore < 50) {
+                            payload.rottenImage = 'tomato_rotten.png';
                         }
                     }
                 } else if (rating.Source === 'Metacritic') {
-                    data.metaScore = parseFloat(rating.Value);
+                    payload.metaScore = parseFloat(rating.Value);
                 }
             }
 
             if (response.Poster !== 'N/A') {
-                data.omdbPoster = response.Poster;
+                payload.omdbPoster = response.Poster;
             }
             if (response.Awards !== 'N/A') {
-                data.awards = response.Awards;
+                payload.awards = response.Awards;
             }
+            return payload;
         } catch (error) {
             // Keep TMDb data when OMDb is unavailable.
+            return emptyPayload;
         }
     }
 
-    private async searchIMDb232Ratings(data: Title): Promise<void> {
+    private async fetchIMDb232Ratings(data: Title): Promise<Imdb232RatingPayload> {
+        const emptyPayload: Imdb232RatingPayload = {
+            imdb232Score: null,
+            imdb232Votes: null
+        };
         const imdbId = data?.external_ids?.imdb_id;
         if (!imdbId || !this.rapidApiKey) {
-            return;
+            return emptyPayload;
         }
 
         const imdb232Url = `https://${this.imdb232Host}/api/title/get-ratings?tt=${imdbId}`;
@@ -209,14 +265,31 @@ export class TitleService {
             const aggregateRating = Number(summary?.aggregateRating);
             const voteCount = Number(summary?.voteCount);
             if (!Number.isFinite(aggregateRating) || aggregateRating <= 0) {
-                return;
+                return emptyPayload;
             }
 
-            data.imdb232Score = Math.round(aggregateRating * 10);
-            data.imdb232Votes = Number.isFinite(voteCount) ? voteCount : null;
+            return {
+                imdb232Score: Math.round(aggregateRating * 10),
+                imdb232Votes: Number.isFinite(voteCount) ? voteCount : null
+            };
         } catch (error) {
             // Keep OMDb/TMDb ratings even when RapidAPI data is unavailable.
+            return emptyPayload;
         }
+    }
+
+    private applyOMDBRatings(data: Title, payload: OmdbRatingPayload) {
+        data.imdbScore = Number.isFinite(payload?.imdbScore) && payload.imdbScore > 0 ? payload.imdbScore : null;
+        data.rottenScore = Number.isFinite(payload?.rottenScore) && payload.rottenScore > 0 ? payload.rottenScore : null;
+        data.metaScore = Number.isFinite(payload?.metaScore) && payload.metaScore > 0 ? payload.metaScore : null;
+        data.rottenImage = payload?.rottenImage || null;
+        data.omdbPoster = payload?.omdbPoster || data.omdbPoster || null;
+        data.awards = payload?.awards || data.awards || null;
+    }
+
+    private applyIMDb232Ratings(data: Title, payload: Imdb232RatingPayload) {
+        data.imdb232Score = Number.isFinite(payload?.imdb232Score) && payload.imdb232Score > 0 ? payload.imdb232Score : null;
+        data.imdb232Votes = Number.isFinite(payload?.imdb232Votes) ? payload.imdb232Votes : null;
     }
 
     searchStreams(data: Title) {
