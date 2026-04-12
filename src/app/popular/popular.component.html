@@ -6,7 +6,7 @@
 </nav>
 
 <div class="tab-content" id="pills-tabContent">
-  <div (click)="scrollToElement()" [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
+  <div [ngClass]="{ 'show active': true }" class="tab-pane fade show active">
     @if (popService.loadingPopular) {
       <app-page-loader [minHeight]="'320px'" [spinnerSize]="'4.5rem'"></app-page-loader>
     } @else {

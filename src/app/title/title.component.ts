@@ -25,7 +25,12 @@ export class TitleComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => this.title = data);
+        this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => {
+            this.title = data;
+            if (data?.id && this.ts.shouldScrollToTitleTarget()) {
+                requestAnimationFrame(() => this.ts.scrollToTitleTarget());
+            }
+        });
     }
 
 
@@ -65,6 +70,5 @@ export class TitleComponent implements OnInit, OnDestroy {
             return;
         }
         this.ts.search(similarTitle.id, mediaType);
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 }

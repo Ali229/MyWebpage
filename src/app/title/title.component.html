@@ -6,8 +6,8 @@
   <div>
     @if (title && !ts.loading) {
       <div class="mt-2">
-        <div class="row title-layout">
-          <div class="col-12 col-md-auto title-poster-col animated zoomIn text-light">
+        <div id="title-scroll-anchor" class="row title-layout">
+          <div id="title-poster-target" class="col-12 col-md-auto title-poster-col animated zoomIn text-light">
             <div class="row">
               @if (title.poster_path) {
                 <img class="poster"

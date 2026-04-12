@@ -64,6 +64,8 @@ export class TitleService {
     private titleSubject$: BehaviorSubject<Title> = new BehaviorSubject(null);
     title$ = this.titleSubject$.asObservable();
     currentSearchSubscription: Subscription;
+    private scrollRequestVersion = 0;
+    private handledScrollRequestVersion = 0;
 
     multiSearch() {
         this.loading = true;
@@ -92,6 +94,7 @@ export class TitleService {
         this.error = false;
         this.loadingMoreLikeThis = true;
         this.moreLikeThis = [];
+        this.requestScrollToTitle();
 
         // Cancel the previous HTTP request when a new one is initiated
         if (this.currentSearchSubscription) {
@@ -491,4 +494,62 @@ export class TitleService {
             return data.runtime + 'min';
         }
     }
+
+    scrollToTitleTarget() {
+        const maxAttempts = 12;
+        const tryScroll = (attempt: number) => {
+            const stableAnchor = document.getElementById('title-scroll-anchor');
+            const posterTarget = document.getElementById('title-poster-target');
+            const titleTarget = document.getElementById('title-target');
+            const fallbackTarget = document.getElementById('target');
+            const target = stableAnchor || posterTarget || titleTarget || fallbackTarget;
+
+            if (target) {
+                const offset = this.getScrollOffsetTop();
+                const targetTop = window.scrollY + target.getBoundingClientRect().top - offset;
+                window.scrollTo({
+                    top: Math.max(0, targetTop),
+                    behavior: 'smooth'
+                });
+                return;
+            }
+
+            if (attempt < maxAttempts) {
+                requestAnimationFrame(() => tryScroll(attempt + 1));
+            }
+        };
+
+        requestAnimationFrame(() => tryScroll(0));
+    }
+
+    shouldScrollToTitleTarget(): boolean {
+        if (this.handledScrollRequestVersion < this.scrollRequestVersion) {
+            this.handledScrollRequestVersion = this.scrollRequestVersion;
+            return true;
+        }
+        return false;
+    }
+
+    private requestScrollToTitle() {
+        this.scrollRequestVersion++;
+    }
+
+    private getScrollOffsetTop(): number {
+        const defaultOffset = 8;
+        const navbar = document.querySelector('.app-navbar') as HTMLElement | null;
+        if (!navbar) {
+            return defaultOffset;
+        }
+
+        const styles = window.getComputedStyle(navbar);
+        const position = styles.position;
+        const hasOverlayingNavbar = position === 'fixed' || position === 'sticky';
+        if (!hasOverlayingNavbar) {
+            return defaultOffset;
+        }
+
+        const navbarHeight = Math.ceil(navbar.getBoundingClientRect().height);
+        return navbarHeight + defaultOffset;
+    }
+
 }
