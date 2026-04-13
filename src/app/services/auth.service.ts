@@ -185,6 +185,7 @@ export class AuthService {
                 return;
             }
 
+            const titleName = title.title ? title.title : title.name;
             const watchlistRef = doc(
                 firestore,
                 'users',
@@ -192,16 +193,22 @@ export class AuthService {
                 'watchlist',
                 title.watchlistDocId || this.getWatchlistDocId(title)
             );
-            const existing = await getDoc(watchlistRef);
 
-            if (existing.exists()) {
+            try {
+                const existing = await getDoc(watchlistRef);
                 await deleteDoc(watchlistRef);
+
+                // Keep the local UI in sync even when another tab already removed the doc.
                 this.watchlist = this.watchlist.filter(item => item.id !== id);
                 this.recalculateWatchlistMeta();
                 this.emitWatchlistChanged();
-                this.toastr.success((title.title ? title.title : title.name) + ' removed from watchlist');
-            } else {
-                this.toastr.info((title.title ? title.title : title.name) + ' is not in your watchlist');
+                if (existing.exists()) {
+                    this.toastr.success(titleName + ' removed from watchlist');
+                } else {
+                    this.toastr.info(titleName + ' was already removed from your watchlist');
+                }
+            } catch (error) {
+                this.toastr.error(String(error), 'Error removing from watchlist');
             }
         } else {
             this.toastr.info('Please login to use the watchlist feature');
