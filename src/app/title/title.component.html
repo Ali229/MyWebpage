@@ -122,64 +122,64 @@
                         }
                       </div>
                       <div class="row">
-                        <div class="ratings-panel">
-                          @if (title.vote_average) {
+                        @if (hasAnyRatings()) {
+                          <div class="ratings-panel">
                             <h3 class="section-heading section-heading--spaced"><b>Ratings</b></h3>
-                          }
-                          <table class="ratings table table-borderless">
-                            <tbody>
-                              @if (title.vote_average > 0) {
-                                <tr>
-                                  <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
-                                  {{ title.vote_average }}</span></td>
-                                </tr>
-                              }
-                              @if (title.ratingsHydrated && title.imdbScore && !title.imdb232Score) {
-                                <tr>
-                                  <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
-                                  {{ title.imdbScore }}</span></td>
-                                </tr>
-                              }
-                              @if (title.ratingsHydrated && title.imdb232Score) {
-                                <tr>
-                                  <td><img class="icon" src="assets/imdb.svg" alt="Can't load image" title="IMDb232"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.imdb232Score)}} animated zoomIn z-depth-3">
-                                  {{ title.imdb232Score }}</span></td>
-                                </tr>
-                              }
-                              @if (title.ratingsHydrated && title.rottenScore) {
-                                <tr>
-                                  <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
-                                  {{ title.rottenScore }}</span></td>
-                                </tr>
-                              }
-                              @if (title.ratingsHydrated && title.metaScore) {
-                                <tr>
-                                  <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
-                                  {{ title.metaScore }}</span></td>
-                                </tr>
-                              }
-                              @if (title.ratingsHydrated && title.averageScore !== 0 && title.scoreCount > 1) {
-                                <tr>
-                                  <td><img class="icon" src="assets/avg.png" alt="Can't load image"
-                                  style="border-radius: 15px;"></td>
-                                  <td><span
-                                    class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
-                                  {{ title.averageScore }}</span></td>
-                                </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
+                            <table class="ratings table table-borderless">
+                              <tbody>
+                                @if (title.vote_average > 0) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/tmdb.png" alt="Can't load image"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.vote_average)}} animated zoomIn z-depth-3">
+                                    {{ title.vote_average }}</span></td>
+                                  </tr>
+                                }
+                                @if (title.ratingsHydrated && title.imdbScore && !title.imdb232Score) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/imdb.jpg" alt="Can't load image"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.imdbScore)}} animated zoomIn z-depth-3">
+                                    {{ title.imdbScore }}</span></td>
+                                  </tr>
+                                }
+                                @if (title.ratingsHydrated && title.imdb232Score) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/imdb.svg" alt="Can't load image" title="IMDb232"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.imdb232Score)}} animated zoomIn z-depth-3">
+                                    {{ title.imdb232Score }}</span></td>
+                                  </tr>
+                                }
+                                @if (title.ratingsHydrated && title.rottenScore) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/{{title.rottenImage}}" alt="Can't load image"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.rottenScore)}} animated zoomIn z-depth-3">
+                                    {{ title.rottenScore }}</span></td>
+                                  </tr>
+                                }
+                                @if (title.ratingsHydrated && title.metaScore) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/meta.png" alt="Can't load image"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.metaScore)}} animated zoomIn z-depth-3">
+                                    {{ title.metaScore }}</span></td>
+                                  </tr>
+                                }
+                                @if (title.ratingsHydrated && title.averageScore !== 0 && title.scoreCount > 1) {
+                                  <tr>
+                                    <td><img class="icon" src="assets/avg.png" alt="Can't load image"
+                                    style="border-radius: 15px;"></td>
+                                    <td><span
+                                      class="badge badge-{{ts.getRatingColor(title.averageScore)}} animated zoomIn z-depth-3">
+                                    {{ title.averageScore }}</span></td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        }
                       </div>
                       @if (ts.moreLikeThis.length > 0 || ts.loadingMoreLikeThis) {
                         <div class="row">

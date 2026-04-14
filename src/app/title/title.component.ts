@@ -71,4 +71,21 @@ export class TitleComponent implements OnInit, OnDestroy {
         }
         this.ts.search(similarTitle.id, mediaType);
     }
+
+    hasAnyRatings(): boolean {
+        if (!this.title) {
+            return false;
+        }
+
+        const hasTmdb = Number(this.title.vote_average) > 0;
+        const hasImdb = this.title.ratingsHydrated
+            && (Number(this.title.imdbScore) > 0 || Number(this.title.imdb232Score) > 0);
+        const hasRotten = this.title.ratingsHydrated && Number(this.title.rottenScore) > 0;
+        const hasMeta = this.title.ratingsHydrated && Number(this.title.metaScore) > 0;
+        const hasAverage = this.title.ratingsHydrated
+            && Number(this.title.averageScore) > 0
+            && Number(this.title.scoreCount) > 1;
+
+        return hasTmdb || hasImdb || hasRotten || hasMeta || hasAverage;
+    }
 }
