@@ -45,6 +45,7 @@ export class TitleService {
     private readonly omdbApiKey = apiConfig.omdbApiKey;
     private readonly rapidApiKey = apiConfig.rapidApiKey;
     private readonly imdb232Host = apiConfig.rapidApiHosts.imdb232;
+    private readonly certificationFallbackCountryOrder = ['CA', 'GB', 'AU', 'NZ', 'IE'];
 
     loading = false;
     loadingMoreLikeThis = false;
@@ -376,19 +377,103 @@ export class TitleService {
 
     getCertification(data, type) {
         if (type === 'movie') {
-            for (const certification of data.release_dates.results) {
-                if (certification.iso_3166_1 === 'US') {
-                    return certification.release_dates[0].certification;
-                }
+            const releaseDateGroups = Array.isArray(data?.release_dates?.results) ? data.release_dates.results : [];
+            const usReleaseGroup = releaseDateGroups.find(group => group?.iso_3166_1 === 'US');
+            const usCertification = this.pickBestMovieCertification(usReleaseGroup?.release_dates);
+            if (usCertification) {
+                return usCertification;
             }
+
+            return this.pickFallbackMovieCertification(releaseDateGroups);
         } else {
-            for (const certification of data.content_ratings.results) {
-                if (certification.iso_3166_1 === 'US') {
-                    return certification.rating;
-                }
+            const contentRatings = Array.isArray(data?.content_ratings?.results) ? data.content_ratings.results : [];
+            const usContentRating = contentRatings.find(ratingEntry =>
+                ratingEntry?.iso_3166_1 === 'US' &&
+                this.normalizeCertificationValue(ratingEntry?.rating)
+            );
+            if (usContentRating) {
+                return this.normalizeCertificationValue(usContentRating.rating);
             }
+
+            return this.pickFallbackTvCertification(contentRatings);
         }
         return '';
+    }
+
+    private pickBestMovieCertification(releaseDates: any[]): string {
+        const releaseDateEntries = Array.isArray(releaseDates) ? releaseDates : [];
+        // Prefer theatrical/digital/physical entries before premiere-style entries.
+        const preferredReleaseTypeOrder = [3, 4, 5, 2, 1, 6];
+        for (const preferredType of preferredReleaseTypeOrder) {
+            const matchingRelease = releaseDateEntries.find(releaseDate =>
+                Number(releaseDate?.type) === preferredType &&
+                this.normalizeCertificationValue(releaseDate?.certification)
+            );
+            if (matchingRelease) {
+                return this.normalizeCertificationValue(matchingRelease.certification);
+            }
+        }
+
+        const firstNonEmptyCertification = releaseDateEntries
+            .map(releaseDate => this.normalizeCertificationValue(releaseDate?.certification))
+            .find(value => !!value);
+        return firstNonEmptyCertification || '';
+    }
+
+    private pickFallbackMovieCertification(releaseDateGroups: any[]): string {
+        const groups = Array.isArray(releaseDateGroups) ? releaseDateGroups : [];
+
+        for (const countryCode of this.certificationFallbackCountryOrder) {
+            const countryGroup = groups.find(group => group?.iso_3166_1 === countryCode);
+            const certification = this.pickBestMovieCertification(countryGroup?.release_dates);
+            if (certification) {
+                return `${certification} (${countryCode})`;
+            }
+        }
+
+        for (const group of groups) {
+            const countryCode = this.normalizeCertificationValue(group?.iso_3166_1);
+            if (!countryCode || countryCode === 'US') {
+                continue;
+            }
+            const certification = this.pickBestMovieCertification(group?.release_dates);
+            if (certification) {
+                return `${certification} (${countryCode})`;
+            }
+        }
+
+        return '';
+    }
+
+    private pickFallbackTvCertification(contentRatings: any[]): string {
+        const ratings = Array.isArray(contentRatings) ? contentRatings : [];
+
+        for (const countryCode of this.certificationFallbackCountryOrder) {
+            const matchingRating = ratings.find(ratingEntry =>
+                ratingEntry?.iso_3166_1 === countryCode &&
+                this.normalizeCertificationValue(ratingEntry?.rating)
+            );
+            if (matchingRating) {
+                return `${this.normalizeCertificationValue(matchingRating.rating)} (${countryCode})`;
+            }
+        }
+
+        for (const ratingEntry of ratings) {
+            const countryCode = this.normalizeCertificationValue(ratingEntry?.iso_3166_1);
+            const rating = this.normalizeCertificationValue(ratingEntry?.rating);
+            if (countryCode && countryCode !== 'US' && rating) {
+                return `${rating} (${countryCode})`;
+            }
+        }
+
+        return '';
+    }
+
+    private normalizeCertificationValue(value: any): string {
+        if (typeof value !== 'string') {
+            return '';
+        }
+        return value.trim();
     }
 
     getTrailer(data, mediaType?: 'movie' | 'tv') {
