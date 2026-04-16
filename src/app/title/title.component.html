@@ -60,44 +60,23 @@
                     <div class="row title-heading-row">
                       <h2 class="title-heading">
                       <b>{{ title.title ? title.title : title.name }}
-                      <span class="year text-muted"> ({{
-                        title.release_date ?
-                        (title.release_date | date:'yyyy') : (title.first_air_date | date:'yyyy')
-                      }})</span></b>
-                    </h2>
-                  </div>
-                  <div class="row title-meta">
-                    @if (title.certification) {
-                      <span><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
-                    }
-                    <span>{{ title.release_date ? (title.release_date | date:'d MMMM') : (title.first_air_date | date:'d MMMM') }}
-                      <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-                      @if (title.genres.length > 0) {
-                        <span>
-                          @for (genre of title.genres; track genre; let isLast = $last) {
-                            {{ genre.name }}{{ isLast ? '' : ', ' }}
-                          }
-                          <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-                        }
-                        @if (title.runtime) {
-                          <span>{{ title.runtimeText }}<span
-                          class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
-                        }
-                        @if (title.number_of_seasons) {
-                          <span>{{ title.number_of_seasons }}
-                            @if (title.number_of_seasons > 1) {
-                              Seasons
-                            }
-                            @if (title.number_of_seasons == 1) {
-                              Season
-                            }
-                            <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span>
-                          </span>
-                        }
-                        @if (title.language) {
-                          <span>{{ title.language }}</span>
-                        }
-                      </div>
+                      @if (displayYear) {
+                        <span class="year text-muted"> ({{ displayYear }})</span>
+                      }</b>
+                     </h2>
+                   </div>
+                   <div class="row title-meta">
+                     @for (segment of metaSegments; track $index; let isFirst = $first) {
+                       @if (!isFirst) {
+                         <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span>
+                       }
+                       @if (segment.kind === 'certification') {
+                         <span class="certifications">{{ segment.value }}</span>
+                       } @else {
+                         <span>{{ segment.value }}</span>
+                       }
+                     }
+                   </div>
                       <div class="row">
                         @if (title.tagline) {
                           <div>
