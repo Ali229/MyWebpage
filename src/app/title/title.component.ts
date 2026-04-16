@@ -102,6 +102,15 @@ export class TitleComponent implements OnInit, OnDestroy {
         return hasTmdb || hasImdb || hasRotten || hasMeta || hasAverage;
     }
 
+    shouldShowMetaSeparator(index: number): boolean {
+        if (index <= 0) {
+            return false;
+        }
+
+        const previousSegment = this.metaSegments[index - 1];
+        return previousSegment?.kind !== 'certification';
+    }
+
     private buildMetaSegments(title: Title): TitleMetaSegment[] {
         if (!title) {
             return [];

@@ -94,17 +94,17 @@
                       <span><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
                     }
                     <span>{{ title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy') }}
-                      <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+                      <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
                       @if (title.genres) {
                         <span>
                           @for (genre of title.genres; track genre; let isLast = $last) {
                             {{ genre.name }}{{ isLast ? '' : ', ' }}
                           }
-                          <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+                          <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
                         }
                         @if (title.runtime) {
                           <span>{{ title.runtimeText }}<span
-                          class="text-muted">&nbsp;|&nbsp;&nbsp;</span></span>
+                          class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
                         }
                         @if (title.number_of_seasons) {
                           <span>{{ title.number_of_seasons }}
@@ -114,7 +114,7 @@
                             @if (title.number_of_seasons == 1) {
                               Season
                             }
-                            <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span>
+                            <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span>
                           </span>
                         }
                         @if (title.language) {

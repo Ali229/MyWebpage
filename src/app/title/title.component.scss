@@ -171,6 +171,36 @@ b {
   font-weight: 300;
 }
 
+.title-meta__segment {
+  display: inline-flex;
+  align-items: center;
+}
+
+.title-meta__segment--certification::after {
+  content: "\00a0\00a0";
+  display: inline-block;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.title-meta__segment--with-separator::before {
+  content: "\00a0\00a0\2022\00a0\00a0";
+  display: inline-block;
+  font-size: 1.22em;
+  line-height: 1;
+  color: #5f6f81;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .title-meta .text-muted {
   color: #5f6f81 !important;
 }

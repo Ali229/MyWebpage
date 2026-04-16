@@ -65,16 +65,18 @@
                       }</b>
                      </h2>
                    </div>
-                   <div class="row title-meta">
-                     @for (segment of metaSegments; track $index; let isFirst = $first) {
-                       @if (!isFirst) {
-                         <span class="text-muted">&nbsp;|&nbsp;&nbsp;</span>
-                       }
-                       @if (segment.kind === 'certification') {
-                         <span class="certifications">{{ segment.value }}</span>
-                       } @else {
-                         <span>{{ segment.value }}</span>
-                       }
+                     <div class="row title-meta">
+                     @for (segment of metaSegments; track $index; let index = $index) {
+                       <span
+                         class="title-meta__segment"
+                         [class.title-meta__segment--certification]="segment.kind === 'certification'"
+                         [class.title-meta__segment--with-separator]="shouldShowMetaSeparator(index)">
+                         @if (segment.kind === 'certification') {
+                           <span class="certifications">{{ segment.value }}</span>
+                         } @else {
+                           <span>{{ segment.value }}</span>
+                         }
+                       </span>
                      }
                    </div>
                       <div class="row">
