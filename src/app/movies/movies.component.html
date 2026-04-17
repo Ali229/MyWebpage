@@ -5,61 +5,15 @@
     <app-user-profile class="mobile-user-profile"></app-user-profile>
   </div>
 }
-<form (submit)="ts.multiSearch(); $event.preventDefault()" class="movies-search-form">
+<form (submit)="onSearchSubmit(); $event.preventDefault()" class="movies-search-form">
   <div class="movies-search-layout">
     <div class="movies-search-bar">
-      <div class="movies-search-filter">
-        <details #moviesTypeMenu class="movies-search-filter-menu">
-          <summary [attr.aria-label]="'Filter by media type: ' + mediaTypeLabel" class="movies-search-filter-trigger">
-            <span>{{ mediaTypeLabel }}</span>
-            <i aria-hidden="true" class="fas fa-chevron-down movies-search-filter-trigger__caret"></i>
-          </summary>
-
-          <div class="movies-search-filter-options">
-            <button
-              (click)="setMediaType('', moviesTypeMenu)"
-              [class.is-active]="ts.selectedOption === ''"
-              class="movies-search-filter-option"
-              type="button">
-              All
-            </button>
-            <button
-              (click)="setMediaType('movie', moviesTypeMenu)"
-              [class.is-active]="ts.selectedOption === 'movie'"
-              class="movies-search-filter-option"
-              type="button">
-              Movie
-            </button>
-            <button
-              (click)="setMediaType('tv', moviesTypeMenu)"
-              [class.is-active]="ts.selectedOption === 'tv'"
-              class="movies-search-filter-option"
-              type="button">
-              TV
-            </button>
-          </div>
-        </details>
-      </div>
-
       <input #searchInput [(ngModel)]="ts.title"
         aria-label="Search for movies or TV shows"
         class="movies-search-input"
         name="movname"
         placeholder="Search for movies or TV shows"
         type="text">
-
-      <input [(ngModel)]="ts.year"
-        aria-label="Year"
-        class="movies-search-year"
-        inputmode="numeric"
-        maxlength="4"
-        name="movyear"
-        placeholder="Year"
-        type="text">
-
-      <button [disabled]="!ts.title" class="movies-search-button" id="button-addon2" type="submit">
-        Search
-      </button>
     </div>
 
     @if (!isPhone) {
@@ -70,7 +24,94 @@
   </div>
 </form>
 
-<app-title></app-title>
+@if (hasSearchResultsView) {
+  <section class="search-results-panel">
+    <div class="search-results-layout">
+      <aside class="search-results-filters">
+        <h3 class="search-results-filters__heading">Search Results</h3>
+        <button
+          (click)="setSearchResultsType('movie')"
+          [class.is-active]="ts.searchResultsType === 'movie'"
+          class="search-results-filters__option"
+          type="button">
+          <span>Movies</span>
+          <span class="search-results-filters__count">{{ movieResultCount }}</span>
+        </button>
+        <button
+          (click)="setSearchResultsType('tv')"
+          [class.is-active]="ts.searchResultsType === 'tv'"
+          class="search-results-filters__option"
+          type="button">
+          <span>TV Shows</span>
+          <span class="search-results-filters__count">{{ tvResultCount }}</span>
+        </button>
+      </aside>
+
+      <div class="search-results-content">
+        @if (ts.searchResultsLoading) {
+          <app-page-loader [minHeight]="'320px'" [spinnerSize]="'4.25rem'"></app-page-loader>
+        } @else {
+          @if (activeSearchResults.length > 0) {
+            <div class="search-results-list">
+              @for (result of activeSearchResults; track trackSearchResult($index, result)) {
+                <button
+                  (click)="openSearchResult(result)"
+                  [attr.title]="'Open ' + getSearchResultName(result)"
+                  class="search-result-card"
+                  type="button">
+                  <div class="search-result-card__poster-col">
+                    @if (result.poster_path) {
+                      <img
+                        [src]="'https://image.tmdb.org/t/p/w154' + result.poster_path"
+                        alt="Can't load image"
+                        class="search-result-card__poster"
+                        decoding="async"
+                        loading="lazy">
+                    } @else {
+                      <img
+                        alt="Can't load image"
+                        class="search-result-card__poster"
+                        decoding="async"
+                        loading="lazy"
+                        src="assets/404PosterNotFound.jpg">
+                    }
+                  </div>
+
+                  <div class="search-result-card__body">
+                    <p class="search-result-card__title">{{ getSearchResultName(result) }}</p>
+                    @if (getSearchResultDate(result)) {
+                      <p class="search-result-card__date">{{ getSearchResultDate(result) | date:'longDate' }}</p>
+                    }
+                    <p class="search-result-card__overview">
+                      {{ result.overview ? result.overview : 'No overview available.' }}
+                    </p>
+                  </div>
+
+                  <div class="search-result-card__score-wrap">
+                    @if (getSearchResultScore(result) > 0) {
+                      <span
+                        class="search-result-card__score badge badge-{{ts.getRatingColor(getSearchResultScore(result))}}">
+                        {{ getSearchResultScore(result) }}
+                      </span>
+                    } @else {
+                      <span class="search-result-card__score badge badge-secondary">NR</span>
+                    }
+                  </div>
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="search-results-empty">
+              No {{ ts.searchResultsType === 'movie' ? 'movies' : 'TV shows' }} found for "{{ ts.searchResultsQuery }}".
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </section>
+} @else {
+  <app-title></app-title>
+}
 
 <div class="popular-header">
   <h2 class="popular-header__title">Popular</h2>
@@ -87,5 +128,5 @@
       <span class="streamable-toggle__label">Streamable</span>
     </label>
   }
-    </div>
+</div>
 <app-popular></app-popular>

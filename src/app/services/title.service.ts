@@ -37,6 +37,19 @@ export interface SimilarTitle {
     name: string;
 }
 
+export interface SearchResultItem {
+    id: number;
+    media_type: 'movie' | 'tv';
+    poster_path: string;
+    title: string;
+    name: string;
+    release_date: string;
+    first_air_date: string;
+    overview: string;
+    searchScore: number;
+    vote_count: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -49,6 +62,13 @@ export class TitleService {
 
     loading = false;
     loadingMoreLikeThis = false;
+    searchResultsLoading = false;
+    searchResultsActive = false;
+    searchResultsError = false;
+    searchResultsQuery = '';
+    searchResultsType: 'movie' | 'tv' = 'movie';
+    searchMovieResults: SearchResultItem[] = [];
+    searchTvResults: SearchResultItem[] = [];
     selectedOption = '';
     type = '';
     title: string;
@@ -68,29 +88,43 @@ export class TitleService {
     private scrollRequestVersion = 0;
     private handledScrollRequestVersion = 0;
 
-    multiSearch() {
-        this.loading = true;
+    async multiSearch() {
+        const query = typeof this.title === 'string' ? this.title.trim() : '';
+        this.title = query;
+
+        if (!query) {
+            this.clearSearchResults();
+            return;
+        }
+
+        this.loading = false;
         this.error = false;
-        const multiSearchUrl = this.buildTmdbUrl('/search/multi', {
-            query: this.title
-        });
-        this.http.get(multiSearchUrl)
-            .subscribe((response: any) => {
-                for (const result of response.results) {
-                    if (result.media_type !== 'person' &&
-                        (this.selectedOption ? result.media_type === this.selectedOption : true) &&
-                        (this.year ? (this.year === new Date(result.release_date).getFullYear().toString()) ||
-                            (this.year === new Date(result.first_air_date).getFullYear().toString()) : true)) {
-                        return this.search(result.id, result.media_type);
-                    }
-                }
-                this.loading = false;
-                this.error = true;
-                return this.errorTitle = this.title;
-            });
+        this.errorTitle = '';
+        this.searchResultsQuery = query;
+        this.searchResultsActive = true;
+        this.searchResultsLoading = true;
+        this.searchResultsError = false;
+
+        const [movieResults, tvResults, topTypeResult] = await Promise.allSettled([
+            this.fetchSearchResults('movie', query),
+            this.fetchSearchResults('tv', query),
+            this.fetchTopSearchResultType(query)
+        ]);
+
+        this.searchMovieResults = movieResults.status === 'fulfilled' ? movieResults.value : [];
+        this.searchTvResults = tvResults.status === 'fulfilled' ? tvResults.value : [];
+        const rankedType = topTypeResult.status === 'fulfilled' ? topTypeResult.value : null;
+        this.searchResultsType = this.resolveDefaultSearchType(
+            this.searchMovieResults,
+            this.searchTvResults,
+            rankedType
+        );
+        this.searchResultsError = this.searchMovieResults.length === 0 && this.searchTvResults.length === 0;
+        this.searchResultsLoading = false;
     }
 
     search(id, type) {
+        this.clearSearchResults();
         this.loading = true;
         this.error = false;
         this.loadingMoreLikeThis = true;
@@ -128,6 +162,107 @@ export class TitleService {
                 void this.hydrateRatings(data);
                 this.loading = false;
             });
+    }
+
+    private async fetchSearchResults(type: 'movie' | 'tv', query: string): Promise<SearchResultItem[]> {
+        const searchUrl = this.buildTmdbUrl(`/search/${type}`, {
+            query,
+            include_adult: 'false',
+            language: 'en-US',
+            page: '1'
+        });
+
+        try {
+            const response: any = await this.http.get(searchUrl).pipe(take(1)).toPromise();
+            const results = Array.isArray(response?.results) ? response.results : [];
+            return results
+                .filter(item => item && Number.isInteger(item.id))
+                .slice(0, 10)
+                .map(item => this.mapSearchResult(item, type));
+        } catch (error) {
+            return [];
+        }
+    }
+
+    private async fetchTopSearchResultType(query: string): Promise<'movie' | 'tv' | null> {
+        const searchUrl = this.buildTmdbUrl('/search/multi', {
+            query,
+            include_adult: 'false',
+            language: 'en-US',
+            page: '1'
+        });
+
+        try {
+            const response: any = await this.http.get(searchUrl).pipe(take(1)).toPromise();
+            const results = Array.isArray(response?.results) ? response.results : [];
+            const topTitleResult = results.find(item =>
+                item &&
+                Number.isInteger(item.id) &&
+                (item.media_type === 'movie' || item.media_type === 'tv')
+            );
+            return topTitleResult?.media_type === 'tv' ? 'tv' : topTitleResult?.media_type === 'movie' ? 'movie' : null;
+        } catch {
+            return null;
+        }
+    }
+
+    private resolveDefaultSearchType(
+        movieResults: SearchResultItem[],
+        tvResults: SearchResultItem[],
+        rankedType: 'movie' | 'tv' | null
+    ): 'movie' | 'tv' {
+        if (rankedType === 'movie' && movieResults.length > 0) {
+            return 'movie';
+        }
+        if (rankedType === 'tv' && tvResults.length > 0) {
+            return 'tv';
+        }
+        if (movieResults.length === 0 && tvResults.length > 0) {
+            return 'tv';
+        }
+        if (tvResults.length === 0 && movieResults.length > 0) {
+            return 'movie';
+        }
+        if (movieResults.length > 0 && tvResults.length > 0) {
+            const movieTop = movieResults[0];
+            const tvTop = tvResults[0];
+            return this.getSearchRankScore(tvTop) > this.getSearchRankScore(movieTop) ? 'tv' : 'movie';
+        }
+        return 'movie';
+    }
+
+    private getSearchRankScore(result: SearchResultItem): number {
+        const score = Number(result?.searchScore) || 0;
+        const votes = Number(result?.vote_count) || 0;
+        return score * 100000 + votes;
+    }
+
+    private mapSearchResult(item: any, mediaType: 'movie' | 'tv'): SearchResultItem {
+        const rawScore = Number(item?.vote_average);
+        const searchScore = Number.isFinite(rawScore) && rawScore > 0 ? Math.round(rawScore * 10) : 0;
+
+        return {
+            id: Number(item.id),
+            media_type: mediaType,
+            poster_path: item?.poster_path || '',
+            title: item?.title || '',
+            name: item?.name || '',
+            release_date: item?.release_date || '',
+            first_air_date: item?.first_air_date || '',
+            overview: item?.overview || '',
+            searchScore,
+            vote_count: Number(item?.vote_count) || 0
+        };
+    }
+
+    clearSearchResults() {
+        this.searchResultsLoading = false;
+        this.searchResultsActive = false;
+        this.searchResultsError = false;
+        this.searchResultsQuery = '';
+        this.searchResultsType = 'movie';
+        this.searchMovieResults = [];
+        this.searchTvResults = [];
     }
 
     searchMoreLikeThis(data: Title) {
