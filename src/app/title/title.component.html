@@ -65,20 +65,81 @@
                       }</b>
                      </h2>
                    </div>
-                     <div class="row title-meta">
-                     @for (segment of metaSegments; track $index; let index = $index) {
-                       <span
-                         class="title-meta__segment"
-                         [class.title-meta__segment--certification]="segment.kind === 'certification'"
-                         [class.title-meta__segment--with-separator]="shouldShowMetaSeparator(index)">
-                         @if (segment.kind === 'certification') {
-                           <span class="certifications">{{ segment.value }}</span>
-                         } @else {
-                           <span>{{ segment.value }}</span>
+                     <div class="row title-meta-row">
+                       <div class="title-meta">
+                         @for (segment of metaSegments; track $index; let index = $index) {
+                           <span
+                             class="title-meta__segment"
+                             [class.title-meta__segment--certification]="segment.kind === 'certification'"
+                             [class.title-meta__segment--with-separator]="shouldShowMetaSeparator(index)">
+                             @if (segment.kind === 'certification') {
+                               <span class="certifications">{{ segment.value }}</span>
+                             } @else {
+                               <span>{{ segment.value }}</span>
+                             }
+                           </span>
                          }
-                       </span>
+                       </div>
+                     </div>
+                     @if (seasonGuideSummary || nextEpisodeText) {
+                       <div class="row title-tv-meta-row">
+                         @if (seasonGuideSummary) {
+                           <details #seasonGuideMenu class="season-guide">
+                             <summary class="season-guide__trigger">
+                               <span>{{ seasonGuideLabel }}</span>
+                               <i aria-hidden="true" class="fas fa-chevron-down season-guide__caret"></i>
+                             </summary>
+                             <div class="season-guide__panel">
+                               @if (seasonGuideSeasons.length === 0) {
+                                 <div class="season-guide__hint">Season details unavailable.</div>
+                               } @else if (seasonGuideSeasons.length === 1) {
+                                 @if (seasonGuideSeasons[0].episodes.length > 0) {
+                                   <div class="season-guide__episodes">
+                                     @for (episode of seasonGuideSeasons[0].episodes; track episode.episode_number) {
+                                       <div class="season-guide__episode">
+                                         <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                         <span>{{ episode.name }}</span>
+                                       </div>
+                                     }
+                                   </div>
+                                 } @else {
+                                   <div class="season-guide__hint">
+                                     {{ seasonGuideSeasons[0].episodeCount || 0 }} episodes
+                                   </div>
+                                 }
+                               } @else {
+                                 @for (season of seasonGuideSeasons; track season.seasonNumber) {
+                                   <div class="season-guide__season">
+                                     <div class="season-guide__season-heading">
+                                       <span>{{ season.label }}</span>
+                                       <span class="season-guide__season-count">
+                                         {{ season.episodeCount || 0 }} episodes
+                                       </span>
+                                     </div>
+                                     @if (season.episodes.length > 0) {
+                                       <div class="season-guide__episodes">
+                                         @for (episode of season.episodes; track episode.episode_number) {
+                                           <div class="season-guide__episode">
+                                             <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                             <span>{{ episode.name }}</span>
+                                           </div>
+                                         }
+                                       </div>
+                                     }
+                                   </div>
+                                 }
+                               }
+                             </div>
+                           </details>
+                         }
+                         @if (nextEpisodeText) {
+                           <span class="title-next-episode-pill">
+                             <i aria-hidden="true" class="fas fa-calendar-alt"></i>
+                             <span>{{ nextEpisodeText }}</span>
+                           </span>
+                         }
+                       </div>
                      }
-                   </div>
                       <div class="row">
                         @if (title.tagline) {
                           <div>

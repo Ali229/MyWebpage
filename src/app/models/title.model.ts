@@ -1,3 +1,24 @@
+export interface TitleEpisode {
+    episode_number: number;
+    name: string;
+    air_date?: string;
+}
+
+export interface TitleSeason {
+    season_number: number;
+    name?: string;
+    episode_count?: number;
+    air_date?: string;
+    episodes?: TitleEpisode[];
+}
+
+export interface TitleEpisodeAiring {
+    episode_number?: number;
+    season_number?: number;
+    name?: string;
+    air_date?: string;
+}
+
 export interface Title {
     poster_path: string;
     id: number;
@@ -25,6 +46,9 @@ export interface Title {
     name: string;
     content_ratings: object[];
     number_of_seasons: number;
+    seasons?: TitleSeason[];
+    next_episode_to_air?: TitleEpisodeAiring | null;
+    episode_run_time?: number[];
 
     // Movie-Specific
     release_date: Date;

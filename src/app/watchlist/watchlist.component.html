@@ -90,37 +90,84 @@
                 </a>
                   </div>
                   <div class="row d-none d-sm-block watchlist-meta">
-                    @if (title.certification) {
-                      <span><span class="certifications">{{ title.certification }}</span>&nbsp;&nbsp;&nbsp;</span>
-                    }
-                    <span>{{ title.release_date ? (title.release_date | date:'d MMMM yyyy') : (title.first_air_date | date:'d MMMM yyyy') }}
-                      <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
-                      @if (title.genres) {
-                        <span>
-                          @for (genre of title.genres; track genre; let isLast = $last) {
-                            {{ genre.name }}{{ isLast ? '' : ', ' }}
-                          }
-                          <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
-                        }
-                        @if (title.runtime) {
-                          <span>{{ title.runtimeText }}<span
-                          class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span></span>
-                        }
-                        @if (title.number_of_seasons) {
-                          <span>{{ title.number_of_seasons }}
-                            @if (title.number_of_seasons > 1) {
-                              Seasons
+                    @let segments = getMetaSegments(title);
+                    <div class="watchlist-meta-row">
+                      <div class="watchlist-meta-row__left">
+                        @for (segment of segments; track $index; let index = $index) {
+                          <span
+                            class="watchlist-meta__segment"
+                            [class.watchlist-meta__segment--certification]="segment.kind === 'certification'"
+                            [class.watchlist-meta__segment--with-separator]="shouldShowMetaSeparator(segments, index)">
+                            @if (segment.kind === 'certification') {
+                              <span class="certifications">{{ segment.value }}</span>
+                            } @else {
+                              <span>{{ segment.value }}</span>
                             }
-                            @if (title.number_of_seasons == 1) {
-                              Season
-                            }
-                            <span class="text-muted">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span>
                           </span>
                         }
-                        @if (title.language) {
-                          <span>{{ title.language }}</span>
-                        }
                       </div>
+                    </div>
+                    @let seasonSummary = getSeasonGuideSummary(title);
+                    @let nextEpisodeText = getNextEpisodeText(title);
+                    @if (seasonSummary || nextEpisodeText) {
+                      <div class="watchlist-tv-meta-row">
+                      @if (seasonSummary) {
+                        <details #seasonGuideMenu class="watchlist-season-guide">
+                          <summary class="watchlist-season-guide__trigger">
+                            <span>{{ getSeasonGuideLabel(title) }}</span>
+                            <i aria-hidden="true" class="fas fa-chevron-down watchlist-season-guide__caret"></i>
+                          </summary>
+                          <div class="watchlist-season-guide__panel">
+                            @let guideSeasons = getSeasonGuideSeasons(title);
+                            @if (guideSeasons.length === 0) {
+                              <div class="watchlist-season-guide__hint">Season details unavailable.</div>
+                            } @else if (guideSeasons.length === 1) {
+                              @if (guideSeasons[0].episodes.length > 0) {
+                                <div class="watchlist-season-guide__episodes">
+                                  @for (episode of guideSeasons[0].episodes; track episode.episode_number) {
+                                    <div class="watchlist-season-guide__episode">
+                                      <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                      <span>{{ episode.name }}</span>
+                                    </div>
+                                  }
+                                </div>
+                              } @else {
+                                <div class="watchlist-season-guide__hint">
+                                  {{ guideSeasons[0].episodeCount || 0 }} episodes
+                                </div>
+                              }
+                            } @else {
+                              @for (season of guideSeasons; track season.seasonNumber) {
+                                <div class="watchlist-season-guide__season">
+                                  <div class="watchlist-season-guide__season-heading">
+                                    <span>{{ season.label }}</span>
+                                    <span class="watchlist-season-guide__season-count">{{ season.episodeCount || 0 }} episodes</span>
+                                  </div>
+                                  @if (season.episodes.length > 0) {
+                                    <div class="watchlist-season-guide__episodes">
+                                      @for (episode of season.episodes; track episode.episode_number) {
+                                        <div class="watchlist-season-guide__episode">
+                                          <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                          <span>{{ episode.name }}</span>
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            }
+                          </div>
+                        </details>
+                      }
+                      @if (nextEpisodeText) {
+                        <span class="watchlist-next-episode-pill">
+                          <i aria-hidden="true" class="fas fa-calendar-alt"></i>
+                          <span>{{ nextEpisodeText }}</span>
+                        </span>
+                      }
+                      </div>
+                    }
+                  </div>
                       @if (title.overview) {
                         <div class="row mt-3 pr-3 d-none d-sm-block"><p
                         class="overview">{{ title.overview }}</p>

@@ -194,8 +194,171 @@
   font-weight: 300;
 }
 
+.watchlist-meta-row {
+  display: block;
+  margin-bottom: 0.2rem;
+  width: 100%;
+}
+
+.watchlist-meta-row__left {
+  display: inline-flex;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.watchlist-meta__segment {
+  display: inline-flex;
+  align-items: center;
+}
+
+.watchlist-meta__segment--certification::after {
+  content: "\00a0\00a0";
+  display: inline-block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watchlist-meta__segment--with-separator::before {
+  content: "\00a0\00a0\2022\00a0\00a0";
+  display: inline-block;
+  font-size: 1.22em;
+  line-height: 1;
+  color: #5f6f81;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watchlist-tv-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .watchlist-meta .text-muted {
   color: #5f6f81 !important;
+}
+
+.watchlist-season-guide {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.watchlist-season-guide__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  min-height: 2rem;
+  min-width: 114px;
+  padding: 0.18rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #23384c;
+  font-size: 0.8rem;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.watchlist-season-guide__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.watchlist-season-guide[open] .watchlist-season-guide__trigger,
+.watchlist-season-guide__trigger:focus-visible {
+  border-color: #9eacba;
+  box-shadow: 0 0 0 2px rgba(158, 172, 186, 0.22);
+  outline: none;
+}
+
+.watchlist-season-guide__caret {
+  color: #647588;
+  font-size: 0.66rem;
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.watchlist-season-guide[open] .watchlist-season-guide__caret {
+  transform: rotate(180deg);
+}
+
+.watchlist-season-guide__panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 25;
+  width: min(350px, 80vw);
+  max-height: 280px;
+  overflow: auto;
+  padding: 0.5rem;
+  border: 1px solid #d3dfec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 16px 30px rgba(16, 36, 61, 0.18);
+}
+
+.watchlist-season-guide__season + .watchlist-season-guide__season {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid #e5edf4;
+}
+
+.watchlist-season-guide__season-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  color: #1f3850;
+  font-weight: 500;
+  font-size: 0.84rem;
+}
+
+.watchlist-season-guide__season-count,
+.watchlist-season-guide__hint {
+  color: #647588;
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+
+.watchlist-season-guide__episodes {
+  margin-top: 0.32rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.watchlist-season-guide__episode {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.4rem;
+  color: #364a5f;
+  font-size: 0.8rem;
+}
+
+.watchlist-season-guide__episode-number {
+  color: #73879a;
+  font-weight: 500;
+}
+
+.watchlist-next-episode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  min-height: 2rem;
+  padding: 0.18rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #5f6f81;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.watchlist-next-episode-pill .fa-calendar-alt {
+  font-size: 0.7rem;
+  color: #6b8195;
 }
 
 .badge {
@@ -307,6 +470,25 @@
     font-size: 20px;
     padding: 10px
   }
+
+  .watchlist-meta-row {
+    margin-bottom: 0.2rem;
+  }
+
+  .watchlist-tv-meta-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .watchlist-season-guide {
+    margin-left: 0;
+  }
+
+  .watchlist-season-guide__panel {
+    left: 0;
+    right: auto;
+  }
+
   h5 {
     font-size: 0.8rem;
   }

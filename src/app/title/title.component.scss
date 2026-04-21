@@ -165,10 +165,29 @@ b {
 }
 
 .title-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 0;
   margin-top: 0.1rem;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0;
   color: #5f6f81;
   font-weight: 300;
+}
+
+.title-meta-row {
+  display: block;
+  margin-top: 0.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.title-tv-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.55rem;
 }
 
 .title-meta__segment {
@@ -203,6 +222,126 @@ b {
 
 .title-meta .text-muted {
   color: #5f6f81 !important;
+}
+
+.season-guide {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.season-guide__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  min-height: 2rem;
+  min-width: 118px;
+  padding: 0.2rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #23384c;
+  font-size: 0.84rem;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.season-guide__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.season-guide[open] .season-guide__trigger,
+.season-guide__trigger:focus-visible {
+  border-color: #9eacba;
+  box-shadow: 0 0 0 2px rgba(158, 172, 186, 0.22);
+  outline: none;
+}
+
+.season-guide__caret {
+  color: #647588;
+  font-size: 0.68rem;
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.season-guide[open] .season-guide__caret {
+  transform: rotate(180deg);
+}
+
+.season-guide__panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 24;
+  width: min(370px, 92vw);
+  max-height: 320px;
+  overflow: auto;
+  padding: 0.55rem;
+  border: 1px solid #d3dfec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 16px 30px rgba(16, 36, 61, 0.18);
+}
+
+.season-guide__season + .season-guide__season {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5edf4;
+}
+
+.season-guide__season-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  color: #1f3850;
+  font-weight: 500;
+}
+
+.season-guide__season-count,
+.season-guide__hint {
+  color: #647588;
+  font-size: 0.84rem;
+  font-weight: 300;
+}
+
+.season-guide__episodes {
+  margin-top: 0.32rem;
+  display: grid;
+  gap: 0.22rem;
+}
+
+.season-guide__episode {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.45rem;
+  color: #364a5f;
+  font-size: 0.84rem;
+}
+
+.season-guide__episode-number {
+  color: #73879a;
+  font-weight: 500;
+}
+
+.title-next-episode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #5f6f81;
+  font-size: 0.84rem;
+  font-weight: 400;
+}
+
+.title-next-episode-pill .fa-calendar-alt {
+  font-size: 0.74rem;
+  color: #6b8195;
 }
 
 .title-tagline {
@@ -409,6 +548,24 @@ b {
 }
 
 @media (max-width: 767px) {
+  .title-meta-row {
+    margin-bottom: 0.2rem;
+  }
+
+  .title-tv-meta-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .season-guide {
+    margin-left: 0;
+  }
+
+  .season-guide__panel {
+    left: 0;
+    right: auto;
+  }
+
   .title-poster-col {
     width: 100%;
     padding-left: 0;

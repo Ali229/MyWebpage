@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../services/auth.service';
-import {Title} from '../models/title.model';
+import {Title, TitleEpisode, TitleSeason} from '../models/title.model';
 import {SimilarTitle, TitleService} from '../services/title.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -13,6 +13,13 @@ interface TitleMetaSegment {
     value: string;
 }
 
+interface SeasonGuideSeason {
+    seasonNumber: number;
+    label: string;
+    episodeCount: number | null;
+    episodes: TitleEpisode[];
+}
+
 
 @Component({
     selector: 'app-title',
@@ -22,10 +29,15 @@ interface TitleMetaSegment {
     imports: [CommonModule, StreamComponent, PageLoaderComponent]
 })
 export class TitleComponent implements OnInit, OnDestroy {
+    @ViewChild('seasonGuideMenu') seasonGuideMenuRef?: ElementRef<HTMLDetailsElement>;
 
     title: Title;
     displayYear = '';
     metaSegments: TitleMetaSegment[] = [];
+    seasonGuideSummary = '';
+    seasonGuideLabel = '';
+    seasonGuideSeasons: SeasonGuideSeason[] = [];
+    nextEpisodeText = '';
     private terminate$: Subject<Title> = new Subject();
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -40,6 +52,10 @@ export class TitleComponent implements OnInit, OnDestroy {
             this.title = data;
             this.displayYear = this.extractDisplayYear(data);
             this.metaSegments = this.buildMetaSegments(data);
+            this.seasonGuideSummary = this.extractSeasonsText(data);
+            this.seasonGuideLabel = this.buildSeasonGuideLabel(data);
+            this.seasonGuideSeasons = this.buildSeasonGuide(data);
+            this.nextEpisodeText = this.extractNextEpisodeText(data);
             if (data?.id && this.ts.shouldScrollToTitleTarget()) {
                 requestAnimationFrame(() => this.ts.scrollToTitleTarget());
             }
@@ -50,6 +66,19 @@ export class TitleComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.terminate$.next();
         this.terminate$.complete();
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const menu = this.seasonGuideMenuRef?.nativeElement;
+        if (!menu || !menu.open) {
+            return;
+        }
+
+        const target = event.target as Node | null;
+        if (target && !menu.contains(target)) {
+            menu.open = false;
+        }
     }
 
     onToggleWatchlist() {
@@ -121,7 +150,6 @@ export class TitleComponent implements OnInit, OnDestroy {
         const displayDate = this.extractDisplayDate(title);
         const genresText = this.extractGenresText(title);
         const runtimeText = this.normalizeDisplayValue(title.runtimeText);
-        const seasonsText = this.extractSeasonsText(title);
         const language = this.normalizeDisplayValue(title.language);
 
         if (certification) {
@@ -135,9 +163,6 @@ export class TitleComponent implements OnInit, OnDestroy {
         }
         if (runtimeText) {
             segments.push({kind: 'text', value: runtimeText});
-        }
-        if (seasonsText) {
-            segments.push({kind: 'text', value: seasonsText});
         }
         if (language) {
             segments.push({kind: 'text', value: language});
@@ -199,12 +224,100 @@ export class TitleComponent implements OnInit, OnDestroy {
     }
 
     private extractSeasonsText(title: Title): string {
-        const seasons = Number(title?.number_of_seasons);
+        const seasons = this.resolveSeasonCount(title);
         if (!Number.isFinite(seasons) || seasons <= 0) {
             return '';
         }
 
         return `${seasons} ${seasons === 1 ? 'Season' : 'Seasons'}`;
+    }
+
+    private buildSeasonGuideLabel(title: Title): string {
+        const seasons = this.resolveSeasonCount(title);
+        if (!Number.isFinite(seasons) || seasons <= 0) {
+            return '';
+        }
+
+        return `${seasons === 1 ? 'Season' : 'Seasons'} • ${seasons}`;
+    }
+
+    private extractNextEpisodeText(title: Title): string {
+        const nextAirDate = this.normalizeDisplayValue(title?.next_episode_to_air?.air_date);
+        if (!nextAirDate) {
+            return '';
+        }
+
+        const formattedDate = this.formatLongDate(nextAirDate);
+        if (!formattedDate) {
+            return '';
+        }
+
+        return `Next episode ${formattedDate}`;
+    }
+
+    private buildSeasonGuide(title: Title): SeasonGuideSeason[] {
+        const seasons = Array.isArray(title?.seasons) ? title.seasons : [];
+        if (!seasons.length) {
+            return [];
+        }
+
+        const mapped = seasons
+            .map((season: TitleSeason) => this.mapSeasonGuideSeason(season))
+            .filter(season => season.seasonNumber >= 0);
+
+        const regularSeasons = mapped.filter(season => season.seasonNumber > 0);
+        return regularSeasons.length > 0 ? regularSeasons : mapped;
+    }
+
+    private mapSeasonGuideSeason(season: TitleSeason): SeasonGuideSeason {
+        const seasonNumber = Number(season?.season_number);
+        const safeSeasonNumber = Number.isFinite(seasonNumber) ? seasonNumber : 0;
+        const seasonName = this.normalizeDisplayValue(season?.name);
+        const fallbackLabel = safeSeasonNumber > 0 ? `Season ${safeSeasonNumber}` : 'Specials';
+        const episodeCount = Number(season?.episode_count);
+        const episodes = this.mapSeasonEpisodes(season?.episodes);
+
+        return {
+            seasonNumber: safeSeasonNumber,
+            label: seasonName || fallbackLabel,
+            episodeCount: Number.isFinite(episodeCount) && episodeCount > 0 ? episodeCount : null,
+            episodes
+        };
+    }
+
+    private mapSeasonEpisodes(episodes: TitleEpisode[] | undefined): TitleEpisode[] {
+        if (!Array.isArray(episodes)) {
+            return [];
+        }
+
+        return episodes
+            .map(episode => {
+                const episodeNumber = Number(episode?.episode_number);
+                return {
+                    episode_number: Number.isFinite(episodeNumber) && episodeNumber > 0 ? episodeNumber : 0,
+                    name: this.normalizeDisplayValue(episode?.name),
+                    air_date: this.normalizeDisplayValue(episode?.air_date)
+                };
+            })
+            .filter(episode => !!episode.name)
+            .sort((a, b) => a.episode_number - b.episode_number);
+    }
+
+    private resolveSeasonCount(title: Title): number {
+        const seasonCount = Number(title?.number_of_seasons);
+        if (Number.isFinite(seasonCount) && seasonCount > 0) {
+            return seasonCount;
+        }
+
+        if (Array.isArray(title?.seasons)) {
+            const regularSeasons = title.seasons.filter((season: TitleSeason) => Number(season?.season_number) > 0);
+            if (regularSeasons.length > 0) {
+                return regularSeasons.length;
+            }
+            return title.seasons.length;
+        }
+
+        return 0;
     }
 
     private getPrimaryDateValue(title: Title): string {
@@ -221,5 +334,29 @@ export class TitleComponent implements OnInit, OnDestroy {
             return value.trim();
         }
         return '';
+    }
+
+    private formatLongDate(value: string): string {
+        const isoDateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+        if (isoDateMatch) {
+            const year = Number(isoDateMatch[1]);
+            const monthIndex = Number(isoDateMatch[2]) - 1;
+            const day = Number(isoDateMatch[3]);
+            if (
+                Number.isFinite(year) &&
+                monthIndex >= 0 &&
+                monthIndex < this.monthNames.length &&
+                Number.isFinite(day) &&
+                day > 0
+            ) {
+                return `${this.monthNames[monthIndex]} ${day}, ${year}`;
+            }
+        }
+
+        const parsedDate = new Date(value);
+        if (Number.isNaN(parsedDate.getTime())) {
+            return '';
+        }
+        return `${this.monthNames[parsedDate.getMonth()]} ${parsedDate.getDate()}, ${parsedDate.getFullYear()}`;
     }
 }
