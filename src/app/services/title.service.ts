@@ -708,11 +708,31 @@ export class TitleService {
     }
 
     getRuntime(data) {
-        if (data.runtime > 60) {
-            return (data.runtime - data.runtime % 60) / 60 + 'h ' + data.runtime % 60 + 'min';
-        } else {
-            return data.runtime + 'min';
+        const runtimeMinutes = this.resolveRuntimeMinutes(data);
+        if (!runtimeMinutes) {
+            return '';
         }
+
+        if (runtimeMinutes > 60) {
+            return (runtimeMinutes - runtimeMinutes % 60) / 60 + 'h ' + runtimeMinutes % 60 + 'min';
+        }
+
+        return runtimeMinutes + 'min';
+    }
+
+    private resolveRuntimeMinutes(data: any): number | null {
+        const runtime = Number(data?.runtime);
+        if (Number.isFinite(runtime) && runtime > 0) {
+            return runtime;
+        }
+
+        const episodeRunTimes = Array.isArray(data?.episode_run_time) ? data.episode_run_time : [];
+        const firstEpisodeRuntime = Number(episodeRunTimes.find((value: any) => Number.isFinite(Number(value)) && Number(value) > 0));
+        if (Number.isFinite(firstEpisodeRuntime) && firstEpisodeRuntime > 0) {
+            return firstEpisodeRuntime;
+        }
+
+        return null;
     }
 
     scrollToTitleTarget() {

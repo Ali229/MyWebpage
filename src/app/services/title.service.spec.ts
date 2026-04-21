@@ -121,4 +121,20 @@ describe('MovieServiceService', () => {
 
         expect(certification).toBe('15 (GB)');
     });
+
+    it('uses episode runtime when tv runtime is unavailable', () => {
+        const service: TitleService = TestBed.inject(TitleService);
+        const runtimeText = service.getRuntime({
+            episode_run_time: [48]
+        });
+
+        expect(runtimeText).toBe('48min');
+    });
+
+    it('returns an empty runtime string when runtime is missing', () => {
+        const service: TitleService = TestBed.inject(TitleService);
+        const runtimeText = service.getRuntime({});
+
+        expect(runtimeText).toBe('');
+    });
 });
