@@ -353,7 +353,18 @@
 }
 
 @media (max-width: 767.98px) {
+  .mobile-movies-header {
+    width: calc(100% - 1.75rem);
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .movies-search-form {
+    width: calc(100% - 1.75rem);
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 1rem;
   }
 
