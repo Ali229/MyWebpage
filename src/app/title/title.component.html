@@ -111,7 +111,12 @@
                                  @for (season of seasonGuideSeasons; track season.seasonNumber) {
                                    <div class="season-guide__season">
                                      <div class="season-guide__season-heading">
-                                       <span>{{ season.label }}</span>
+                                       <span class="season-guide__season-label">
+                                         <span>{{ season.label }}</span>
+                                         @if (season.year) {
+                                           <span class="season-guide__season-year">({{ season.year }})</span>
+                                         }
+                                       </span>
                                        <span class="season-guide__season-count">
                                          {{ season.episodeCount || 0 }} episodes
                                        </span>

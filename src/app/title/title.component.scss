@@ -299,6 +299,19 @@ b {
   font-weight: 500;
 }
 
+.season-guide__season-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+.season-guide__season-year {
+  color: #647588;
+  font-size: 0.84em;
+  font-weight: 300;
+}
+
 .season-guide__season-count,
 .season-guide__hint {
   color: #647588;

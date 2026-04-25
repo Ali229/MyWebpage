@@ -20,6 +20,7 @@ interface WatchlistMetaSegment {
 interface SeasonGuideSeason {
     seasonNumber: number;
     label: string;
+    year: string;
     episodeCount: number | null;
     episodes: TitleEpisode[];
 }
@@ -271,12 +272,14 @@ export class WatchlistComponent implements OnInit, OnDestroy {
         const safeSeasonNumber = Number.isFinite(seasonNumber) ? seasonNumber : 0;
         const seasonName = this.normalizeDisplayValue(season?.name);
         const fallbackLabel = safeSeasonNumber > 0 ? `Season ${safeSeasonNumber}` : 'Specials';
+        const year = this.extractYearFromDate(season?.air_date);
         const episodeCount = Number(season?.episode_count);
         const episodes = this.mapSeasonEpisodes(season?.episodes);
 
         return {
             seasonNumber: safeSeasonNumber,
             label: seasonName || fallbackLabel,
+            year,
             episodeCount: Number.isFinite(episodeCount) && episodeCount > 0 ? episodeCount : null,
             episodes
         };
@@ -305,6 +308,12 @@ export class WatchlistComponent implements OnInit, OnDestroy {
             return value.trim();
         }
         return '';
+    }
+
+    private extractYearFromDate(value: any): string {
+        const dateValue = this.normalizeDisplayValue(value);
+        const yearMatch = /^(\d{4})/.exec(dateValue);
+        return yearMatch?.[1] || '';
     }
 
     private formatLongDate(value: string): string {

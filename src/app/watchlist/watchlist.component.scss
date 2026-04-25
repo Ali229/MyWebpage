@@ -316,6 +316,19 @@
   font-size: 0.84rem;
 }
 
+.watchlist-season-guide__season-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.24rem;
+  min-width: 0;
+}
+
+.watchlist-season-guide__season-year {
+  color: #647588;
+  font-size: 0.84em;
+  font-weight: 300;
+}
+
 .watchlist-season-guide__season-count,
 .watchlist-season-guide__hint {
   color: #647588;

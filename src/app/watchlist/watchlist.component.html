@@ -140,7 +140,12 @@
                               @for (season of guideSeasons; track season.seasonNumber) {
                                 <div class="watchlist-season-guide__season">
                                   <div class="watchlist-season-guide__season-heading">
-                                    <span>{{ season.label }}</span>
+                                    <span class="watchlist-season-guide__season-label">
+                                      <span>{{ season.label }}</span>
+                                      @if (season.year) {
+                                        <span class="watchlist-season-guide__season-year">({{ season.year }})</span>
+                                      }
+                                    </span>
                                     <span class="watchlist-season-guide__season-count">{{ season.episodeCount || 0 }} episodes</span>
                                   </div>
                                   @if (season.episodes.length > 0) {
