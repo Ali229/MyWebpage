@@ -21,6 +21,8 @@ export function createAuthServiceStub() {
         bShowStreamableOnly: false,
         authStateReady$: authStateReady$.asObservable(),
         bShowStreamableCheckbox$: streamableOnly$.asObservable(),
+        canUseDownloadButton: jasmine.createSpy('canUseDownloadButton').and.returnValue(false),
+        getCurrentUserIdToken: jasmine.createSpy('getCurrentUserIdToken').and.resolveTo(null),
         getWatchlisted: jasmine.createSpy('getWatchlisted').and.returnValue(false),
         addToWatchlist: jasmine.createSpy('addToWatchlist'),
         removeFromWatchlist: jasmine.createSpy('removeFromWatchlist'),

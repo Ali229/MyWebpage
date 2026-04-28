@@ -38,7 +38,19 @@
                       </button>
                     }
                   </div>
-                  <div class="col-auto ml-auto p-0"
+                  @if (canShowDownloadButton()) {
+                    <div class="col-auto ml-auto p-0">
+                      <button class="poster-action poster-action--icon poster-action--download"
+                        (click)="onDownloadTitle()"
+                        [disabled]="downloadRequestActive"
+                        type="button"
+                        title="Send to download app">
+                        <i class="fas" [class.fa-save]="!downloadRequestActive" [class.fa-spinner]="downloadRequestActive" [class.fa-spin]="downloadRequestActive"></i>
+                        <span class="sr-only">Send to download app</span>
+                      </button>
+                    </div>
+                  }
+                  <div class="col-auto p-0"
                     [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
                     <button class="poster-action poster-action--icon"
                       type="button">

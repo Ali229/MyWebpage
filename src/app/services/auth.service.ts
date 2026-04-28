@@ -9,6 +9,7 @@ import {firebaseAuth, firestore} from '../firebase.config';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
+    private readonly downloadAdminEmail = 'mairaandali@gmail.com';
     watchlist: Title[] = [];
     empty = false;
     watchlistLoaded = false;
@@ -213,6 +214,19 @@ export class AuthService {
         } else {
             this.toastr.info('Please login to use the watchlist feature');
         }
+    }
+
+    canUseDownloadButton(): boolean {
+        return this.user.email?.toLowerCase() === this.downloadAdminEmail;
+    }
+
+    async getCurrentUserIdToken(): Promise<string | null> {
+        const currentUser = firebaseAuth.currentUser;
+        if (!currentUser || currentUser.email?.toLowerCase() !== this.downloadAdminEmail) {
+            return null;
+        }
+
+        return currentUser.getIdToken();
     }
 
     public getWatchlisted(id) {

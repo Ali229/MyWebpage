@@ -7,6 +7,8 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {StreamComponent} from '../stream/stream.component';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
+import {DownloadService} from '../services/download.service';
+import {ToastrService} from 'ngx-toastr';
 
 interface TitleMetaSegment {
     kind: 'certification' | 'text';
@@ -39,13 +41,19 @@ export class TitleComponent implements OnInit, OnDestroy {
     seasonGuideLabel = '';
     seasonGuideSeasons: SeasonGuideSeason[] = [];
     nextEpisodeText = '';
+    downloadRequestActive = false;
     private terminate$: Subject<Title> = new Subject();
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    constructor(public auth: AuthService, public ts: TitleService) {
+    constructor(
+        public auth: AuthService,
+        public ts: TitleService,
+        private downloadService: DownloadService,
+        private toastr: ToastrService
+    ) {
     }
 
     ngOnInit() {
@@ -105,6 +113,41 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     isWatchlisted(): boolean {
         return !!this.title?.id && this.auth.watchlistLoaded && this.auth.getWatchlisted(this.title.id);
+    }
+
+    canShowDownloadButton(): boolean {
+        return !!this.title?.id
+            && (this.title.media_type === 'movie' || this.title.media_type === 'tv')
+            && this.auth.canUseDownloadButton();
+    }
+
+    async onDownloadTitle() {
+        if (!this.canShowDownloadButton() || this.downloadRequestActive) {
+            return;
+        }
+
+        this.downloadRequestActive = true;
+        const titleName = this.title.title || this.title.name || 'Title';
+
+        try {
+            const idToken = await this.auth.getCurrentUserIdToken();
+            if (!idToken) {
+                this.toastr.info('Please login with the download-enabled account');
+                return;
+            }
+
+            const response = await this.downloadService.downloadTitle(this.title, idToken);
+            if (response.alreadyExists) {
+                this.toastr.info(`${response.title || titleName} is already in your download app`);
+                return;
+            }
+
+            this.toastr.success(`${response.title || titleName} sent to download app`);
+        } catch (error) {
+            this.toastr.error(this.resolveDownloadError(error), 'Download request failed');
+        } finally {
+            this.downloadRequestActive = false;
+        }
     }
 
     openMoreLikeThis(similarTitle: SimilarTitle) {
@@ -286,6 +329,19 @@ export class TitleComponent implements OnInit, OnDestroy {
             episodeCount: Number.isFinite(episodeCount) && episodeCount > 0 ? episodeCount : null,
             episodes
         };
+    }
+
+    private resolveDownloadError(error: any): string {
+        const serverError = error?.error?.error;
+        if (typeof serverError === 'string' && serverError.trim()) {
+            return serverError;
+        }
+
+        if (typeof error?.message === 'string' && error.message.trim()) {
+            return error.message;
+        }
+
+        return 'Could not reach the download server.';
     }
 
     private mapSeasonEpisodes(episodes: TitleEpisode[] | undefined): TitleEpisode[] {
