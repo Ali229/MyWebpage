@@ -53,14 +53,15 @@ export class TitleComponent implements OnInit, OnDestroy {
         {value: '720p', label: '720p'}
     ];
     readonly movieMonitorOptions = [
-        {value: 'movieOnly', label: 'This movie'},
-        {value: 'movieAndCollection', label: "This movie and its collection"}
+        {value: 'movieOnly', label: 'Movie Only'},
+        {value: 'movieAndCollection', label: 'Movie & Collection'}
     ];
     readonly tvMonitorOptions = [
-        {value: 'all', label: 'All episodes'},
-        {value: 'future', label: 'Future episodes'},
-        {value: 'missing', label: 'Missing episodes'},
-        {value: 'none', label: 'None'}
+        {value: 'all', label: 'All Episodes'},
+        {value: 'future', label: 'Future Episodes'},
+        {value: 'pilot', label: 'Pilot Episode'},
+        {value: 'firstSeason', label: 'First Season'},
+        {value: 'lastSeason', label: 'Last Season'}
     ];
     private terminate$: Subject<Title> = new Subject();
     private readonly monthNames = [
@@ -204,7 +205,7 @@ export class TitleComponent implements OnInit, OnDestroy {
     }
 
     getDownloadDialogTitle(): string {
-        return `Add ${this.title?.title || this.title?.name || 'title'}`;
+        return this.title?.title || this.title?.name || 'Download request';
     }
 
     private getSelectedDownloadMonitor(): string {
