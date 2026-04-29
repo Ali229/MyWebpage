@@ -12,6 +12,11 @@ export interface DownloadResponse {
     error?: string;
 }
 
+export interface DownloadRequestOptions {
+    quality: '720p' | '1080p' | '4k';
+    monitor: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class DownloadService {
     private readonly apiBaseUrl = environment.downloadApiBaseUrl.replace(/\/$/, '');
@@ -19,7 +24,7 @@ export class DownloadService {
     constructor(private http: HttpClient) {
     }
 
-    downloadTitle(title: Title, idToken: string): Promise<DownloadResponse> {
+    downloadTitle(title: Title, idToken: string, options: DownloadRequestOptions): Promise<DownloadResponse> {
         const mediaType = title?.media_type;
         const endpoint = mediaType === 'tv' ? 'tv' : 'movie';
         const headers = new HttpHeaders({
@@ -30,8 +35,8 @@ export class DownloadService {
             `${this.apiBaseUrl}/download/${endpoint}`,
             {
                 tmdbId: title.id,
-                quality: '1080p',
-                searchNow: true
+                quality: options.quality,
+                monitor: options.monitor
             },
             {headers}
         ).pipe(take(1)).toPromise();

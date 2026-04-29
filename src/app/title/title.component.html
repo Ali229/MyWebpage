@@ -41,16 +41,17 @@
                   @if (canShowDownloadButton()) {
                     <div class="col-auto ml-auto p-0">
                       <button class="poster-action poster-action--icon poster-action--download"
-                        (click)="onDownloadTitle()"
+                        (click)="openDownloadMenu()"
                         [disabled]="downloadRequestActive"
                         type="button"
                         title="Send to download app">
-                        <i class="fas" [class.fa-save]="!downloadRequestActive" [class.fa-spinner]="downloadRequestActive" [class.fa-spin]="downloadRequestActive"></i>
+                        <i class="fas fa-save"></i>
                         <span class="sr-only">Send to download app</span>
                       </button>
                     </div>
                   }
                   <div class="col-auto p-0"
+                    [class.ml-auto]="!canShowDownloadButton()"
                     [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
                     <button class="poster-action poster-action--icon"
                       type="button">
@@ -67,6 +68,71 @@
                 </div>
                 <app-stream class="stream"></app-stream>
               </div>
+              @if (downloadMenuOpen) {
+                <div class="download-modal-backdrop" (click)="closeDownloadMenu()">
+                  <div class="download-modal" role="dialog" aria-modal="true" [attr.aria-label]="getDownloadDialogTitle()" (click)="$event.stopPropagation()">
+                    <div class="download-modal__header">
+                      <div>
+                        <div class="download-modal__eyebrow">{{ isMovieTitle() ? 'Movie request' : 'TV request' }}</div>
+                        <h3 class="download-modal__title">{{ getDownloadDialogTitle() }}</h3>
+                      </div>
+                      <button class="download-modal__close" type="button" title="Close" (click)="closeDownloadMenu()" [disabled]="downloadRequestActive">
+                        <i class="fas fa-times"></i>
+                        <span class="sr-only">Close</span>
+                      </button>
+                    </div>
+                    <div class="download-modal__body">
+                      <img class="download-modal__poster"
+                        [src]="title.poster_path ? ('https://image.tmdb.org/t/p/w185/' + title.poster_path) : (title.omdbPoster || 'assets/404PosterNotFound.jpg')"
+                        alt="Can't load image"
+                        onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
+                      <div class="download-modal__content">
+                        @if (title.overview) {
+                          <p class="download-modal__overview">{{ title.overview }}</p>
+                        }
+                        <label class="download-field">
+                          <span>Quality</span>
+                          <select [(ngModel)]="selectedDownloadQuality">
+                            @for (option of downloadQualityOptions; track option.value) {
+                              <option [value]="option.value">{{ option.label }}</option>
+                            }
+                          </select>
+                        </label>
+                        @if (isMovieTitle()) {
+                          <label class="download-field">
+                            <span>Monitor</span>
+                            <select [(ngModel)]="selectedMovieMonitor">
+                              @for (option of movieMonitorOptions; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                              }
+                            </select>
+                          </label>
+                        } @else {
+                          <label class="download-field">
+                            <span>Monitor</span>
+                            <select [(ngModel)]="selectedTvMonitor">
+                              @for (option of tvMonitorOptions; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                              }
+                            </select>
+                          </label>
+                        }
+                      </div>
+                    </div>
+                    <div class="download-modal__footer">
+                      <button class="download-button download-button--ghost" type="button" (click)="closeDownloadMenu()" [disabled]="downloadRequestActive">Cancel</button>
+                      <button class="download-button download-button--primary" type="button" (click)="onDownloadTitle()" [disabled]="downloadRequestActive">
+                        @if (downloadRequestActive) {
+                          <i class="fas fa-spinner fa-spin"></i>
+                        } @else {
+                          <i class="fas fa-save"></i>
+                        }
+                        <span>{{ isMovieTitle() ? 'Add Movie' : 'Add Series' }}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
               <div class="col-12 col-md bodyText title-details-col">
                 <div class="title-content-wrap mt-2 mt-md-0">
                     <div class="row title-heading-row">

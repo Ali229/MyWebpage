@@ -24,6 +24,13 @@ const MOVIE_QUALITY_PROFILES = {
   "4k": 5
 };
 
+const MOVIE_MONITOR_TYPES = {
+  "movieOnly": "movieOnly",
+  "movieAndCollection": "movieAndCollection",
+  "movieAndCollections": "movieAndCollection",
+  "none": "none"
+};
+
 const TV_QUALITY_PROFILES = {
   "720p": 3,
   "1080p": 4,
@@ -204,8 +211,8 @@ app.get("/health", (req, res) => {
 async function handleMovieDownload(req, res) {
   try {
     const tmdbId = Number(req.body.tmdbId);
-    const quality = String(req.body.quality || "1080p").toLowerCase();
-    const searchNow = req.body.searchNow !== false;
+    const quality = String(req.body.quality || "4k").toLowerCase();
+    const monitor = String(req.body.monitor || "movieOnly");
 
     if (!tmdbId) {
       return res.status(400).json({
@@ -220,6 +227,15 @@ async function handleMovieDownload(req, res) {
       return res.status(400).json({
         ok: false,
         error: "Invalid quality. Use 720p, 1080p, or 4k."
+      });
+    }
+
+    const monitorType = MOVIE_MONITOR_TYPES[monitor];
+
+    if (!monitorType) {
+      return res.status(400).json({
+        ok: false,
+        error: "Invalid monitor type."
       });
     }
 
@@ -247,9 +263,10 @@ async function handleMovieDownload(req, res) {
       ...movie,
       qualityProfileId,
       rootFolderPath: RADARR_ROOT_FOLDER,
-      monitored: true,
+      monitored: monitorType !== "none",
       addOptions: {
-        searchForMovie: searchNow
+        monitor: monitorType,
+        searchForMovie: true
       }
     });
 
@@ -261,7 +278,8 @@ async function handleMovieDownload(req, res) {
       tmdbId: addedMovie.tmdbId,
       quality,
       qualityProfileId,
-      searchNow
+      monitor: monitorType,
+      searchNow: true
     });
   } catch (error) {
     res.status(500).json({
@@ -274,9 +292,8 @@ async function handleMovieDownload(req, res) {
 async function handleTvDownload(req, res) {
   try {
     const tmdbId = Number(req.body.tmdbId);
-    const quality = String(req.body.quality || "1080p").toLowerCase();
+    const quality = String(req.body.quality || "4k").toLowerCase();
     const monitor = String(req.body.monitor || "all");
-    const searchNow = req.body.searchNow !== false;
 
     if (!tmdbId) {
       return res.status(400).json({
@@ -341,7 +358,7 @@ async function handleTvDownload(req, res) {
       seriesType: "standard",
       addOptions: {
         monitor: monitorType,
-        searchForMissingEpisodes: searchNow,
+        searchForMissingEpisodes: true,
         searchForCutoffUnmetEpisodes: false
       }
     });
@@ -357,7 +374,7 @@ async function handleTvDownload(req, res) {
       qualityProfileId,
       monitor: monitorType,
       seasonFolder: true,
-      searchNow
+      searchNow: true
     });
   } catch (error) {
     res.status(500).json({

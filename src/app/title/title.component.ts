@@ -1,5 +1,6 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Title, TitleEpisode, TitleSeason} from '../models/title.model';
 import {SimilarTitle, TitleService} from '../services/title.service';
@@ -29,7 +30,7 @@ interface SeasonGuideSeason {
     templateUrl: './title.component.html',
     styleUrls: ['./title.component.scss'],
     standalone: true,
-    imports: [CommonModule, StreamComponent, PageLoaderComponent]
+    imports: [CommonModule, FormsModule, StreamComponent, PageLoaderComponent]
 })
 export class TitleComponent implements OnInit, OnDestroy {
     @ViewChild('seasonGuideMenu') seasonGuideMenuRef?: ElementRef<HTMLDetailsElement>;
@@ -42,6 +43,25 @@ export class TitleComponent implements OnInit, OnDestroy {
     seasonGuideSeasons: SeasonGuideSeason[] = [];
     nextEpisodeText = '';
     downloadRequestActive = false;
+    downloadMenuOpen = false;
+    selectedDownloadQuality: '720p' | '1080p' | '4k' = '4k';
+    selectedMovieMonitor = 'movieOnly';
+    selectedTvMonitor = 'all';
+    readonly downloadQualityOptions = [
+        {value: '4k', label: '4K'},
+        {value: '1080p', label: '1080p'},
+        {value: '720p', label: '720p'}
+    ];
+    readonly movieMonitorOptions = [
+        {value: 'movieOnly', label: 'This movie'},
+        {value: 'movieAndCollection', label: "This movie and its collection"}
+    ];
+    readonly tvMonitorOptions = [
+        {value: 'all', label: 'All episodes'},
+        {value: 'future', label: 'Future episodes'},
+        {value: 'missing', label: 'Missing episodes'},
+        {value: 'none', label: 'None'}
+    ];
     private terminate$: Subject<Title> = new Subject();
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -90,6 +110,11 @@ export class TitleComponent implements OnInit, OnDestroy {
         }
     }
 
+    @HostListener('document:keydown.escape')
+    onEscapeKey() {
+        this.closeDownloadMenu();
+    }
+
     onToggleWatchlist() {
         if (!this.title?.id) {
             return;
@@ -121,6 +146,25 @@ export class TitleComponent implements OnInit, OnDestroy {
             && this.auth.canUseDownloadButton();
     }
 
+    openDownloadMenu() {
+        if (!this.canShowDownloadButton()) {
+            return;
+        }
+
+        this.selectedDownloadQuality = '4k';
+        this.selectedMovieMonitor = 'movieOnly';
+        this.selectedTvMonitor = 'all';
+        this.downloadMenuOpen = true;
+    }
+
+    closeDownloadMenu() {
+        if (this.downloadRequestActive) {
+            return;
+        }
+
+        this.downloadMenuOpen = false;
+    }
+
     async onDownloadTitle() {
         if (!this.canShowDownloadButton() || this.downloadRequestActive) {
             return;
@@ -136,18 +180,35 @@ export class TitleComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            const response = await this.downloadService.downloadTitle(this.title, idToken);
+            const response = await this.downloadService.downloadTitle(this.title, idToken, {
+                quality: this.selectedDownloadQuality,
+                monitor: this.getSelectedDownloadMonitor()
+            });
             if (response.alreadyExists) {
                 this.toastr.info(`${response.title || titleName} is already in your download app`);
+                this.downloadMenuOpen = false;
                 return;
             }
 
             this.toastr.success(`${response.title || titleName} sent to download app`);
+            this.downloadMenuOpen = false;
         } catch (error) {
             this.toastr.error(this.resolveDownloadError(error), 'Download request failed');
         } finally {
             this.downloadRequestActive = false;
         }
+    }
+
+    isMovieTitle(): boolean {
+        return this.title?.media_type === 'movie';
+    }
+
+    getDownloadDialogTitle(): string {
+        return `Add ${this.title?.title || this.title?.name || 'title'}`;
+    }
+
+    private getSelectedDownloadMonitor(): string {
+        return this.isMovieTitle() ? this.selectedMovieMonitor : this.selectedTvMonitor;
     }
 
     openMoreLikeThis(similarTitle: SimilarTitle) {

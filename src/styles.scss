@@ -97,3 +97,179 @@ b, strong {
   text-align: center;
   min-height: 100vh;
 }
+
+.download-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(14, 24, 35, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.download-modal {
+  width: min(720px, 100%);
+  max-height: min(720px, calc(100vh - 2rem));
+  overflow: auto;
+  border: 1px solid #d6e2ee;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #23384c;
+  box-shadow: 0 24px 60px rgba(14, 24, 35, 0.28);
+}
+
+.download-modal__header,
+.download-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+}
+
+.download-modal__header {
+  border-bottom: 1px solid #e3ebf3;
+}
+
+.download-modal__eyebrow {
+  color: #5f6f81;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.download-modal__title {
+  margin: 0.08rem 0 0;
+  color: #172f46;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.download-modal__close {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4d6176;
+  cursor: pointer;
+}
+
+.download-modal__body {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 1.2rem;
+  padding: 1.1rem;
+}
+
+.download-modal__poster {
+  width: 118px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 10px 22px rgba(16, 36, 61, 0.16);
+}
+
+.download-modal__content {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.download-modal__overview {
+  margin: 0;
+  color: #35485d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.download-field {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.download-field span {
+  color: #314b63;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.download-field select {
+  width: 100%;
+  min-height: 2.55rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #c9d8e6;
+  border-radius: 8px;
+  background: #f8fbfd;
+  color: #1d3348;
+  font: inherit;
+}
+
+.download-field select:focus {
+  border-color: #8fb2d0;
+  box-shadow: 0 0 0 3px rgba(99, 150, 191, 0.22);
+  outline: none;
+}
+
+.download-modal__footer {
+  border-top: 1px solid #e3ebf3;
+  justify-content: flex-end;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.82rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.download-button--ghost {
+  background: #ffffff;
+  border-color: #d8e2ec;
+  color: #3f5369;
+}
+
+.download-button--primary {
+  background: #3f729b;
+  color: #ffffff;
+}
+
+.download-button:disabled,
+.download-modal__close:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+@media (max-width: 767px) {
+  .download-modal-backdrop {
+    align-items: flex-end;
+    padding: 0.75rem;
+  }
+
+  .download-modal {
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  .download-modal__body {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.95rem;
+  }
+
+  .download-modal__poster {
+    width: 84px;
+  }
+
+  .download-modal__footer {
+    padding: 0.85rem 0.95rem;
+  }
+}
