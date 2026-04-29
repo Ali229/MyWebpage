@@ -623,14 +623,11 @@ function renderDashboardPage() {
       flex: 0 0 auto;
       transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
-    .refresh-button svg {
-      width: 1.35rem;
-      height: 1.35rem;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .refresh-glyph {
+      display: inline-block;
+      font-size: 1.5rem !important;
+      line-height: 1;
+      transform: translateY(-1px);
     }
     .refresh-button:hover,
     .refresh-button:focus-visible {
@@ -642,7 +639,7 @@ function renderDashboardPage() {
       cursor: wait;
       opacity: 0.72;
     }
-    .refresh-button:disabled svg {
+    .refresh-button:disabled .refresh-glyph {
       animation: spin 0.9s linear infinite;
     }
     @keyframes spin {
@@ -671,10 +668,7 @@ function renderDashboardPage() {
           <span id="summary-time">Starting up</span>
         </div>
         <button type="button" id="refresh" class="refresh-button" title="Refresh status" aria-label="Refresh status">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
-            <path d="M21 4v6h-6"></path>
-          </svg>
+          <span class="refresh-glyph" aria-hidden="true">&#8635;</span>
         </button>
       </div>
     </header>
