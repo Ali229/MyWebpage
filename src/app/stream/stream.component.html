@@ -1,36 +1,36 @@
-@if (title?.onNetflix) {
+@if (showAllIcons || title?.onNetflix) {
   <img class="stream-logo stream-logo--netflix" [style.height]="imgHeight" [style.width]="imgWidth" alt="Netflix" src="assets/netflix.svg">
 }
-@if (title?.onDisney) {
+@if (showAllIcons || title?.onDisney) {
   <img class="stream-logo stream-logo--disney" [style.height]="imgHeight" [style.width]="imgWidth" alt="Disney+" src="assets/disney.webp">
 }
-@if (title?.onHulu) {
+@if (showAllIcons || title?.onHulu) {
   <img class="stream-logo stream-logo--hulu" [style.height]="imgHeight" [style.width]="imgWidth" alt="Hulu" src="assets/hulu.svg">
 }
-@if (title?.onAmazon) {
+@if (showAllIcons || title?.onAmazon) {
   <img class="stream-logo stream-logo--prime" [style.height]="imgHeight" [style.width]="imgWidth" alt="Prime Video" src="assets/prime.svg">
 }
-@if (title?.onYoutube) {
+@if (showAllIcons || title?.onYoutube) {
   <img class="stream-logo stream-logo--youtube" [style.height]="imgHeight" [style.width]="imgWidth" alt="YouTube Premium" src="assets/youtube.svg">
 }
-@if (title?.onApple) {
+@if (showAllIcons || title?.onApple) {
   <img class="stream-logo stream-logo--apple" [style.height]="imgHeight" [style.width]="imgWidth" alt="Apple TV" src="assets/apple.svg">
 }
-@if (title?.onPeacock) {
+@if (showAllIcons || title?.onPeacock) {
   <img class="stream-logo stream-logo--peacock" [style.height]="imgHeight" [style.width]="imgWidth" alt="Peacock" src="assets/peacock.svg">
 }
-@if (title?.onMax) {
+@if (showAllIcons || title?.onMax) {
   <img class="stream-logo stream-logo--max" [style.height]="imgHeight" [style.width]="imgWidth" alt="Max" src="assets/max.webp">
 }
-@if (title?.onParamount) {
+@if (showAllIcons || title?.onParamount) {
   <img class="stream-logo stream-logo--paramount" [style.height]="imgHeight" [style.width]="imgWidth" alt="Paramount+" src="assets/paramount-plus.svg">
 }
-@if (title?.onStarz) {
+@if (showAllIcons || title?.onStarz) {
   <img class="stream-logo stream-logo--starz" [style.height]="imgHeight" [style.width]="imgWidth" alt="STARZ" src="assets/starz.svg">
 }
-@if (title?.onAmc) {
+@if (showAllIcons || title?.onAmc) {
   <img class="stream-logo stream-logo--amc" [style.height]="imgHeight" [style.width]="imgWidth" alt="AMC+" src="assets/amc-plus.png">
 }
-@if (title?.onMgm) {
+@if (showAllIcons || title?.onMgm) {
   <img class="stream-logo stream-logo--mgm" [style.height]="imgHeight" [style.width]="imgWidth" alt="MGM+" src="assets/mgm-plus.svg">
 }

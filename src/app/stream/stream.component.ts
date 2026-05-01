@@ -16,6 +16,7 @@ export class StreamComponent implements OnInit, OnDestroy {
     @Input() public incomingTitle: Title;
     @Input() imgWidth = '55px';
     @Input() imgHeight = '55px';
+    @Input() showAllIcons = false;
 
     title: Title;
     private terminate$: Subject<Title> = new Subject();

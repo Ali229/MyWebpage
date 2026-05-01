@@ -70,3 +70,32 @@
   box-shadow: none;
 }
 
+:host-context(.watchlist-action-streams) .stream-logo {
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0;
+}
+
+:host-context(.watchlist-action-streams) {
+  gap: 0.42rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 575.98px) {
+  :host-context(.watchlist-action-streams) {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.22rem;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  :host-context(.watchlist-action-streams) .stream-logo {
+    flex: 0 0 auto;
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    border-radius: 6px;
+    box-shadow: none;
+    padding: 2px;
+  }
+}
