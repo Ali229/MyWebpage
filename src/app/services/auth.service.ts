@@ -11,10 +11,15 @@ import {firebaseAuth, firestore} from '../firebase.config';
 export class AuthService {
     private readonly downloadAdminEmail = 'mairaandali@gmail.com';
     watchlist: Title[] = [];
+    lovelist: Title[] = [];
     empty = false;
+    lovelistEmpty = false;
     watchlistLoaded = false;
+    lovelistLoaded = false;
     moviesCount = 0;
     tvCount = 0;
+    lovelistMoviesCount = 0;
+    lovelistTvCount = 0;
     settingsLoaded = false;
     public providers = [
         {id: 8, name: 'Netflix', icon: 'assets/netflix.svg', selected: false},
@@ -53,6 +58,7 @@ export class AuthService {
                     photoURL: user.photoURL || ''
                 };
                 this.getWatchlist();
+                this.getLovelist();
                 Promise.all([
                     this.loadSettings(),
                     this.loadStreamableOnlySetting()
@@ -68,10 +74,15 @@ export class AuthService {
                     photoURL: ''
                 };
                 this.watchlist = [];
+                this.lovelist = [];
                 this.watchlistLoaded = true;
+                this.lovelistLoaded = true;
                 this.moviesCount = 0;
                 this.tvCount = 0;
+                this.lovelistMoviesCount = 0;
+                this.lovelistTvCount = 0;
                 this.empty = false;
+                this.lovelistEmpty = false;
                 this.emitWatchlistChanged();
                 this._bShowStreamableCheckBox.next(true);
             }
@@ -159,21 +170,11 @@ export class AuthService {
 
     async addToWatchlist(title) {
         if (this.user.uid) {
-            const titleName = title.title ? title.title : title.name;
-            const watchlistDocId = this.getWatchlistDocId(title);
-            const watchlistRef = doc(firestore, 'users', this.user.uid, 'watchlist', watchlistDocId);
-            const existing = await getDoc(watchlistRef);
-            if (!existing.exists()) {
-                title.watchlistAddDate = new Date();
-                title.watchlistDocId = watchlistDocId;
-                await setDoc(watchlistRef, title);
-                this.watchlist.push(title);
-                this.recalculateWatchlistMeta();
-                this.emitWatchlistChanged();
-                this.toastr.success(titleName + ' added to watchlist');
-            } else {
-                this.toastr.info(titleName + ' is already in your watchlist');
-            }
+            const titleName = this.getTitleName(title);
+            const added = await this.addToWatchlistQuiet(title);
+            this.toastr[added ? 'success' : 'info'](
+                added ? titleName + ' added to watchlist' : titleName + ' is already in your watchlist'
+            );
         } else {
             this.toastr.info('Please login to use the watchlist feature');
         }
@@ -186,34 +187,125 @@ export class AuthService {
                 return;
             }
 
-            const titleName = title.title ? title.title : title.name;
-            const watchlistRef = doc(
-                firestore,
-                'users',
-                this.user.uid,
-                'watchlist',
-                title.watchlistDocId || this.getWatchlistDocId(title)
+            const titleName = this.getTitleName(title);
+            const removed = await this.removeFromWatchlistQuiet(id);
+            this.toastr[removed ? 'success' : 'info'](
+                removed ? titleName + ' removed from watchlist' : titleName + ' was already removed from your watchlist'
             );
-
-            try {
-                const existing = await getDoc(watchlistRef);
-                await deleteDoc(watchlistRef);
-
-                // Keep the local UI in sync even when another tab already removed the doc.
-                this.watchlist = this.watchlist.filter(item => item.id !== id);
-                this.recalculateWatchlistMeta();
-                this.emitWatchlistChanged();
-                if (existing.exists()) {
-                    this.toastr.success(titleName + ' removed from watchlist');
-                } else {
-                    this.toastr.info(titleName + ' was already removed from your watchlist');
-                }
-            } catch (error) {
-                this.toastr.error(String(error), 'Error removing from watchlist');
-            }
         } else {
             this.toastr.info('Please login to use the watchlist feature');
         }
+    }
+
+    async moveToWatchlist(title: Title) {
+        if (!this.user.uid) {
+            this.toastr.info('Please login to use saved title features');
+            return;
+        }
+
+        const titleName = this.getTitleName(title);
+        await this.removeFromLovelistQuiet(title.id);
+        await this.addToWatchlistQuiet(title);
+        this.toastr.success(titleName + ' moved to watchlist');
+    }
+
+    async getLovelist() {
+        this.lovelistLoaded = false;
+        if (this.user.uid) {
+            try {
+                this.lovelist = [];
+                this.lovelistEmpty = false;
+                const lovelistQuery = query(
+                    collection(firestore, 'users', this.user.uid, 'lovelist'),
+                    orderBy('lovelistAddDate')
+                );
+                const snapshot = await getDocs(lovelistQuery);
+                let x = 0;
+                this.lovelistMoviesCount = 0;
+                this.lovelistTvCount = 0;
+                for (const item of snapshot.docs) {
+                    this.lovelist.push(item.data() as Title);
+                    this.lovelist[x].lovelistDocId = item.id;
+                    if (this.lovelist[x].media_type === 'movie') {
+                        this.lovelistMoviesCount++;
+                    } else if (this.lovelist[x].media_type === 'tv') {
+                        this.lovelistTvCount++;
+                    }
+                    x++;
+                }
+                if (this.lovelist.length === 0) {
+                    this.lovelistEmpty = true;
+                }
+            } finally {
+                this.lovelistLoaded = true;
+            }
+        } else {
+            this.lovelist = [];
+            this.lovelistMoviesCount = 0;
+            this.lovelistTvCount = 0;
+            this.lovelistEmpty = false;
+            this.lovelistLoaded = true;
+        }
+    }
+
+    async addToLovelist(title) {
+        if (this.user.uid) {
+            const titleName = this.getTitleName(title);
+            const added = await this.addToLovelistQuiet(title);
+            this.toastr[added ? 'success' : 'info'](
+                added ? titleName + ' added to lovelist' : titleName + ' is already in your lovelist'
+            );
+        } else {
+            this.toastr.info('Please login to use the lovelist feature');
+        }
+    }
+
+    async moveToLovelist(title: Title) {
+        if (!this.user.uid) {
+            this.toastr.info('Please login to use saved title features');
+            return;
+        }
+
+        const titleName = this.getTitleName(title);
+        await this.removeFromWatchlistQuiet(title.id);
+        await this.addToLovelistQuiet(title);
+        this.toastr.success(titleName + ' moved to lovelist');
+    }
+
+    async removeFromLovelist(id) {
+        if (this.user.uid) {
+            const title = this.lovelist.find(item => item.id === id);
+            if (!title) {
+                return;
+            }
+
+            const titleName = this.getTitleName(title);
+            const removed = await this.removeFromLovelistQuiet(id);
+            this.toastr[removed ? 'success' : 'info'](
+                removed ? titleName + ' removed from lovelist' : titleName + ' was already removed from your lovelist'
+            );
+        } else {
+            this.toastr.info('Please login to use the lovelist feature');
+        }
+    }
+
+    public getLoved(id) {
+        if (this.user.uid && this.lovelist) {
+            for (const item of this.lovelist) {
+                if (item.id === id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    get lovelistIds(): Set<number> {
+        return new Set(this.lovelist.map(title => title.id));
+    }
+
+    get watchlistIds(): Set<number> {
+        return new Set(this.watchlist.map(title => title.id));
     }
 
     canUseDownloadButton(): boolean {
@@ -325,6 +417,94 @@ export class AuthService {
     }
 
     private getWatchlistDocId(title: Title) {
+        return this.getSavedTitleDocId(title);
+    }
+
+    private async addToWatchlistQuiet(title: Title): Promise<boolean> {
+        const watchlistDocId = this.getWatchlistDocId(title);
+        const watchlistRef = doc(firestore, 'users', this.user.uid, 'watchlist', watchlistDocId);
+        const existing = await getDoc(watchlistRef);
+        if (existing.exists()) {
+            return false;
+        }
+
+        title.watchlistAddDate = new Date();
+        title.watchlistDocId = watchlistDocId;
+        await setDoc(watchlistRef, title);
+        if (!this.watchlist.some(item => item.id === title.id)) {
+            this.watchlist.push(title);
+        }
+        this.recalculateWatchlistMeta();
+        this.emitWatchlistChanged();
+        return true;
+    }
+
+    private async removeFromWatchlistQuiet(id: number): Promise<boolean> {
+        const title = this.watchlist.find(item => item.id === id);
+        if (!title) {
+            return false;
+        }
+
+        const watchlistRef = doc(
+            firestore,
+            'users',
+            this.user.uid,
+            'watchlist',
+            title.watchlistDocId || this.getWatchlistDocId(title)
+        );
+        const existing = await getDoc(watchlistRef);
+        await deleteDoc(watchlistRef);
+
+        this.watchlist = this.watchlist.filter(item => item.id !== id);
+        this.recalculateWatchlistMeta();
+        this.emitWatchlistChanged();
+        return existing.exists();
+    }
+
+    private async addToLovelistQuiet(title: Title): Promise<boolean> {
+        const lovelistDocId = this.getSavedTitleDocId(title);
+        const lovelistRef = doc(firestore, 'users', this.user.uid, 'lovelist', lovelistDocId);
+        const existing = await getDoc(lovelistRef);
+        if (existing.exists()) {
+            return false;
+        }
+
+        title.lovelistAddDate = new Date();
+        title.lovelistDocId = lovelistDocId;
+        await setDoc(lovelistRef, title);
+        if (!this.lovelist.some(item => item.id === title.id)) {
+            this.lovelist.push(title);
+        }
+        this.recalculateLovelistMeta();
+        return true;
+    }
+
+    private async removeFromLovelistQuiet(id: number): Promise<boolean> {
+        const title = this.lovelist.find(item => item.id === id);
+        if (!title) {
+            return false;
+        }
+
+        const lovelistRef = doc(
+            firestore,
+            'users',
+            this.user.uid,
+            'lovelist',
+            title.lovelistDocId || this.getSavedTitleDocId(title)
+        );
+        const existing = await getDoc(lovelistRef);
+        await deleteDoc(lovelistRef);
+
+        this.lovelist = this.lovelist.filter(item => item.id !== id);
+        this.recalculateLovelistMeta();
+        return existing.exists();
+    }
+
+    private getTitleName(title: Title): string {
+        return title.title || title.name || 'Title';
+    }
+
+    private getSavedTitleDocId(title: Title) {
         return `${title.media_type || 'title'}_${title.id}`;
     }
 
@@ -339,6 +519,19 @@ export class AuthService {
             }
         }
         this.empty = this.watchlist.length === 0;
+    }
+
+    private recalculateLovelistMeta() {
+        this.lovelistMoviesCount = 0;
+        this.lovelistTvCount = 0;
+        for (const item of this.lovelist) {
+            if (item.media_type === 'movie') {
+                this.lovelistMoviesCount++;
+            } else if (item.media_type === 'tv') {
+                this.lovelistTvCount++;
+            }
+        }
+        this.lovelistEmpty = this.lovelist.length === 0;
     }
 
     private emitWatchlistChanged() {

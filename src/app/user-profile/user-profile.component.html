@@ -17,9 +17,10 @@
           <span>Watchlist</span>
           <span class="menu-chip">{{ auth.watchlist.length }}</span>
         </a>
-            <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
-              <span>Lovelist</span>
-            </a>
+        <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/lovelist">
+          <span>Lovelist</span>
+          <span class="menu-chip">{{ auth.lovelist.length }}</span>
+        </a>
         <a (click)="closeMenu(menu)" class="profile-menu__item" routerLink="/settings">
           <span>Settings</span>
         </a>

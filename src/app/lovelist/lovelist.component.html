@@ -1,28 +1,19 @@
-@if (auth.authStateReady$ | async) {
-  <section class="lovelist-page">
-    <header class="lovelist-header">
-      <div class="lovelist-heading">
-        <app-back-button [to]="'/movies'" ariaLabel="Back to movies"></app-back-button>
-        <h1 class="subpage-title">Lovelist</h1>
-      </div>
-      <app-user-profile></app-user-profile>
-    </header>
-
-    <section class="lovelist-empty">
-      <span aria-hidden="true" class="lovelist-empty__icon">
-        <i class="fas fa-heart"></i>
-      </span>
-      <h2>Your Lovelist Is Coming Soon</h2>
-      <p>
-        We are refreshing this page to match the new movie experience. You can keep exploring titles now,
-        and we can wire full Lovelist actions next.
-      </p>
-      <div class="lovelist-empty__actions">
-        <a class="lovelist-empty__button" routerLink="/watchlist">Open Watchlist</a>
-        <a class="lovelist-empty__button lovelist-empty__button--secondary" routerLink="/movies">Browse Movies</a>
-      </div>
-    </section>
-  </section>
-} @else {
-  <app-page-loader [minHeight]="'360px'" [spinnerSize]="'4.5rem'"></app-page-loader>
-}
+<app-saved-title-list
+  title="Lovelist"
+  backLabel="Back to movies"
+  backTo="/movies"
+  [titles]="auth.lovelist"
+  [loaded]="auth.lovelistLoaded"
+  [empty]="auth.lovelistEmpty"
+  [moviesCount]="auth.lovelistMoviesCount"
+  [tvCount]="auth.lovelistTvCount"
+  emptyMessage="Empty lovelist, add something you love."
+  removeLabel="Remove from lovelist"
+  removeIconClass="fas fa-heart fa-lg text-danger"
+  secondaryActionLabel="Add to Watchlist"
+  secondaryIconClass="fas fa-bookmark fa-lg"
+  secondaryActiveIconClass="fas fa-bookmark fa-lg amber-text"
+  [secondaryActiveIds]="auth.watchlistIds"
+  (removeTitle)="remove($event)"
+  (secondaryTitle)="moveToWatchlist($event)">
+</app-saved-title-list>

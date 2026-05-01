@@ -38,6 +38,8 @@ export interface Title {
     awards: string;
     watchlistAddDate: Date;
     watchlistDocId: string;
+    lovelistAddDate: Date;
+    lovelistDocId: string;
     year: any;
     streams: any;
 

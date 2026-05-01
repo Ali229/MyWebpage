@@ -19,6 +19,10 @@ export const routes: Routes = [
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent),
         canActivate: [AuthGuard]
     },
-    {path: 'lovelist', loadComponent: () => import('./lovelist/lovelist.component').then(m => m.LovelistComponent)},
+    {
+        path: 'lovelist',
+        loadComponent: () => import('./lovelist/lovelist.component').then(m => m.LovelistComponent),
+        canActivate: [AuthGuard]
+    },
     {path: '**', redirectTo: 'home'}
 ];

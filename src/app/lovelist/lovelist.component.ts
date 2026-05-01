@@ -1,24 +1,23 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {BackButtonComponent} from '../shared/back-button/back-button.component';
-import {UserProfileComponent} from '../user-profile/user-profile.component';
-import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
+import {Component} from '@angular/core';
 import {AuthService} from '../services/auth.service';
+import {SavedTitleListComponent} from '../shared/saved-title-list/saved-title-list.component';
+import {Title} from '../models/title.model';
 
 @Component({
     selector: 'app-lovelist',
     templateUrl: './lovelist.component.html',
     styleUrls: ['./lovelist.component.scss'],
     standalone: true,
-    imports: [CommonModule, RouterModule, BackButtonComponent, UserProfileComponent, PageLoaderComponent]
+    imports: [SavedTitleListComponent]
 })
-export class LovelistComponent implements OnInit {
+export class LovelistComponent {
+    constructor(public auth: AuthService) {}
 
-    constructor(public auth: AuthService) {
+    remove(id: number) {
+        void this.auth.removeFromLovelist(id);
     }
 
-    ngOnInit() {
+    moveToWatchlist(title: Title) {
+        void this.auth.moveToWatchlist(title);
     }
-
 }

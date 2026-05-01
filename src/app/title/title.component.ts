@@ -126,12 +126,14 @@ export class TitleComponent implements OnInit, OnDestroy {
         }
 
         // Avoid false-state flicker actions while the saved watchlist is still loading.
-        if (this.auth.user.uid && !this.auth.watchlistLoaded) {
+        if (this.auth.user.uid && (!this.auth.watchlistLoaded || !this.auth.lovelistLoaded)) {
             return;
         }
 
         if (this.auth.getWatchlisted(this.title.id)) {
             this.auth.removeFromWatchlist(this.title.id);
+        } else if (this.auth.getLoved(this.title.id)) {
+            this.auth.moveToWatchlist(this.title);
         } else {
             this.auth.addToWatchlist(this.title);
         }
@@ -143,6 +145,28 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     isWatchlisted(): boolean {
         return !!this.title?.id && this.auth.watchlistLoaded && this.auth.getWatchlisted(this.title.id);
+    }
+
+    onToggleLovelist() {
+        if (!this.title?.id) {
+            return;
+        }
+
+        if (this.auth.user.uid && (!this.auth.lovelistLoaded || !this.auth.watchlistLoaded)) {
+            return;
+        }
+
+        if (this.auth.getLoved(this.title.id)) {
+            this.auth.removeFromLovelist(this.title.id);
+        } else if (this.auth.getWatchlisted(this.title.id)) {
+            this.auth.moveToLovelist(this.title);
+        } else {
+            this.auth.addToLovelist(this.title);
+        }
+    }
+
+    isLoved(): boolean {
+        return !!this.title?.id && this.auth.lovelistLoaded && this.auth.getLoved(this.title.id);
     }
 
     canShowDownloadButton(): boolean {

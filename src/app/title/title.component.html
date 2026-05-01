@@ -52,11 +52,12 @@
                   }
                   <div class="col-auto p-0"
                     [class.ml-auto]="!canShowDownloadButton()"
-                    [attr.title]="auth.user.uid ? 'Add to Lovelist' : 'Login to add this title to your Lovelist'">
+                    [attr.title]="auth.user.uid ? (isLoved() ? 'Remove from Lovelist' : 'Add to Lovelist') : 'Login to add this title to your Lovelist'">
                     <button class="poster-action poster-action--icon"
+                      (click)="onToggleLovelist()"
                       type="button">
-                      <i class="fas fa-heart"></i>
-                      <span class="sr-only">Add to Lovelist</span>
+                      <i class="fas fa-heart" [class.text-danger]="isLoved()"></i>
+                      <span class="sr-only">{{ isLoved() ? 'Remove from Lovelist' : 'Add to Lovelist' }}</span>
                     </button>
                   </div>
                   <div class="col-auto p-0">

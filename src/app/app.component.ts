@@ -53,12 +53,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
     get hasTightBottomPadding(): boolean {
         const path = this.router.url.split('?')[0];
-        return path === '/movies' || path === '/lovelist';
+        return path === '/movies';
     }
 
     get hasWatchlistBottomPadding(): boolean {
         const path = this.router.url.split('?')[0];
-        return path === '/watchlist';
+        return path === '/watchlist' || path === '/lovelist';
     }
 
     get hasSettingsBottomPadding(): boolean {

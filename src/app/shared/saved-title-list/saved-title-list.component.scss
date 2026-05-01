@@ -1,0 +1,650 @@
+:host {
+  display: block;
+  font-weight: 300;
+}
+
+.watchlist-header {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
+  position: sticky;
+  top: 0;
+  z-index: 18;
+  background: #f6f4ef;
+  padding-inline: 0.35rem;
+}
+
+.watchlist-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.watchlist-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.watchlist-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.watchlist-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 0;
+}
+
+.watchlist-filter-menu {
+  position: relative;
+  margin: 0;
+}
+
+.watchlist-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  box-sizing: border-box;
+  min-height: 44px;
+  min-width: 205px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid #cad5e0;
+  border-radius: 14px;
+  background: #fff;
+  color: #23384c;
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1;
+  list-style: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.watchlist-top-actions > app-user-profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.watchlist-filter-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.watchlist-filter-trigger:focus-visible,
+.watchlist-filter-menu[open] .watchlist-filter-trigger {
+  border-color: #9eacba;
+  box-shadow: 0 0 0 2px rgba(158, 172, 186, 0.25);
+}
+
+.watchlist-filter-trigger__caret {
+  color: #647588;
+  font-size: 0.72rem;
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.watchlist-filter-menu[open] .watchlist-filter-trigger__caret {
+  transform: rotate(180deg);
+}
+
+.watchlist-filter-options {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 22;
+  min-width: 220px;
+  padding: 0.45rem;
+  border: 1px solid #d3dfec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 16px 30px rgba(16, 36, 61, 0.2);
+}
+
+.watchlist-filter-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #1b4e74;
+  font-size: 0.92rem;
+  font-weight: 300;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.watchlist-filter-option:hover,
+.watchlist-filter-option:focus {
+  background: #edf5fb;
+  color: #164669;
+}
+
+.watchlist-filter-option.is-active {
+  background: #e2eff9;
+  color: #164669;
+}
+
+.watchlist-poster-link {
+  align-self: stretch;
+  display: flex;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  max-width: 300px;
+  border-radius: 10px 0 0 10px;
+  object-fit: cover;
+}
+
+.main-row {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  align-items: stretch;
+  display: grid;
+  grid-template-columns: clamp(150px, 12vw, 190px) minmax(0, 1fr) clamp(130px, 14vw, 180px);
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  max-width: 100%;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.main-row + .main-row {
+  margin-top: 1rem;
+}
+
+.main-row.is-removing {
+  animation: watchlistCardFlyOut 0.28s ease forwards;
+  pointer-events: none;
+}
+
+.certifications {
+  padding: 0.06em 4px 0.15em 4px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.watchlist-title {
+  margin-bottom: 0;
+  color: #142842;
+}
+
+.watchlist-title b {
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.year {
+  font-weight: 300;
+  color: #5f6f81 !important;
+}
+
+.watchlist-meta {
+  color: #5f6f81;
+  font-weight: 300;
+}
+
+.watchlist-meta-row {
+  display: block;
+  margin-bottom: 0.2rem;
+  width: 100%;
+}
+
+.watchlist-meta-row__left {
+  display: inline-flex;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.watchlist-meta__segment {
+  display: inline-flex;
+  align-items: center;
+}
+
+.watchlist-meta__segment--certification::after {
+  content: "\00a0\00a0";
+  display: inline-block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watchlist-meta__segment--with-separator::before {
+  content: "\00a0\00a0\2022\00a0\00a0";
+  display: inline-block;
+  font-size: 1.22em;
+  line-height: 1;
+  color: #5f6f81;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watchlist-tv-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.watchlist-meta .text-muted {
+  color: #5f6f81 !important;
+}
+
+.watchlist-season-guide {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.watchlist-season-guide__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  min-height: 2rem;
+  min-width: 114px;
+  padding: 0.18rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #23384c;
+  font-size: 0.8rem;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.watchlist-season-guide__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.watchlist-season-guide[open] .watchlist-season-guide__trigger,
+.watchlist-season-guide__trigger:focus-visible {
+  border-color: #9eacba;
+  box-shadow: 0 0 0 2px rgba(158, 172, 186, 0.22);
+  outline: none;
+}
+
+.watchlist-season-guide__caret {
+  color: #647588;
+  font-size: 0.66rem;
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.watchlist-season-guide[open] .watchlist-season-guide__caret {
+  transform: rotate(180deg);
+}
+
+.watchlist-season-guide__panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 25;
+  width: min(350px, 80vw);
+  max-height: 280px;
+  overflow: auto;
+  padding: 0.5rem;
+  border: 1px solid #d3dfec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 16px 30px rgba(16, 36, 61, 0.18);
+}
+
+.watchlist-season-guide__season + .watchlist-season-guide__season {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid #e5edf4;
+}
+
+.watchlist-season-guide__season-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  color: #1f3850;
+  font-weight: 500;
+  font-size: 0.84rem;
+}
+
+.watchlist-season-guide__season-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.24rem;
+  min-width: 0;
+}
+
+.watchlist-season-guide__season-year {
+  color: #647588;
+  font-size: 0.84em;
+  font-weight: 300;
+}
+
+.watchlist-season-guide__season-count,
+.watchlist-season-guide__hint {
+  color: #647588;
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+
+.watchlist-season-guide__episodes {
+  margin-top: 0.32rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.watchlist-season-guide__episode {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.4rem;
+  color: #364a5f;
+  font-size: 0.8rem;
+}
+
+.watchlist-season-guide__episode-number {
+  color: #73879a;
+  font-weight: 500;
+}
+
+.watchlist-next-episode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  min-height: 2rem;
+  padding: 0.18rem 0.62rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 999px;
+  background: #f6f9fc;
+  color: #5f6f81;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.watchlist-next-episode-pill .fa-calendar-alt {
+  font-size: 0.7rem;
+  color: #6b8195;
+}
+
+.badge {
+  border-radius: 0 10px 10px 0;
+  font-size: 60px;
+  padding: 30px;
+  height: 100%;
+  width: 100%;
+}
+
+.main-row > .col-8 {
+  grid-column: 2;
+  max-width: none;
+  width: auto;
+}
+
+.main-row > .col-2.pr-0 {
+  grid-column: 3;
+  max-width: none;
+  width: auto;
+}
+
+.main-row > .watchlist-poster-link {
+  grid-column: 1;
+  max-width: none;
+  width: auto;
+}
+
+.main-row a {
+  color: #10243d;
+}
+
+.watchlist-link,
+.watchlist-link:hover,
+.watchlist-link:focus,
+.watchlist-link:active {
+  color: inherit;
+  text-decoration: none;
+}
+
+.watchlist-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #6c757d;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+}
+
+.watchlist-icon-btn--link {
+  text-decoration: none;
+}
+
+.watchlist-icon-btn:hover,
+.watchlist-icon-btn:focus-visible {
+  background: #edf5fb;
+  border-color: #8fb2d0;
+  box-shadow: 0 10px 20px rgba(16, 36, 61, 0.14);
+  color: #1d344a;
+}
+
+.watchlist-icon-btn:focus-visible {
+  outline: 2px solid rgba(63, 114, 155, 0.35);
+  outline-offset: 1px;
+}
+
+.watchlist-icon-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.watchlist-actions-row {
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.watchlist-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.55rem;
+  flex: 0 0 auto;
+}
+
+.watchlist-action-streams {
+  margin-left: auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.overview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-bottom: 0;
+  color: #36475b;
+  font-weight: 300;
+}
+
+// Extra small devices (portrait phones, less than 576px)
+@media (max-width: 575.98px) {
+  .watchlist-header {
+    margin-bottom: 0.85rem;
+    padding-inline: 0;
+  }
+
+  .watchlist-top {
+    align-items: flex-start;
+  }
+
+  .watchlist-top-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .watchlist-filter {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .watchlist-filter-menu {
+    width: 100%;
+  }
+
+  .watchlist-filter-trigger {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .watchlist-filter-options {
+    left: 0;
+    right: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .main-row {
+    grid-template-columns: 3.65rem minmax(0, 1fr) 3.4rem;
+    min-height: 5.8rem;
+    overflow: hidden;
+    background-color: #e9e9e9;
+    box-shadow: none;
+  }
+
+  .main-row > .watchlist-poster-link,
+  .main-row > .col-8,
+  .main-row > .col-2 {
+    flex: none;
+    max-width: none;
+    min-width: 0;
+    width: auto;
+  }
+
+  .watchlist-poster-link {
+    grid-column: 1;
+    height: 100%;
+    padding: 0 !important;
+  }
+
+  .poster {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+  }
+
+  .main-row > .col-8 {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.25rem;
+    padding: 0.55rem 0.45rem 0.4rem 0.55rem !important;
+  }
+
+  .main-row > .col-8 > .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .watchlist-title {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    font-size: 0.92rem;
+    line-height: 1.18;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .watchlist-actions-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.22rem;
+    margin-top: 0 !important;
+  }
+
+  .watchlist-action-streams {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .watchlist-action-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(2.2rem, 1fr));
+    gap: 0;
+  }
+
+  .watchlist-icon-btn {
+    width: 2.15rem;
+    height: 2rem;
+  }
+
+  .watchlist-icon-btn .fa-lg {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .main-row > .col-2.pr-0 {
+    grid-column: 3;
+    padding: 0 !important;
+  }
+
+  .badge {
+    width: 100%;
+    height: 100%;
+    min-height: 5.8rem;
+    padding: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+}
+
+// Small devices (landscape phones, 576px and upto 768px)
+@media (min-width: 576px) and (max-width: 768px) {
+  .badge {
+    font-size: 40px;
+    padding: 20px
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .watchlist-title {
+    font-size: 1rem;
+  }
+}
+
+@keyframes watchlistCardFlyOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(140px) scale(0.98);
+  }
+}
+
