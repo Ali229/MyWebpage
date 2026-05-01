@@ -7,6 +7,7 @@ import {Title} from '../models/title.model';
 export interface DownloadResponse {
     ok: boolean;
     added?: boolean;
+    updated?: boolean;
     alreadyExists?: boolean;
     title?: string;
     error?: string;
@@ -15,6 +16,11 @@ export interface DownloadResponse {
 export interface DownloadRequestOptions {
     quality: '720p' | '1080p' | '4k';
     monitor: string;
+    episodeRange?: {
+        seasonNumber: number;
+        startEpisode: number;
+        endEpisode: number;
+    };
 }
 
 @Injectable({providedIn: 'root'})
@@ -36,7 +42,8 @@ export class DownloadService {
             {
                 tmdbId: title.id,
                 quality: options.quality,
-                monitor: options.monitor
+                monitor: options.monitor,
+                episodeRange: options.episodeRange
             },
             {headers}
         ).pipe(take(1)).toPromise();

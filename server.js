@@ -56,7 +56,8 @@ const TV_MONITOR_TYPES = {
   "lastSeason": "lastSeason",
   "monitorSpecials": "monitorSpecials",
   "unmonitorSpecials": "unmonitorSpecials",
-  "none": "none"
+  "none": "none",
+  "customRange": "customRange"
 };
 
 app.use(express.json());
@@ -212,6 +213,25 @@ async function arrGet(baseUrl, apiKey, path) {
 async function arrPost(baseUrl, apiKey, path, body) {
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    throw new Error(`${response.status}: ${text}`);
+  }
+
+  return text ? JSON.parse(text) : {};
+}
+
+async function arrPut(baseUrl, apiKey, path, body) {
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "X-Api-Key": apiKey
@@ -897,6 +917,7 @@ async function handleTvDownload(req, res) {
     const tmdbId = Number(req.body.tmdbId);
     const quality = String(req.body.quality || "4k").toLowerCase();
     const monitor = String(req.body.monitor || "all");
+    const episodeRange = req.body.episodeRange || {};
 
     if (!tmdbId) {
       return res.status(400).json({
@@ -937,11 +958,29 @@ async function handleTvDownload(req, res) {
     }
 
     const series = lookupResults[0];
+    const isCustomEpisodeRange = monitorType === "customRange";
+    const customRange = isCustomEpisodeRange ? normalizeEpisodeRange(episodeRange) : null;
 
     const existingSeries = await arrGet(SONARR_URL, SONARR_API_KEY, "/api/v3/series");
     const existing = existingSeries.find(item => item.tvdbId === series.tvdbId);
 
     if (existing) {
+      if (isCustomEpisodeRange) {
+        const customResult = await monitorAndSearchEpisodeRange(existing, customRange);
+        return res.json({
+          ok: true,
+          alreadyExists: true,
+          updated: true,
+          type: "tv",
+          title: existing.title,
+          tvdbId: existing.tvdbId,
+          tmdbId,
+          qualityProfileId: existing.qualityProfileId,
+          monitor: monitorType,
+          ...customResult
+        });
+      }
+
       return res.json({
         ok: true,
         alreadyExists: true,
@@ -960,11 +999,15 @@ async function handleTvDownload(req, res) {
       seasonFolder: true,
       seriesType: "standard",
       addOptions: {
-        monitor: monitorType,
-        searchForMissingEpisodes: true,
+        monitor: isCustomEpisodeRange ? "none" : monitorType,
+        searchForMissingEpisodes: !isCustomEpisodeRange,
         searchForCutoffUnmetEpisodes: false
       }
     });
+
+    const customResult = isCustomEpisodeRange
+      ? await monitorAndSearchEpisodeRange(addedSeries, customRange)
+      : {};
 
     res.json({
       ok: true,
@@ -977,7 +1020,8 @@ async function handleTvDownload(req, res) {
       qualityProfileId,
       monitor: monitorType,
       seasonFolder: true,
-      searchNow: true
+      searchNow: true,
+      ...customResult
     });
   } catch (error) {
     res.status(500).json({
@@ -985,6 +1029,122 @@ async function handleTvDownload(req, res) {
       error: error.message
     });
   }
+}
+
+function normalizeEpisodeRange(value) {
+  const seasonNumber = Number(value.seasonNumber);
+  const startEpisode = Number(value.startEpisode);
+  const endEpisode = Number(value.endEpisode);
+
+  if (!Number.isInteger(seasonNumber) || seasonNumber < 1) {
+    throw new Error("Season must be a positive whole number.");
+  }
+  if (!Number.isInteger(startEpisode) || startEpisode < 1) {
+    throw new Error("Start episode must be a positive whole number.");
+  }
+  if (!Number.isInteger(endEpisode) || endEpisode < 1) {
+    throw new Error("End episode must be a positive whole number.");
+  }
+  if (startEpisode > endEpisode) {
+    throw new Error("Start episode cannot be after end episode.");
+  }
+  if ((endEpisode - startEpisode) > 100) {
+    throw new Error("Episode range is too large.");
+  }
+
+  return {
+    seasonNumber,
+    startEpisode,
+    endEpisode
+  };
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getEpisodesForRangeWithRetry(seriesId, range) {
+  const maxAttempts = 15;
+  const delayMs = 1000;
+  let latestEpisodes = [];
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    latestEpisodes = await arrGet(SONARR_URL, SONARR_API_KEY, `/api/v3/episode?seriesId=${seriesId}`);
+    const matchingEpisodes = Array.isArray(latestEpisodes)
+      ? latestEpisodes.filter(episode =>
+        Number(episode.seasonNumber) === range.seasonNumber &&
+        Number(episode.episodeNumber) >= range.startEpisode &&
+        Number(episode.episodeNumber) <= range.endEpisode
+      )
+      : [];
+
+    if (matchingEpisodes.length > 0) {
+      return {
+        episodes: latestEpisodes,
+        matchingEpisodes
+      };
+    }
+
+    if (attempt < maxAttempts) {
+      await delay(delayMs);
+    }
+  }
+
+  return {
+    episodes: latestEpisodes,
+    matchingEpisodes: []
+  };
+}
+
+async function monitorAndSearchEpisodeRange(series, range) {
+  if (!series?.id) {
+    throw new Error("Sonarr did not return a series ID.");
+  }
+
+  const {matchingEpisodes} = await getEpisodesForRangeWithRetry(series.id, range);
+
+  if (matchingEpisodes.length === 0) {
+    throw new Error(`Sonarr could not load metadata for season ${range.seasonNumber}, episodes ${range.startEpisode}-${range.endEpisode} after waiting. Try again in a moment.`);
+  }
+
+  const foundEpisodeNumbers = new Set(matchingEpisodes.map(episode => Number(episode.episodeNumber)));
+  const missingEpisodeNumbers = [];
+  for (let episodeNumber = range.startEpisode; episodeNumber <= range.endEpisode; episodeNumber++) {
+    if (!foundEpisodeNumbers.has(episodeNumber)) {
+      missingEpisodeNumbers.push(episodeNumber);
+    }
+  }
+
+  if (missingEpisodeNumbers.length > 0) {
+    throw new Error(`Sonarr is missing episode metadata for: ${missingEpisodeNumbers.join(", ")}.`);
+  }
+
+  const episodeIds = matchingEpisodes
+    .map(episode => Number(episode.id))
+    .filter(id => Number.isInteger(id) && id > 0);
+
+  if (episodeIds.length === 0) {
+    throw new Error("No Sonarr episode IDs found for that range.");
+  }
+
+  await arrPut(SONARR_URL, SONARR_API_KEY, "/api/v3/episode/monitor", {
+    episodeIds,
+    monitored: true
+  });
+
+  await arrPost(SONARR_URL, SONARR_API_KEY, "/api/v3/command", {
+    name: "EpisodeSearch",
+    episodeIds
+  });
+
+  return {
+    customEpisodeRange: {
+      seasonNumber: range.seasonNumber,
+      startEpisode: range.startEpisode,
+      endEpisode: range.endEpisode,
+      episodeCount: episodeIds.length
+    }
+  };
 }
 
 app.post("/download/movie", requireDownloadAdmin, handleMovieDownload);

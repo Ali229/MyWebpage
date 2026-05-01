@@ -47,6 +47,9 @@ export class TitleComponent implements OnInit, OnDestroy {
     selectedDownloadQuality: '720p' | '1080p' | '4k' = '4k';
     selectedMovieMonitor = 'movieOnly';
     selectedTvMonitor = 'all';
+    selectedTvSeason = 1;
+    selectedTvStartEpisode = 1;
+    selectedTvEndEpisode = 1;
     readonly downloadQualityOptions = [
         {value: '4k', label: '4K'},
         {value: '1080p', label: '1080p'},
@@ -61,7 +64,8 @@ export class TitleComponent implements OnInit, OnDestroy {
         {value: 'future', label: 'Future Episodes'},
         {value: 'pilot', label: 'Pilot Episode'},
         {value: 'firstSeason', label: 'First Season'},
-        {value: 'lastSeason', label: 'Last Season'}
+        {value: 'lastSeason', label: 'Last Season'},
+        {value: 'customRange', label: 'Custom Episode Range'}
     ];
     private terminate$: Subject<Title> = new Subject();
     private readonly monthNames = [
@@ -155,6 +159,9 @@ export class TitleComponent implements OnInit, OnDestroy {
         this.selectedDownloadQuality = '4k';
         this.selectedMovieMonitor = 'movieOnly';
         this.selectedTvMonitor = 'all';
+        this.selectedTvSeason = 1;
+        this.selectedTvStartEpisode = 1;
+        this.selectedTvEndEpisode = 1;
         this.downloadMenuOpen = true;
     }
 
@@ -183,9 +190,10 @@ export class TitleComponent implements OnInit, OnDestroy {
 
             const response = await this.downloadService.downloadTitle(this.title, idToken, {
                 quality: this.selectedDownloadQuality,
-                monitor: this.getSelectedDownloadMonitor()
+                monitor: this.getSelectedDownloadMonitor(),
+                episodeRange: this.getSelectedEpisodeRange()
             });
-            if (response.alreadyExists) {
+            if (response.alreadyExists && !response.updated) {
                 this.toastr.info(`${response.title || titleName} is already in your download app`);
                 this.downloadMenuOpen = false;
                 return;
@@ -210,6 +218,22 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     private getSelectedDownloadMonitor(): string {
         return this.isMovieTitle() ? this.selectedMovieMonitor : this.selectedTvMonitor;
+    }
+
+    isCustomEpisodeRangeSelected(): boolean {
+        return !this.isMovieTitle() && this.selectedTvMonitor === 'customRange';
+    }
+
+    private getSelectedEpisodeRange() {
+        if (!this.isCustomEpisodeRangeSelected()) {
+            return undefined;
+        }
+
+        return {
+            seasonNumber: this.selectedTvSeason,
+            startEpisode: this.selectedTvStartEpisode,
+            endEpisode: this.selectedTvEndEpisode
+        };
     }
 
     openMoreLikeThis(similarTitle: SimilarTitle) {

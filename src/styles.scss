@@ -197,7 +197,8 @@ b, strong {
   font-weight: 600;
 }
 
-.download-field select {
+.download-field select,
+.download-field input {
   width: 100%;
   min-height: 2.55rem;
   padding: 0.45rem 0.7rem;
@@ -208,10 +209,17 @@ b, strong {
   font: inherit;
 }
 
-.download-field select:focus {
+.download-field select:focus,
+.download-field input:focus {
   border-color: #8fb2d0;
   box-shadow: 0 0 0 3px rgba(99, 150, 191, 0.22);
   outline: none;
+}
+
+.download-range-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
 }
 
 .download-modal__footer {
@@ -271,5 +279,9 @@ b, strong {
 
   .download-modal__footer {
     padding: 0.85rem 0.95rem;
+  }
+
+  .download-range-grid {
+    grid-template-columns: 1fr;
   }
 }

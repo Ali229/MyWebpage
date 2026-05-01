@@ -116,6 +116,22 @@
                               }
                             </select>
                           </label>
+                          @if (isCustomEpisodeRangeSelected()) {
+                            <div class="download-range-grid">
+                              <label class="download-field">
+                                <span>Season</span>
+                                <input [(ngModel)]="selectedTvSeason" min="1" step="1" type="number">
+                              </label>
+                              <label class="download-field">
+                                <span>From episode</span>
+                                <input [(ngModel)]="selectedTvStartEpisode" min="1" step="1" type="number">
+                              </label>
+                              <label class="download-field">
+                                <span>To episode</span>
+                                <input [(ngModel)]="selectedTvEndEpisode" min="1" step="1" type="number">
+                              </label>
+                            </div>
+                          }
                         }
                       </div>
                     </div>
