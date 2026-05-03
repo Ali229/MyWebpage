@@ -401,9 +401,18 @@ export class TitleComponent implements OnInit, OnDestroy {
             return '';
         }
 
+        if (!this.shouldShowNextAirDate(nextAirDate)) {
+            return '';
+        }
+
         const formattedDate = this.formatLongDate(nextAirDate);
         if (!formattedDate) {
             return '';
+        }
+
+        const episodeNumber = Number(title?.next_episode_to_air?.episode_number);
+        if (Number.isFinite(episodeNumber) && episodeNumber > 0) {
+            return `Episode ${episodeNumber} • ${formattedDate}`;
         }
 
         return `Next episode ${formattedDate}`;
@@ -511,21 +520,44 @@ export class TitleComponent implements OnInit, OnDestroy {
         return yearMatch?.[1] || '';
     }
 
-    private formatLongDate(value: string): string {
+    private shouldShowNextAirDate(value: string): boolean {
+        const dateParts = this.extractIsoDateParts(value);
+        if (!dateParts) {
+            return false;
+        }
+
+        const today = new Date();
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+        const airDateStart = new Date(dateParts.year, dateParts.monthIndex, dateParts.day).getTime();
+        return airDateStart >= todayStart;
+    }
+
+    private extractIsoDateParts(value: string): {year: number; monthIndex: number; day: number} | null {
         const isoDateMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
-        if (isoDateMatch) {
-            const year = Number(isoDateMatch[1]);
-            const monthIndex = Number(isoDateMatch[2]) - 1;
-            const day = Number(isoDateMatch[3]);
-            if (
-                Number.isFinite(year) &&
-                monthIndex >= 0 &&
-                monthIndex < this.monthNames.length &&
-                Number.isFinite(day) &&
-                day > 0
-            ) {
-                return `${this.monthNames[monthIndex]} ${day}, ${year}`;
-            }
+        if (!isoDateMatch) {
+            return null;
+        }
+
+        const year = Number(isoDateMatch[1]);
+        const monthIndex = Number(isoDateMatch[2]) - 1;
+        const day = Number(isoDateMatch[3]);
+        if (
+            !Number.isFinite(year) ||
+            monthIndex < 0 ||
+            monthIndex >= this.monthNames.length ||
+            !Number.isFinite(day) ||
+            day <= 0
+        ) {
+            return null;
+        }
+
+        return {year, monthIndex, day};
+    }
+
+    private formatLongDate(value: string): string {
+        const dateParts = this.extractIsoDateParts(value);
+        if (dateParts) {
+            return `${this.monthNames[dateParts.monthIndex]} ${dateParts.day}, ${dateParts.year}`;
         }
 
         const parsedDate = new Date(value);
