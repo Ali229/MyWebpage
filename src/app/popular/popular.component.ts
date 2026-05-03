@@ -21,6 +21,7 @@ import {apiConfig} from '../config/api.config';
 export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
+    genreChangedSub: Subscription;
     private readonly providerRequestConcurrency = 10;
     private readonly ratingRequestConcurrency = 10;
     private readonly tmdbApiKey = apiConfig.tmdbApiKey;
@@ -40,10 +41,14 @@ export class PopularComponent implements OnInit, OnDestroy {
             this.popService.popularList = [];
             this.toggleMediaType(this.popService.selectedType);
         });
+        this.genreChangedSub = this.popService.genreChanged$.subscribe(() => {
+            this.toggleMediaType(this.popService.selectedType);
+        });
     }
 
     toggleMediaType(type: string) {
         this.popService.selectedType = type;
+        this.popService.ensureSelectedGenreAvailable();
         const selectedList = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
         if (selectedList.length === 0) {
             this.fetchMostPopular();
@@ -225,6 +230,9 @@ export class PopularComponent implements OnInit, OnDestroy {
         if (this.showStreamableCheckBoxSub) {
             this.showStreamableCheckBoxSub.unsubscribe();
         }
+        if (this.genreChangedSub) {
+            this.genreChangedSub.unsubscribe();
+        }
     }
 
     private async enrichPopularRatings(type: 'movie' | 'tv', titles: Title[]) {
@@ -372,6 +380,10 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         params.set('watch_region', 'US');
         params.set('sort_by', 'popularity.desc');
+        const genreId = this.popService.getSelectedGenreId(type);
+        if (genreId) {
+            params.set('with_genres', genreId.toString());
+        }
 
         if (type === 'movie') {
             params.set('region', 'us');

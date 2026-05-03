@@ -9,6 +9,7 @@ import {TitleComponent} from '../title/title.component';
 import {UserProfileComponent} from '../user-profile/user-profile.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
+import {PopularGenreOption, PopularService} from '../services/popular.service';
 
 @Component({
     selector: 'app-movies',
@@ -20,6 +21,7 @@ import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 
 export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+    @ViewChild('popularGenreMenu') popularGenreMenu: ElementRef<HTMLDetailsElement>;
     isPhone: boolean = window.innerWidth <= 767.98; // Check if the screen width is less than or equal to your breakpoint
     private showStreamableCheckBoxSub: Subscription;
     private queryParamsSub: Subscription;
@@ -31,6 +33,7 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     constructor(
         public ts: TitleService,
         public auth: AuthService,
+        public popService: PopularService,
         private route: ActivatedRoute,
         private router: Router
     ) {
@@ -185,9 +188,39 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
         return result?.title || result?.name || 'Untitled';
     }
 
+    selectPopularGenre(option: PopularGenreOption, menu: HTMLDetailsElement) {
+        if (!this.popService.isGenreAvailableForSelectedType(option)) {
+            return;
+        }
+
+        this.popService.selectGenre(option.key);
+        menu.open = false;
+    }
+
+    isPopularGenreDisabled(option: PopularGenreOption): boolean {
+        return !this.popService.isGenreAvailableForSelectedType(option);
+    }
+
     @HostListener('window:resize')
     onResize() {
         this.isPhone = window.innerWidth <= 767.98;
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const menu = this.popularGenreMenu?.nativeElement;
+        const target = event.target as Node | null;
+        if (menu && menu.open && target && !menu.contains(target)) {
+            menu.open = false;
+        }
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscapeKey() {
+        const menu = this.popularGenreMenu?.nativeElement;
+        if (menu && menu.open) {
+            menu.open = false;
+        }
     }
 
     private updateSearchRoute() {

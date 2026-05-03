@@ -114,7 +114,26 @@
 }
 
 <div class="popular-header">
-  <h2 class="popular-header__title">Popular</h2>
+  <details #popularGenreMenu class="popular-genre-menu">
+    <summary class="popular-genre-menu__summary" aria-label="Filter popular titles by genre">
+      <h2 class="popular-header__title">Popular</h2>
+      <i aria-hidden="true" class="fas fa-caret-down popular-genre-menu__caret"></i>
+    </summary>
+    <div class="popular-genre-menu__panel">
+      @for (option of popService.availableGenreOptions; track option.key) {
+        <button
+          type="button"
+          class="popular-genre-menu__option"
+          [class.is-active]="popService.selectedGenreKey === option.key"
+          (click)="selectPopularGenre(option, popularGenreMenu)">
+          <span>{{ option.label }}</span>
+          @if (popService.selectedGenreKey === option.key) {
+            <i aria-hidden="true" class="fas fa-check"></i>
+          }
+        </button>
+      }
+    </div>
+  </details>
   @if (showStreamableCheckBox) {
     <label class="streamable-toggle" title="Set any streaming services you have in settings">
       <input

@@ -254,11 +254,34 @@
   margin: 1.65rem 0 0.95rem;
 }
 
+.popular-genre-menu {
+  position: relative;
+}
+
+.popular-genre-menu__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.popular-genre-menu__summary::-webkit-details-marker {
+  display: none;
+}
+
+.popular-genre-menu__summary:focus-visible {
+  outline: 2px solid #4f7fa8;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
 .popular-header__title {
   margin: 0;
+  line-height: 1;
   font-size: clamp(1.7rem, 3vw, 2.2rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: #10243d;
 }
 
@@ -271,6 +294,66 @@
   border-radius: 999px;
   background: #3f729b;
   transform: translateY(2px);
+}
+
+.popular-genre-menu__caret {
+  position: relative;
+  top: 0.12em;
+  color: #000;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.popular-genre-menu[open] .popular-genre-menu__caret {
+  transform: rotate(180deg);
+}
+
+.popular-genre-menu__panel {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(9.5rem, 1fr));
+  gap: 0.25rem;
+  min-width: min(28rem, calc(100vw - 2rem));
+  padding: 0.45rem;
+  border: 1px solid #d8e2ec;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(16, 36, 61, 0.16);
+}
+
+.popular-genre-menu__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 2.35rem;
+  padding: 0.38rem 0.65rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #1b2f47;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.popular-genre-menu__option:hover,
+.popular-genre-menu__option:focus-visible,
+.popular-genre-menu__option.is-active {
+  background: #eef5fb;
+}
+
+.popular-genre-menu__option:disabled {
+  color: #9ba8b5;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.popular-genre-menu__option:disabled:hover {
+  background: transparent;
 }
 
 .streamable-toggle {

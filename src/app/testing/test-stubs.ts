@@ -1,4 +1,4 @@
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 export function createAuthServiceStub() {
     const authStateReady$ = new BehaviorSubject(true);
@@ -48,12 +48,22 @@ export function createTitleServiceStub() {
 }
 
 export function createPopularServiceStub() {
+    const genreChanged$ = new Subject<void>();
+
     return {
         popularList: [],
         popularMovies: [],
         popularTVShows: [],
         selectedType: 'movie',
+        selectedGenreKey: 'all',
+        genreOptions: [{key: 'all', label: 'All'}],
+        availableGenreOptions: [{key: 'all', label: 'All'}],
+        genreChanged$: genreChanged$.asObservable(),
         loadingPopular: false,
+        selectGenre: jasmine.createSpy('selectGenre'),
+        getSelectedGenreId: jasmine.createSpy('getSelectedGenreId').and.returnValue(null),
+        isGenreAvailableForSelectedType: jasmine.createSpy('isGenreAvailableForSelectedType').and.returnValue(true),
+        ensureSelectedGenreAvailable: jasmine.createSpy('ensureSelectedGenreAvailable'),
         pruneProviderCache: jasmine.createSpy('pruneProviderCache'),
         getCachedProviders: jasmine.createSpy('getCachedProviders').and.returnValue(null),
         cacheProviders: jasmine.createSpy('cacheProviders'),
