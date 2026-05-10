@@ -55,6 +55,9 @@ export class SavedTitleListComponent implements OnChanges {
     selectedType: SavedTitleType = 'All';
     displayedList: Title[] = [];
     readonly removingIds = new Set<number>();
+    openEpisodeListKey = '';
+    loadingEpisodeListKey = '';
+    episodeListErrorKey = '';
     private readonly removeAnimationMs = 280;
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -200,8 +203,90 @@ export class SavedTitleListComponent implements OnChanges {
             const seasonMenu = seasonMenuRef.nativeElement;
             if (seasonMenu.open && target && !seasonMenu.contains(target)) {
                 seasonMenu.open = false;
+                this.closeEpisodeList();
             }
         }
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscapeKey() {
+        this.closeEpisodeList();
+    }
+
+    async toggleEpisodeList(title: Title, season: SeasonGuideSeason) {
+        const key = this.getSeasonKey(title, season);
+        if (!key) {
+            return;
+        }
+
+        if (this.openEpisodeListKey === key) {
+            this.openEpisodeListKey = '';
+            return;
+        }
+
+        this.openEpisodeListKey = key;
+        this.episodeListErrorKey = '';
+
+        if (season.episodes.length > 0 || this.loadingEpisodeListKey === key) {
+            return;
+        }
+
+        const titleId = Number(title?.id);
+        if (!Number.isInteger(titleId) || titleId <= 0) {
+            return;
+        }
+
+        this.loadingEpisodeListKey = key;
+        const episodes = this.mapSeasonEpisodes(
+            await this.ts.fetchTvSeasonEpisodes(titleId, season.seasonNumber)
+        );
+
+        if (this.getSeasonKey(title, season) !== key) {
+            if (this.loadingEpisodeListKey === key) {
+                this.loadingEpisodeListKey = '';
+            }
+            return;
+        }
+
+        this.applySeasonEpisodes(title, season.seasonNumber, episodes);
+        if (episodes.length === 0) {
+            this.episodeListErrorKey = key;
+        }
+        if (this.loadingEpisodeListKey === key) {
+            this.loadingEpisodeListKey = '';
+        }
+    }
+
+    isEpisodeListOpen(key: string): boolean {
+        return !!key && this.openEpisodeListKey === key;
+    }
+
+    isEpisodeListLoading(key: string): boolean {
+        return !!key && this.loadingEpisodeListKey === key;
+    }
+
+    hasEpisodeListError(key: string): boolean {
+        return !!key && this.episodeListErrorKey === key;
+    }
+
+    getSeasonKey(title: Title, season: SeasonGuideSeason): string {
+        return title?.id && season ? `${title.id}-season-${season.seasonNumber}` : '';
+    }
+
+    closeEpisodeList() {
+        this.openEpisodeListKey = '';
+        this.loadingEpisodeListKey = '';
+        this.episodeListErrorKey = '';
+    }
+
+    private applySeasonEpisodes(title: Title, seasonNumber: number, episodes: TitleEpisode[]) {
+        if (!Array.isArray(title?.seasons)) {
+            return;
+        }
+
+        title.seasons = title.seasons.map(season =>
+            Number(season?.season_number) === seasonNumber ? {...season, episodes} : season
+        );
     }
 
     private updateDisplayedList() {

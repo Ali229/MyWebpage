@@ -188,16 +188,33 @@
                                @if (seasonGuideSeasons.length === 0) {
                                  <div class="season-guide__hint">Season details unavailable.</div>
                                } @else if (seasonGuideSeasons.length === 1) {
-                                 @if (seasonGuideSeasons[0].episodes.length > 0) {
-                                   <div class="season-guide__episodes">
-                                     @for (episode of seasonGuideSeasons[0].episodes; track episode.episode_number) {
-                                       <div class="season-guide__episode">
-                                         <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
-                                         <span>{{ episode.name }}</span>
-                                       </div>
-                                     }
-                                   </div>
-                                 } @else {
+                                 @if ((seasonGuideSeasons[0].episodes.length || seasonGuideSeasons[0].episodeCount || 0) > 0) {
+                                   <button
+                                     class="season-guide__episode-toggle season-guide__episode-toggle--solo"
+                                     type="button"
+                                     [class.is-loading]="isEpisodeListLoading(getSeasonKey(seasonGuideSeasons[0]))"
+                                     (click)="toggleEpisodeList(seasonGuideSeasons[0]); $event.stopPropagation()">
+                                     {{ seasonGuideSeasons[0].episodes.length || seasonGuideSeasons[0].episodeCount || 0 }} episodes
+                                   </button>
+                                 }
+                                 @if (isEpisodeListOpen(getSeasonKey(seasonGuideSeasons[0]))) {
+                                   @if (isEpisodeListLoading(getSeasonKey(seasonGuideSeasons[0]))) {
+                                     <div class="season-guide__hint season-guide__hint--loading">Loading episode names...</div>
+                                   } @else if (seasonGuideSeasons[0].episodes.length > 0) {
+                                     <div class="season-guide__episodes">
+                                       @for (episode of seasonGuideSeasons[0].episodes; track episode.episode_number) {
+                                         <div class="season-guide__episode">
+                                           <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                           <span>{{ episode.name }}</span>
+                                         </div>
+                                       }
+                                     </div>
+                                   } @else if (hasEpisodeListError(getSeasonKey(seasonGuideSeasons[0]))) {
+                                     <div class="season-guide__hint">
+                                       Episode names unavailable.
+                                     </div>
+                                   }
+                                 } @else if ((seasonGuideSeasons[0].episodes.length || seasonGuideSeasons[0].episodeCount || 0) === 0) {
                                    <div class="season-guide__hint">
                                      {{ seasonGuideSeasons[0].episodeCount || 0 }} episodes
                                    </div>
@@ -212,19 +229,37 @@
                                            <span class="season-guide__season-year">({{ season.year }})</span>
                                          }
                                        </span>
-                                       <span class="season-guide__season-count">
-                                         {{ season.episodeCount || 0 }} episodes
-                                       </span>
+                                       @if ((season.episodes.length || season.episodeCount || 0) > 0) {
+                                         <button
+                                           class="season-guide__episode-toggle"
+                                           type="button"
+                                           [class.is-loading]="isEpisodeListLoading(getSeasonKey(season))"
+                                           (click)="toggleEpisodeList(season); $event.stopPropagation()">
+                                           {{ season.episodes.length || season.episodeCount || 0 }} episodes
+                                         </button>
+                                       } @else {
+                                         <span class="season-guide__season-count">
+                                           {{ season.episodeCount || 0 }} episodes
+                                         </span>
+                                       }
                                      </div>
-                                     @if (season.episodes.length > 0) {
-                                       <div class="season-guide__episodes">
-                                         @for (episode of season.episodes; track episode.episode_number) {
-                                           <div class="season-guide__episode">
-                                             <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
-                                             <span>{{ episode.name }}</span>
-                                           </div>
-                                         }
-                                       </div>
+                                     @if (isEpisodeListOpen(getSeasonKey(season))) {
+                                       @if (isEpisodeListLoading(getSeasonKey(season))) {
+                                         <div class="season-guide__hint season-guide__hint--loading">Loading episode names...</div>
+                                       } @else if (season.episodes.length > 0) {
+                                         <div class="season-guide__episodes">
+                                           @for (episode of season.episodes; track episode.episode_number) {
+                                             <div class="season-guide__episode">
+                                               <span class="season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                               <span>{{ episode.name }}</span>
+                                             </div>
+                                           }
+                                         </div>
+                                       } @else if (hasEpisodeListError(getSeasonKey(season))) {
+                                         <div class="season-guide__hint">
+                                           Episode names unavailable.
+                                         </div>
+                                       }
                                      }
                                    </div>
                                  }

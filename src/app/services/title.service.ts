@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Title} from '../models/title.model';
+import {Title, TitleEpisode} from '../models/title.model';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 import languagesData from '../../assets/languages.json';
@@ -294,6 +294,23 @@ export class TitleService {
                     this.loadingMoreLikeThis = false;
                 }
             });
+    }
+
+    async fetchTvSeasonEpisodes(titleId: number, seasonNumber: number): Promise<TitleEpisode[]> {
+        if (!Number.isInteger(titleId) || titleId <= 0 || !Number.isFinite(seasonNumber) || seasonNumber < 0) {
+            return [];
+        }
+
+        const seasonUrl = this.buildTmdbUrl(`/tv/${titleId}/season/${seasonNumber}`, {
+            language: 'en-US'
+        });
+
+        try {
+            const seasonDetails: any = await this.http.get(seasonUrl).pipe(take(1)).toPromise();
+            return Array.isArray(seasonDetails?.episodes) ? seasonDetails.episodes : [];
+        } catch {
+            return [];
+        }
     }
 
     private async hydrateRatings(data: Title): Promise<void> {

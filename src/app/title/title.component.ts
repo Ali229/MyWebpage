@@ -41,6 +41,9 @@ export class TitleComponent implements OnInit, OnDestroy {
     seasonGuideSummary = '';
     seasonGuideLabel = '';
     seasonGuideSeasons: SeasonGuideSeason[] = [];
+    openEpisodeListKey = '';
+    loadingEpisodeListKey = '';
+    episodeListErrorKey = '';
     nextEpisodeText = '';
     downloadRequestActive = false;
     downloadMenuOpen = false;
@@ -68,6 +71,7 @@ export class TitleComponent implements OnInit, OnDestroy {
         {value: 'customRange', label: 'Custom Episode Range'}
     ];
     private terminate$: Subject<Title> = new Subject();
+    private currentTitleKey = '';
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -83,12 +87,18 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.ts.title$.pipe(takeUntil(this.terminate$)).subscribe(data => {
+            const nextTitleKey = data?.id && data?.media_type ? `${data.media_type}:${data.id}` : '';
+            const titleChanged = nextTitleKey !== this.currentTitleKey;
+            this.currentTitleKey = nextTitleKey;
             this.title = data;
             this.displayYear = this.extractDisplayYear(data);
             this.metaSegments = this.buildMetaSegments(data);
             this.seasonGuideSummary = this.extractSeasonsText(data);
             this.seasonGuideLabel = this.buildSeasonGuideLabel(data);
             this.seasonGuideSeasons = this.buildSeasonGuide(data);
+            if (titleChanged) {
+                this.closeEpisodeList();
+            }
             this.nextEpisodeText = this.extractNextEpisodeText(data);
             if (data?.id && this.ts.shouldScrollToTitleTarget()) {
                 requestAnimationFrame(() => this.ts.scrollToTitleTarget());
@@ -112,12 +122,93 @@ export class TitleComponent implements OnInit, OnDestroy {
         const target = event.target as Node | null;
         if (target && !menu.contains(target)) {
             menu.open = false;
+            this.closeEpisodeList();
         }
     }
 
     @HostListener('document:keydown.escape')
     onEscapeKey() {
         this.closeDownloadMenu();
+        this.closeEpisodeList();
+    }
+
+    async toggleEpisodeList(season: SeasonGuideSeason) {
+        const key = this.getSeasonKey(season);
+        if (!key) {
+            return;
+        }
+
+        if (this.openEpisodeListKey === key) {
+            this.openEpisodeListKey = '';
+            return;
+        }
+
+        this.openEpisodeListKey = key;
+        this.episodeListErrorKey = '';
+
+        if (season.episodes.length > 0 || this.loadingEpisodeListKey === key) {
+            return;
+        }
+
+        const titleId = Number(this.title?.id);
+        if (!Number.isInteger(titleId) || titleId <= 0) {
+            return;
+        }
+
+        const requestedTitleKey = this.currentTitleKey;
+        this.loadingEpisodeListKey = key;
+        const episodes = this.mapSeasonEpisodes(
+            await this.ts.fetchTvSeasonEpisodes(titleId, season.seasonNumber)
+        );
+
+        if (this.currentTitleKey !== requestedTitleKey) {
+            if (this.loadingEpisodeListKey === key) {
+                this.loadingEpisodeListKey = '';
+            }
+            return;
+        }
+
+        this.applySeasonEpisodes(season.seasonNumber, episodes);
+        if (episodes.length === 0) {
+            this.episodeListErrorKey = key;
+        }
+        if (this.loadingEpisodeListKey === key) {
+            this.loadingEpisodeListKey = '';
+        }
+    }
+
+    isEpisodeListOpen(key: string): boolean {
+        return !!key && this.openEpisodeListKey === key;
+    }
+
+    isEpisodeListLoading(key: string): boolean {
+        return !!key && this.loadingEpisodeListKey === key;
+    }
+
+    hasEpisodeListError(key: string): boolean {
+        return !!key && this.episodeListErrorKey === key;
+    }
+
+    getSeasonKey(season: SeasonGuideSeason): string {
+        return season ? `season-${season.seasonNumber}` : '';
+    }
+
+    closeEpisodeList() {
+        this.openEpisodeListKey = '';
+        this.loadingEpisodeListKey = '';
+        this.episodeListErrorKey = '';
+    }
+
+    private applySeasonEpisodes(seasonNumber: number, episodes: TitleEpisode[]) {
+        this.seasonGuideSeasons = this.seasonGuideSeasons.map(season =>
+            season.seasonNumber === seasonNumber ? {...season, episodes} : season
+        );
+
+        if (Array.isArray(this.title?.seasons)) {
+            this.title.seasons = this.title.seasons.map(season =>
+                Number(season?.season_number) === seasonNumber ? {...season, episodes} : season
+            );
+        }
     }
 
     onToggleWatchlist() {

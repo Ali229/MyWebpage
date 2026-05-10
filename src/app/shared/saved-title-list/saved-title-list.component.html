@@ -122,16 +122,33 @@
                             @if (guideSeasons.length === 0) {
                               <div class="watchlist-season-guide__hint">Season details unavailable.</div>
                             } @else if (guideSeasons.length === 1) {
-                              @if (guideSeasons[0].episodes.length > 0) {
-                                <div class="watchlist-season-guide__episodes">
-                                  @for (episode of guideSeasons[0].episodes; track episode.episode_number) {
-                                    <div class="watchlist-season-guide__episode">
-                                      <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
-                                      <span>{{ episode.name }}</span>
-                                    </div>
-                                  }
-                                </div>
-                              } @else {
+                              @if ((guideSeasons[0].episodes.length || guideSeasons[0].episodeCount || 0) > 0) {
+                                <button
+                                  class="watchlist-season-guide__episode-toggle watchlist-season-guide__episode-toggle--solo"
+                                  type="button"
+                                  [class.is-loading]="isEpisodeListLoading(getSeasonKey(title, guideSeasons[0]))"
+                                  (click)="toggleEpisodeList(title, guideSeasons[0]); $event.stopPropagation()">
+                                  {{ guideSeasons[0].episodes.length || guideSeasons[0].episodeCount || 0 }} episodes
+                                </button>
+                              }
+                              @if (isEpisodeListOpen(getSeasonKey(title, guideSeasons[0]))) {
+                                @if (isEpisodeListLoading(getSeasonKey(title, guideSeasons[0]))) {
+                                  <div class="watchlist-season-guide__hint watchlist-season-guide__hint--loading">Loading episode names...</div>
+                                } @else if (guideSeasons[0].episodes.length > 0) {
+                                  <div class="watchlist-season-guide__episodes">
+                                    @for (episode of guideSeasons[0].episodes; track episode.episode_number) {
+                                      <div class="watchlist-season-guide__episode">
+                                        <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                        <span>{{ episode.name }}</span>
+                                      </div>
+                                    }
+                                  </div>
+                                } @else if (hasEpisodeListError(getSeasonKey(title, guideSeasons[0]))) {
+                                  <div class="watchlist-season-guide__hint">
+                                    Episode names unavailable.
+                                  </div>
+                                }
+                              } @else if ((guideSeasons[0].episodes.length || guideSeasons[0].episodeCount || 0) === 0) {
                                 <div class="watchlist-season-guide__hint">
                                   {{ guideSeasons[0].episodeCount || 0 }} episodes
                                 </div>
@@ -146,17 +163,35 @@
                                         <span class="watchlist-season-guide__season-year">({{ season.year }})</span>
                                       }
                                     </span>
-                                    <span class="watchlist-season-guide__season-count">{{ season.episodeCount || 0 }} episodes</span>
+                                    @if ((season.episodes.length || season.episodeCount || 0) > 0) {
+                                      <button
+                                        class="watchlist-season-guide__episode-toggle"
+                                        type="button"
+                                        [class.is-loading]="isEpisodeListLoading(getSeasonKey(title, season))"
+                                        (click)="toggleEpisodeList(title, season); $event.stopPropagation()">
+                                        {{ season.episodes.length || season.episodeCount || 0 }} episodes
+                                      </button>
+                                    } @else {
+                                      <span class="watchlist-season-guide__season-count">{{ season.episodeCount || 0 }} episodes</span>
+                                    }
                                   </div>
-                                  @if (season.episodes.length > 0) {
-                                    <div class="watchlist-season-guide__episodes">
-                                      @for (episode of season.episodes; track episode.episode_number) {
-                                        <div class="watchlist-season-guide__episode">
-                                          <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
-                                          <span>{{ episode.name }}</span>
-                                        </div>
-                                      }
-                                    </div>
+                                  @if (isEpisodeListOpen(getSeasonKey(title, season))) {
+                                    @if (isEpisodeListLoading(getSeasonKey(title, season))) {
+                                      <div class="watchlist-season-guide__hint watchlist-season-guide__hint--loading">Loading episode names...</div>
+                                    } @else if (season.episodes.length > 0) {
+                                      <div class="watchlist-season-guide__episodes">
+                                        @for (episode of season.episodes; track episode.episode_number) {
+                                          <div class="watchlist-season-guide__episode">
+                                            <span class="watchlist-season-guide__episode-number">E{{ episode.episode_number }}</span>
+                                            <span>{{ episode.name }}</span>
+                                          </div>
+                                        }
+                                      </div>
+                                    } @else if (hasEpisodeListError(getSeasonKey(title, season))) {
+                                      <div class="watchlist-season-guide__hint">
+                                        Episode names unavailable.
+                                      </div>
+                                    }
                                   }
                                 </div>
                               }
