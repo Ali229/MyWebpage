@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TitleService} from '../services/title.service';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Title} from '../models/title.model';
 import {AuthService} from '../services/auth.service';
 import {Subscription} from 'rxjs';
@@ -23,10 +23,12 @@ export class PopularComponent implements OnInit, OnDestroy {
     showStreamableCheckBoxSub: Subscription;
     genreChangedSub: Subscription;
     private readonly providerRequestConcurrency = 10;
-    private readonly ratingRequestConcurrency = 10;
+    private readonly ratingRequestConcurrency = 1;
     private readonly tmdbApiKey = apiConfig.tmdbApiKey;
     private readonly rapidApiKey = apiConfig.rapidApiKey;
     private readonly moviesDatabaseHost = apiConfig.rapidApiHosts.moviesDatabase;
+    private readonly moviesDatabaseRatingsUnavailableKey = 'moviesDatabaseRatingsUnavailable';
+    private moviesDatabaseRatingsUnavailable = this.getMoviesDatabaseRatingsUnavailable();
 
     constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
@@ -60,7 +62,6 @@ export class PopularComponent implements OnInit, OnDestroy {
 
     async fetchMostPopular() {
         this.popService.loadingPopular = true;
-        console.log('Fetching Most Popular...');
         const selectedType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
         const currentYear = new Date().getFullYear();
         let watchProvidersParam = '';
@@ -320,6 +321,10 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     private async fetchMoviesDatabaseScore(imdbId: string): Promise<number> {
+        if (this.moviesDatabaseRatingsUnavailable) {
+            return null;
+        }
+
         const url = `https://${this.moviesDatabaseHost}/titles/${imdbId}/ratings`;
         try {
             const response: any = await this.http.get(url, {
@@ -335,7 +340,34 @@ export class PopularComponent implements OnInit, OnDestroy {
             }
             return Math.round(rawRating * 10);
         } catch (error) {
+            if (this.isMoviesDatabaseAvailabilityError(error)) {
+                this.setMoviesDatabaseRatingsUnavailable();
+            }
             return null;
+        }
+    }
+
+    private isMoviesDatabaseAvailabilityError(error: unknown): boolean {
+        if (!(error instanceof HttpErrorResponse)) {
+            return false;
+        }
+        return [403, 429, 500, 502, 503, 504].includes(error.status);
+    }
+
+    private getMoviesDatabaseRatingsUnavailable(): boolean {
+        try {
+            return sessionStorage.getItem(this.moviesDatabaseRatingsUnavailableKey) === 'true';
+        } catch (error) {
+            return false;
+        }
+    }
+
+    private setMoviesDatabaseRatingsUnavailable() {
+        this.moviesDatabaseRatingsUnavailable = true;
+        try {
+            sessionStorage.setItem(this.moviesDatabaseRatingsUnavailableKey, 'true');
+        } catch (error) {
+            // Ignore storage failures; the in-memory flag still protects this component instance.
         }
     }
 
