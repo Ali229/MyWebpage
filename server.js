@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import crypto from "node:crypto";
 import tls from "node:tls";
+import {rateLimit} from "express-rate-limit";
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -10,6 +11,17 @@ const allowedDownloadEmail = process.env.DOWNLOAD_ADMIN_EMAIL?.toLowerCase();
 const firebaseCertUrl = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
 let cachedFirebaseCerts = null;
 let firebaseCertsExpiresAt = 0;
+const maxBearerTokenLength = 4096;
+const downloadRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: "Too many download requests. Try again later."
+  }
+});
 
 const RADARR_URL = process.env.RADARR_URL;
 const RADARR_API_KEY = process.env.RADARR_API_KEY;
@@ -168,15 +180,15 @@ async function verifyFirebaseIdToken(idToken) {
 async function requireDownloadAdmin(req, res, next) {
   try {
     const authHeader = req.get("authorization") || "";
-    const match = /^Bearer\s+(.+)$/i.exec(authHeader);
-    if (!match) {
+    const token = parseBearerToken(authHeader);
+    if (!token) {
       return res.status(401).json({
         ok: false,
         error: "Missing auth token"
       });
     }
 
-    const payload = await verifyFirebaseIdToken(match[1]);
+    const payload = await verifyFirebaseIdToken(token);
     const email = String(payload.email || "").toLowerCase();
     if (email !== allowedDownloadEmail || payload.email_verified !== true) {
       return res.status(403).json({
@@ -193,6 +205,24 @@ async function requireDownloadAdmin(req, res, next) {
       error: error.message
     });
   }
+}
+
+function parseBearerToken(authHeader) {
+  if (typeof authHeader !== "string") {
+    return null;
+  }
+
+  const prefix = "bearer ";
+  if (!authHeader.toLowerCase().startsWith(prefix)) {
+    return null;
+  }
+
+  const token = authHeader.slice(prefix.length).trim();
+  if (!token || token.length > maxBearerTokenLength || token.includes(" ")) {
+    return null;
+  }
+
+  return token;
 }
 
 async function arrGet(baseUrl, apiKey, path) {
@@ -343,7 +373,6 @@ async function checkTlsCertificateService(service) {
         host: hostname,
         port: 443,
         servername: hostname,
-        rejectUnauthorized: false,
         timeout: 5000
       }, () => {
         const certificate = socket.getPeerCertificate();
@@ -1147,10 +1176,10 @@ async function monitorAndSearchEpisodeRange(series, range) {
   };
 }
 
-app.post("/download/movie", requireDownloadAdmin, handleMovieDownload);
-app.post("/download/tv", requireDownloadAdmin, handleTvDownload);
-app.post("/reqarr/download/movie", requireDownloadAdmin, handleMovieDownload);
-app.post("/reqarr/download/tv", requireDownloadAdmin, handleTvDownload);
+app.post("/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
+app.post("/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownload);
+app.post("/reqarr/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
+app.post("/reqarr/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownload);
 
 app.listen(port, () => {
   console.log(`reqarr running on port ${port}`);

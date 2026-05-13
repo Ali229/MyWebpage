@@ -22,6 +22,8 @@
     "animate.css": "^3.7.2",
     "bootstrap": "^4.6.2",
     "core-js": "^3.6.5",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.1",
     "firebase": "^12.11.0",
     "ngx-toastr": "^19.1.0",
     "rxjs": "^6.6.0",
