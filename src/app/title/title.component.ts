@@ -72,6 +72,7 @@ export class TitleComponent implements OnInit, OnDestroy {
     ];
     private terminate$: Subject<Title> = new Subject();
     private currentTitleKey = '';
+    private syncedDetailTitleKey = '';
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -98,8 +99,13 @@ export class TitleComponent implements OnInit, OnDestroy {
             this.seasonGuideSeasons = this.buildSeasonGuide(data);
             if (titleChanged) {
                 this.closeEpisodeList();
+                this.syncedDetailTitleKey = '';
             }
             this.nextEpisodeText = this.extractNextEpisodeText(data);
+            if (data?.ratingsHydrated && nextTitleKey && this.syncedDetailTitleKey !== nextTitleKey) {
+                this.syncedDetailTitleKey = nextTitleKey;
+                void this.auth.updateSavedTitleFromDetail(data);
+            }
             if (data?.id && this.ts.shouldScrollToTitleTarget()) {
                 requestAnimationFrame(() => this.ts.scrollToTitleTarget());
             }
@@ -353,7 +359,7 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     openMoreLikeThis(similarTitle: SimilarTitle) {
         const mediaType = similarTitle?.media_type || this.title?.media_type;
-        if (!similarTitle?.id || !mediaType) {
+        if (!similarTitle?.id || (mediaType !== 'movie' && mediaType !== 'tv')) {
             return;
         }
         this.ts.search(similarTitle.id, mediaType);

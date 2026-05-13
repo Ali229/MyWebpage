@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {ToastrService} from 'ngx-toastr';
 import {GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth';
-import {collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc} from 'firebase/firestore';
+import {collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc} from 'firebase/firestore';
 import {User} from '../models/user.model';
 import {Title} from '../models/title.model';
 import {firebaseAuth, firestore} from '../firebase.config';
@@ -308,6 +308,22 @@ export class AuthService {
         return new Set(this.watchlist.map(title => title.id));
     }
 
+    isTitleSaved(title: Title): boolean {
+        if (!title?.id || !title?.media_type) {
+            return false;
+        }
+
+        return this.findSavedTitleLocation(title) !== null;
+    }
+
+    async updateSavedTitleFromTmdb(title: Title): Promise<boolean> {
+        return this.updateSavedTitleData(title, true);
+    }
+
+    async updateSavedTitleFromDetail(title: Title): Promise<boolean> {
+        return this.updateSavedTitleData(title, false);
+    }
+
     canUseDownloadButton(): boolean {
         return this.user.email?.toLowerCase() === this.downloadAdminEmail;
     }
@@ -540,5 +556,233 @@ export class AuthService {
 
     private getProviderIds(provider: { id: number; ids?: number[] }): number[] {
         return provider.ids && provider.ids.length ? provider.ids : [provider.id];
+    }
+
+    private async updateSavedTitleData(title: Title, tmdbOnly: boolean): Promise<boolean> {
+        if (!this.user.uid || !title?.id || !title?.media_type) {
+            return false;
+        }
+
+        let location = this.findSavedTitleLocation(title);
+        if (!location) {
+            location = await this.findSavedTitleLocationInFirestore(title);
+        }
+        if (!location) {
+            return false;
+        }
+
+        const docRef = doc(firestore, 'users', this.user.uid, location.collectionName, location.docId);
+        const existing = await getDoc(docRef);
+        if (!existing.exists()) {
+            this.removeMissingSavedTitleFromMemory(location.collectionName, title.id, title.media_type);
+            return false;
+        }
+
+        const existingTitle = existing.data() as Title;
+        const patch = this.stripUndefinedValues(this.buildSavedTitlePatch(title, tmdbOnly, existingTitle));
+        try {
+            await updateDoc(docRef, patch);
+        } catch (error) {
+            console.log('Could not persist saved title refresh.', error);
+            return false;
+        }
+
+        this.patchSavedTitleInMemory(location.collectionName, title, patch);
+        return true;
+    }
+
+    private findSavedTitleLocation(title: Title): {collectionName: 'watchlist' | 'lovelist'; docId: string} | null {
+        const titleKey = this.getSavedTitleDocId(title);
+        const watchlistTitle = this.watchlist.find(item => item.id === title.id && item.media_type === title.media_type);
+        if (watchlistTitle) {
+            return {
+                collectionName: 'watchlist',
+                docId: watchlistTitle.watchlistDocId || titleKey
+            };
+        }
+
+        const lovelistTitle = this.lovelist.find(item => item.id === title.id && item.media_type === title.media_type);
+        if (lovelistTitle) {
+            return {
+                collectionName: 'lovelist',
+                docId: lovelistTitle.lovelistDocId || titleKey
+            };
+        }
+
+        return null;
+    }
+
+    private async findSavedTitleLocationInFirestore(title: Title): Promise<{collectionName: 'watchlist' | 'lovelist'; docId: string} | null> {
+        if (!this.user.uid) {
+            return null;
+        }
+
+        const titleKey = this.getSavedTitleDocId(title);
+        const watchlistRef = doc(firestore, 'users', this.user.uid, 'watchlist', titleKey);
+        const watchlistDoc = await getDoc(watchlistRef);
+        if (watchlistDoc.exists()) {
+            return {
+                collectionName: 'watchlist',
+                docId: titleKey
+            };
+        }
+
+        const lovelistRef = doc(firestore, 'users', this.user.uid, 'lovelist', titleKey);
+        const lovelistDoc = await getDoc(lovelistRef);
+        if (lovelistDoc.exists()) {
+            return {
+                collectionName: 'lovelist',
+                docId: titleKey
+            };
+        }
+
+        return null;
+    }
+
+    private buildSavedTitlePatch(title: Title, tmdbOnly: boolean, existingTitle?: Title): Record<string, any> {
+        const aggregateScores = tmdbOnly
+            ? this.calculateAggregateScores({
+                vote_average: title.vote_average,
+                imdbScore: existingTitle?.imdbScore,
+                imdb232Score: existingTitle?.imdb232Score,
+                rottenScore: existingTitle?.rottenScore,
+                metaScore: existingTitle?.metaScore
+            } as Title)
+            : {
+                scoreCount: title.scoreCount,
+                totalScore: title.totalScore,
+                averageScore: title.averageScore
+            };
+
+        const patch: Record<string, any> = {
+            poster_path: title.poster_path,
+            id: title.id,
+            media_type: title.media_type,
+            vote_average: title.vote_average,
+            runtime: title.runtime,
+            original_language: title.original_language,
+            language: title.language,
+            overview: title.overview,
+            genres: title.genres,
+            tagline: title.tagline,
+            external_ids: title.external_ids,
+            certification: title.certification,
+            videos: title.videos,
+            trailer: title.trailer,
+            runtimeText: title.runtimeText,
+            year: title.year,
+            streams: title.streams || [],
+            first_air_date: title.first_air_date,
+            name: title.name,
+            content_ratings: title.content_ratings,
+            number_of_seasons: title.number_of_seasons,
+            seasons: title.seasons,
+            next_episode_to_air: title.next_episode_to_air || null,
+            episode_run_time: title.episode_run_time,
+            status: title.status,
+            release_date: title.release_date,
+            title: title.title,
+            release_dates: title.release_dates,
+            scoreCount: aggregateScores.scoreCount,
+            totalScore: aggregateScores.totalScore,
+            averageScore: aggregateScores.averageScore,
+            popularTmdbScore: title.popularTmdbScore,
+            popularMoviesDatabaseScore: title.popularMoviesDatabaseScore,
+            popularCombinedScore: title.popularCombinedScore,
+            onNetflix: !!title.onNetflix,
+            onHulu: !!title.onHulu,
+            onDisney: !!title.onDisney,
+            onAmazon: !!title.onAmazon,
+            onYoutube: !!title.onYoutube,
+            onApple: !!title.onApple,
+            onPeacock: !!title.onPeacock,
+            onMax: !!title.onMax,
+            onParamount: !!title.onParamount,
+            onStarz: !!title.onStarz,
+            onAmc: !!title.onAmc,
+            onMgm: !!title.onMgm,
+            tmdbDataUpdatedAt: new Date()
+        };
+
+        if (!tmdbOnly) {
+            patch.awards = title.awards;
+            patch.metaScore = title.metaScore;
+            patch.imdbScore = title.imdbScore;
+            patch.imdb232Score = title.imdb232Score;
+            patch.imdb232Votes = title.imdb232Votes;
+            patch.rottenScore = title.rottenScore;
+            patch.rottenImage = title.rottenImage;
+            patch.omdbPoster = title.omdbPoster;
+            patch.ratingsHydrated = title.ratingsHydrated;
+        }
+
+        return patch;
+    }
+
+    private stripUndefinedValues(value: Record<string, any>): Record<string, any> {
+        return Object.keys(value).reduce((result, key) => {
+            if (value[key] !== undefined) {
+                result[key] = value[key];
+            }
+            return result;
+        }, {} as Record<string, any>);
+    }
+
+    private patchSavedTitleInMemory(collectionName: 'watchlist' | 'lovelist', title: Title, patch: Record<string, any>) {
+        if (collectionName === 'watchlist') {
+            this.watchlist = this.watchlist.map(item =>
+                item.id === title.id && item.media_type === title.media_type
+                    ? {...item, ...patch, watchlistAddDate: item.watchlistAddDate, watchlistDocId: item.watchlistDocId}
+                    : item
+            );
+            this.recalculateWatchlistMeta();
+            this.emitWatchlistChanged();
+            return;
+        }
+
+        this.lovelist = this.lovelist.map(item =>
+            item.id === title.id && item.media_type === title.media_type
+                ? {...item, ...patch, lovelistAddDate: item.lovelistAddDate, lovelistDocId: item.lovelistDocId}
+                : item
+        );
+        this.recalculateLovelistMeta();
+    }
+
+    private removeMissingSavedTitleFromMemory(collectionName: 'watchlist' | 'lovelist', titleId: number, mediaType: string) {
+        if (collectionName === 'watchlist') {
+            this.watchlist = this.watchlist.filter(item => item.id !== titleId || item.media_type !== mediaType);
+            this.recalculateWatchlistMeta();
+            this.emitWatchlistChanged();
+            return;
+        }
+
+        this.lovelist = this.lovelist.filter(item => item.id !== titleId || item.media_type !== mediaType);
+        this.recalculateLovelistMeta();
+    }
+
+    private calculateAggregateScores(title: Title): {scoreCount: number; totalScore: number; averageScore: number} {
+        let scoreCount = 0;
+        let totalScore = 0;
+
+        const addScore = (value: number) => {
+            const parsed = Number(value);
+            if (Number.isFinite(parsed) && parsed > 0) {
+                totalScore += parsed;
+                scoreCount++;
+            }
+        };
+
+        const imdbScoreForAverage = Number(title.imdbScore) > 0 ? title.imdbScore : title.imdb232Score;
+
+        addScore(title.vote_average);
+        addScore(imdbScoreForAverage);
+        addScore(title.rottenScore);
+        addScore(title.metaScore);
+
+        return {
+            scoreCount,
+            totalScore,
+            averageScore: scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0
+        };
     }
 }

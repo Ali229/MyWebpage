@@ -10,6 +10,7 @@ import {UserProfileComponent} from '../user-profile/user-profile.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 import {PopularGenreOption, PopularService} from '../services/popular.service';
+import {SavedTitleRefreshService} from '../services/saved-title-refresh.service';
 
 @Component({
     selector: 'app-movies',
@@ -34,12 +35,14 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
         public ts: TitleService,
         public auth: AuthService,
         public popService: PopularService,
+        private savedTitleRefresh: SavedTitleRefreshService,
         private route: ActivatedRoute,
         private router: Router
     ) {
     }
 
     ngOnInit() {
+        this.savedTitleRefresh.start();
         this.showStreamableCheckBoxSub = this.auth.bShowStreamableCheckbox$.subscribe(value => {
             this.showStreamableCheckBox = value;
         });
@@ -110,6 +113,7 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
     }
 
     ngOnDestroy(): void {
+        this.savedTitleRefresh.stop();
         if (this.showStreamableCheckBoxSub) {
             this.showStreamableCheckBoxSub.unsubscribe();
         }

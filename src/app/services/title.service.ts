@@ -123,7 +123,7 @@ export class TitleService {
         this.searchResultsLoading = false;
     }
 
-    search(id, type) {
+    search(id: number, type: 'movie' | 'tv') {
         this.clearSearchResults();
         this.loading = true;
         this.error = false;
@@ -136,25 +136,10 @@ export class TitleService {
             this.currentSearchSubscription.unsubscribe();
         }
 
-        const detailsUrl = this.buildTmdbUrl(`/${type}/${id}`, {
-            append_to_response: 'videos,external_ids,release_dates,content_ratings,watch/providers'
-        });
+        const detailsUrl = this.buildTmdbDetailsUrl(id, type);
         this.currentSearchSubscription = this.http.get<Title>(detailsUrl)
             .pipe(take(1)).subscribe(data => {
-                data.vote_average = Math.round(data.vote_average * 10);
-                data.certification = this.getCertification(data, type);
-                data.trailer = this.getTrailer(data, type);
-                data.language = this.getLanguage(data);
-                data.runtimeText = this.getRuntime(data);
-                data.media_type = type;
-                data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
-                data.ratingsHydrated = false;
-                data.imdbScore = null;
-                data.imdb232Score = null;
-                data.imdb232Votes = null;
-                data.rottenScore = null;
-                data.metaScore = null;
-                data.rottenImage = null;
+                data = this.mapTmdbTitleDetails(data, type);
                 this.updateAggregateScore(data);
                 this.titleSubject$.next(data);
                 this.searchStreams(data);
@@ -162,6 +147,15 @@ export class TitleService {
                 void this.hydrateRatings(data);
                 this.loading = false;
             });
+    }
+
+    async fetchTmdbTitleDetails(id: number, type: 'movie' | 'tv'): Promise<Title> {
+        const detailsUrl = this.buildTmdbDetailsUrl(id, type);
+        const data = await this.http.get<Title>(detailsUrl).pipe(take(1)).toPromise();
+        const mapped = this.mapTmdbTitleDetails(data, type);
+        this.updateAggregateScore(mapped);
+        this.searchStreams(mapped, false);
+        return mapped;
     }
 
     private async fetchSearchResults(type: 'movie' | 'tv', query: string): Promise<SearchResultItem[]> {
@@ -448,7 +442,7 @@ export class TitleService {
         data.imdb232Votes = Number.isFinite(payload?.imdb232Votes) ? payload.imdb232Votes : null;
     }
 
-    searchStreams(data: Title) {
+    searchStreams(data: Title, emit = true) {
         const providers = data['watch/providers'];
         if (providers && providers.results && providers.results.US && providers.results.US.flatrate) {
             data.streams = providers.results.US.flatrate;
@@ -479,7 +473,9 @@ export class TitleService {
                     data.onMgm = true;
                 }
             }
-            this.titleSubject$.next(data);
+            if (emit) {
+                this.titleSubject$.next(data);
+            }
         }
     }
 
@@ -489,6 +485,31 @@ export class TitleService {
             ...params
         });
         return `https://api.themoviedb.org/3${path}?${queryParams.toString()}`;
+    }
+
+    private buildTmdbDetailsUrl(id: number, type: 'movie' | 'tv') {
+        return this.buildTmdbUrl(`/${type}/${id}`, {
+            append_to_response: 'videos,external_ids,release_dates,content_ratings,watch/providers'
+        });
+    }
+
+    private mapTmdbTitleDetails(data: Title, type: 'movie' | 'tv'): Title {
+        data.vote_average = Math.round(Number(data.vote_average || 0) * 10);
+        data.certification = this.getCertification(data, type);
+        data.trailer = this.getTrailer(data, type);
+        data.language = this.getLanguage(data);
+        data.runtimeText = this.getRuntime(data);
+        data.media_type = type;
+        data.year = data.first_air_date ? new Date(data.first_air_date).getFullYear() : new Date(data.release_date).getFullYear();
+        data.ratingsHydrated = false;
+        data.imdbScore = null;
+        data.imdb232Score = null;
+        data.imdb232Votes = null;
+        data.rottenScore = null;
+        data.metaScore = null;
+        data.rottenImage = null;
+        data.tmdbDataUpdatedAt = new Date();
+        return data;
     }
 
     private updateAggregateScore(data: Title) {

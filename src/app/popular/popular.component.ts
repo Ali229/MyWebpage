@@ -46,7 +46,7 @@ export class PopularComponent implements OnInit, OnDestroy {
         });
     }
 
-    toggleMediaType(type: string) {
+    toggleMediaType(type: 'movie' | 'tv') {
         this.popService.selectedType = type;
         this.popService.ensureSelectedGenreAvailable();
         const selectedList = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;

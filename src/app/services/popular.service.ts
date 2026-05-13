@@ -34,7 +34,7 @@ export class PopularService {
   public popularMovies: Title[] = [];
   public popularTVShows: Title[] = [];
   public loadingPopular = false;
-  selectedType = 'movie';
+  selectedType: 'movie' | 'tv' = 'movie';
   selectedGenreKey = 'all';
   readonly genreOptions: PopularGenreOption[] = [
     {key: 'all', label: 'All'},

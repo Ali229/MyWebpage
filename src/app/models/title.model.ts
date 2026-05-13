@@ -40,6 +40,7 @@ export interface Title {
     watchlistDocId: string;
     lovelistAddDate: Date;
     lovelistDocId: string;
+    tmdbDataUpdatedAt?: Date | string | any;
     year: any;
     streams: any;
 
@@ -51,6 +52,7 @@ export interface Title {
     seasons?: TitleSeason[];
     next_episode_to_air?: TitleEpisodeAiring | null;
     episode_run_time?: number[];
+    status?: string;
 
     // Movie-Specific
     release_date: Date;
