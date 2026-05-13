@@ -2,26 +2,20 @@ import express from "express";
 import cors from "cors";
 import crypto from "node:crypto";
 import tls from "node:tls";
-import {rateLimit} from "express-rate-limit";
 
 const app = express();
+app.set("trust proxy", 1);
+
 const port = process.env.PORT || 3001;
 const firebaseProjectId = process.env.FIREBASE_PROJECT_ID;
 const allowedDownloadEmail = process.env.DOWNLOAD_ADMIN_EMAIL?.toLowerCase();
 const firebaseCertUrl = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
 let cachedFirebaseCerts = null;
 let firebaseCertsExpiresAt = 0;
+const downloadRateLimitWindowMs = 15 * 60 * 1000;
+const downloadRateLimitMaxRequests = 20;
+const downloadRateLimitBuckets = new Map();
 const maxBearerTokenLength = 4096;
-const downloadRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 20,
-  standardHeaders: "draft-8",
-  legacyHeaders: false,
-  message: {
-    ok: false,
-    error: "Too many download requests. Try again later."
-  }
-});
 
 const RADARR_URL = process.env.RADARR_URL;
 const RADARR_API_KEY = process.env.RADARR_API_KEY;
@@ -223,6 +217,49 @@ function parseBearerToken(authHeader) {
   }
 
   return token;
+}
+
+function getClientRateLimitKey(req) {
+  const forwardedFor = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  return `${forwardedFor || req.socket.remoteAddress || "unknown"}:${req.path}`;
+}
+
+function pruneExpiredDownloadRateLimitBuckets(now) {
+  for (const [key, bucket] of downloadRateLimitBuckets) {
+    if (now >= bucket.resetAt) {
+      downloadRateLimitBuckets.delete(key);
+    }
+  }
+}
+
+function downloadRateLimit(req, res, next) {
+  const now = Date.now();
+  pruneExpiredDownloadRateLimitBuckets(now);
+
+  const key = getClientRateLimitKey(req);
+  const bucket = downloadRateLimitBuckets.get(key);
+
+  if (!bucket || now >= bucket.resetAt) {
+    downloadRateLimitBuckets.set(key, {
+      count: 1,
+      resetAt: now + downloadRateLimitWindowMs
+    });
+    next();
+    return;
+  }
+
+  bucket.count += 1;
+  if (bucket.count <= downloadRateLimitMaxRequests) {
+    next();
+    return;
+  }
+
+  const retryAfterSeconds = Math.ceil((bucket.resetAt - now) / 1000);
+  res.set("Retry-After", String(retryAfterSeconds));
+  res.status(429).json({
+    ok: false,
+    error: "Too many download requests. Try again later."
+  });
 }
 
 async function arrGet(baseUrl, apiKey, path) {
