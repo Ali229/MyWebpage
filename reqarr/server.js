@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { rateLimit } from "express-rate-limit";
 import crypto from "node:crypto";
 import tls from "node:tls";
 
@@ -14,7 +15,6 @@ let cachedFirebaseCerts = null;
 let firebaseCertsExpiresAt = 0;
 const downloadRateLimitWindowMs = 15 * 60 * 1000;
 const downloadRateLimitMaxRequests = 20;
-const downloadRateLimitBuckets = new Map();
 const maxBearerTokenLength = 4096;
 
 const RADARR_URL = process.env.RADARR_URL;
@@ -219,48 +219,16 @@ function parseBearerToken(authHeader) {
   return token;
 }
 
-function getClientRateLimitKey(req) {
-  const forwardedFor = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
-  return `${forwardedFor || req.socket.remoteAddress || "unknown"}:${req.path}`;
-}
-
-function pruneExpiredDownloadRateLimitBuckets(now) {
-  for (const [key, bucket] of downloadRateLimitBuckets) {
-    if (now >= bucket.resetAt) {
-      downloadRateLimitBuckets.delete(key);
-    }
-  }
-}
-
-function downloadRateLimit(req, res, next) {
-  const now = Date.now();
-  pruneExpiredDownloadRateLimitBuckets(now);
-
-  const key = getClientRateLimitKey(req);
-  const bucket = downloadRateLimitBuckets.get(key);
-
-  if (!bucket || now >= bucket.resetAt) {
-    downloadRateLimitBuckets.set(key, {
-      count: 1,
-      resetAt: now + downloadRateLimitWindowMs
-    });
-    next();
-    return;
-  }
-
-  bucket.count += 1;
-  if (bucket.count <= downloadRateLimitMaxRequests) {
-    next();
-    return;
-  }
-
-  const retryAfterSeconds = Math.ceil((bucket.resetAt - now) / 1000);
-  res.set("Retry-After", String(retryAfterSeconds));
-  res.status(429).json({
+const downloadRateLimit = rateLimit({
+  windowMs: downloadRateLimitWindowMs,
+  limit: downloadRateLimitMaxRequests,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) => res.status(429).json({
     ok: false,
     error: "Too many download requests. Try again later."
-  });
-}
+  })
+});
 
 async function arrGet(baseUrl, apiKey, path) {
   const response = await fetch(`${baseUrl}${path}`, {
