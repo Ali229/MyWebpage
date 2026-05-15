@@ -1,0 +1,10 @@
+[
+  {
+    "title": "Deploy reqarr server",
+    "command": "cd /opt/media-stack && docker compose up -d --build reqarr"
+  },
+  {
+    "title": "Update Docker containers and Dockcheck itself",
+    "command": "/opt/media-stack/dockcheck.sh -y -u"
+  }
+]

@@ -1,0 +1,34 @@
+<section class="commands-page">
+    <header class="commands-header">
+        <h1>Commands</h1>
+    </header>
+
+    @if (loadError) {
+        <div class="commands-state">
+            Could not load commands.
+        </div>
+    } @else if (commands.length === 0) {
+        <div class="commands-state">
+            No commands saved yet.
+        </div>
+    } @else {
+        <div class="commands-list">
+            @for (item of commands; track item.title) {
+                <article class="command-card">
+                    <div class="command-code">
+                        <div class="command-code-title">{{ item.title }}</div>
+                        <button
+                            class="copy-button"
+                            type="button"
+                            [attr.aria-label]="copiedCommand === item ? 'Copied command' : 'Copy command'"
+                            [attr.title]="copiedCommand === item ? 'Copied' : 'Copy'"
+                            (click)="copyCommand(item)">
+                            <i aria-hidden="true" [class]="copiedCommand === item ? 'fas fa-check' : 'far fa-copy'"></i>
+                        </button>
+                        <pre><code>{{ item.command }}</code></pre>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

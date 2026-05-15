@@ -89,6 +89,11 @@ export class AppComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (path === '/commands') {
+            this.browserTitle.setTitle('Commands');
+            return;
+        }
+
         this.browserTitle.setTitle(this.defaultTitle);
     }
 

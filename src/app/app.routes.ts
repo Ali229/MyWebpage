@@ -15,6 +15,12 @@ export const routes: Routes = [
     },
     {path: 'privacy', loadComponent: () => import('./privacy/privacy.component').then(m => m.PrivacyComponent)},
     {
+        path: 'commands',
+        loadComponent: () => import('./commands/commands.component').then(m => m.CommandsComponent),
+        canActivate: [AuthGuard],
+        data: {adminOnly: true}
+    },
+    {
         path: 'settings',
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent),
         canActivate: [AuthGuard]

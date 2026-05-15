@@ -18,7 +18,18 @@ export class AuthGuard  {
         return this.auth.authStateReady$.pipe(
             filter(isReady => isReady),
             take(1),
-            map(() => this.auth.user && this.auth.user.uid ? true : this.router.createUrlTree(['/movies']))
+            map(() => {
+                const isSignedIn = !!(this.auth.user && this.auth.user.uid);
+                if (!isSignedIn) {
+                    return this.router.createUrlTree(['/movies']);
+                }
+
+                if (next.data?.adminOnly && !this.auth.canUseDownloadButton()) {
+                    return this.router.createUrlTree(['/movies']);
+                }
+
+                return true;
+            })
         );
     }
 }
