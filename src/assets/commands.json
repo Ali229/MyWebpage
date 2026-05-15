@@ -5,6 +5,6 @@
   },
   {
     "title": "Update Docker containers and Dockcheck itself",
-    "command": "/opt/media-stack/dockcheck.sh -y -u"
+    "command": "/opt/media-stack/dockcheck.sh -y -u -p"
   }
 ]
