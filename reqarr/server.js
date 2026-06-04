@@ -810,7 +810,6 @@ function renderDashboardPage() {
 
     refreshButton.addEventListener("click", loadStatus);
     loadStatus();
-    setInterval(loadStatus, 60000);
   </script>
 </body>
 </html>`;
