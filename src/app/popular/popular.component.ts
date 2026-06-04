@@ -22,13 +22,12 @@ export class PopularComponent implements OnInit, OnDestroy {
     protected readonly Math = Math;
     showStreamableCheckBoxSub: Subscription;
     genreChangedSub: Subscription;
-    private readonly providerRequestConcurrency = 10;
-    private readonly ratingRequestConcurrency = 1;
     private readonly tmdbApiKey = apiConfig.tmdbApiKey;
     private readonly rapidApiKey = apiConfig.rapidApiKey;
     private readonly moviesDatabaseHost = apiConfig.rapidApiHosts.moviesDatabase;
     private readonly moviesDatabaseRatingsUnavailableKey = 'moviesDatabaseRatingsUnavailable';
     private moviesDatabaseRatingsUnavailable = this.getMoviesDatabaseRatingsUnavailable();
+    private popularFetchRequestId = 0;
 
     constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
@@ -62,6 +61,7 @@ export class PopularComponent implements OnInit, OnDestroy {
 
     async fetchMostPopular() {
         this.popService.loadingPopular = true;
+        const requestId = ++this.popularFetchRequestId;
         const selectedType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
         const currentYear = new Date().getFullYear();
         let watchProvidersParam = '';
@@ -78,11 +78,15 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
 
         try {
+            let popularTitles: Title[] = [];
+            const targetList = selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
+            targetList.length = 0;
+            this.popService.popularList = targetList;
+
             if (selectedType === 'movie') {
                 const movieUrl = this.buildDiscoverUrl(selectedType, watchProvidersParam);
                 const response: any = await this.http.get(movieUrl).pipe(take(1)).toPromise();
-                this.popService.popularMovies.length = 0;
-                this.popService.popularMovies.push(...(response.results || []));
+                popularTitles = response.results || [];
             } else {
                 const tvCurrentYearUrl = this.buildDiscoverUrl(selectedType, watchProvidersParam, currentYear);
                 const currentYearResponse: any = await this.http.get(tvCurrentYearUrl).pipe(take(1)).toPromise();
@@ -96,44 +100,51 @@ export class PopularComponent implements OnInit, OnDestroy {
                     mergedTvResults = this.mergeById(currentYearResults, fallbackResults, 20);
                 }
 
-                this.popService.popularTVShows.length = 0;
-                this.popService.popularTVShows.push(...mergedTvResults);
+                popularTitles = mergedTvResults;
             }
 
-            this.popService.popularList = selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
-            await this.enrichPopularRatings(selectedType, this.popService.popularList);
-            this.getProviders();
+            if (!this.isCurrentPopularFetch(requestId, selectedType)) {
+                return;
+            }
+
+            this.popService.loadingPopular = false;
+            await this.addPopularTitlesAsRatingsLoad(requestId, selectedType, popularTitles.slice(0, 20), targetList);
         } catch (error) {
             console.error('Failed to fetch popular titles', error);
         } finally {
-            this.popService.loadingPopular = false;
-        }
-    }
-
-    getProviders() {
-        const providerType: 'movie' | 'tv' = this.popService.selectedType === 'tv' ? 'tv' : 'movie';
-        const titles = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
-        this.popService.pruneProviderCache();
-
-        if (titles.length === 0) {
-            return;
-        }
-
-        const queue = [...titles];
-        const workerCount = Math.min(this.providerRequestConcurrency, queue.length);
-        for (let i = 0; i < workerCount; i++) {
-            void this.runProviderWorker(queue, providerType);
-        }
-    }
-
-    private async runProviderWorker(queue: Title[], providerType: 'movie' | 'tv') {
-        while (queue.length > 0) {
-            const title = queue.shift();
-            if (!title) {
-                continue;
+            if (this.isCurrentPopularFetch(requestId, selectedType)) {
+                this.popService.loadingPopular = false;
             }
-            await this.populateProvidersForTitle(title, providerType);
         }
+    }
+
+    private async addPopularTitlesAsRatingsLoad(
+        requestId: number,
+        selectedType: 'movie' | 'tv',
+        titles: Title[],
+        targetList: Title[]
+    ) {
+        this.popService.pruneRatingCache();
+        this.popService.pruneProviderCache();
+        for (const title of titles) {
+            if (!this.isCurrentPopularFetch(requestId, selectedType)) {
+                return;
+            }
+
+            await this.populateRatingsForTitle(title, selectedType);
+
+            if (!this.isCurrentPopularFetch(requestId, selectedType)) {
+                return;
+            }
+
+            targetList.push(title);
+            this.popService.popularList = targetList;
+            void this.populateProvidersForTitle(title, selectedType);
+        }
+    }
+
+    private isCurrentPopularFetch(requestId: number, selectedType: 'movie' | 'tv'): boolean {
+        return requestId === this.popularFetchRequestId && selectedType === this.popService.selectedType;
     }
 
     private async populateProvidersForTitle(title: Title, providerType: 'movie' | 'tv') {
@@ -233,31 +244,6 @@ export class PopularComponent implements OnInit, OnDestroy {
         }
         if (this.genreChangedSub) {
             this.genreChangedSub.unsubscribe();
-        }
-    }
-
-    private async enrichPopularRatings(type: 'movie' | 'tv', titles: Title[]) {
-        this.popService.pruneRatingCache();
-        if (titles.length === 0) {
-            return;
-        }
-
-        const queue = [...titles];
-        const workerCount = Math.min(this.ratingRequestConcurrency, queue.length);
-        const workers: Promise<void>[] = [];
-        for (let i = 0; i < workerCount; i++) {
-            workers.push(this.runRatingWorker(queue, type));
-        }
-        await Promise.all(workers);
-    }
-
-    private async runRatingWorker(queue: Title[], type: 'movie' | 'tv') {
-        while (queue.length > 0) {
-            const title = queue.shift();
-            if (!title) {
-                continue;
-            }
-            await this.populateRatingsForTitle(title, type);
         }
     }
 
