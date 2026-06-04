@@ -26,6 +26,7 @@ export class PopularComponent implements OnInit, OnDestroy {
     private readonly rapidApiKey = apiConfig.rapidApiKey;
     private readonly moviesDatabaseHost = apiConfig.rapidApiHosts.moviesDatabase;
     private readonly moviesDatabaseRatingsUnavailableKey = 'moviesDatabaseRatingsUnavailable';
+    private readonly popularDisplayLimit = 20;
     private moviesDatabaseRatingsUnavailable = this.getMoviesDatabaseRatingsUnavailable();
     private popularFetchRequestId = 0;
 
@@ -51,7 +52,7 @@ export class PopularComponent implements OnInit, OnDestroy {
         this.popService.selectedType = type;
         this.popService.ensureSelectedGenreAvailable();
         const selectedList = this.popService.selectedType === 'movie' ? this.popService.popularMovies : this.popService.popularTVShows;
-        if (selectedList.length === 0) {
+        if (selectedList.length < this.popularDisplayLimit) {
             this.fetchMostPopular();
         } else {
             this.popService.loadingPopular = false;
@@ -108,7 +109,12 @@ export class PopularComponent implements OnInit, OnDestroy {
             }
 
             this.popService.loadingPopular = false;
-            await this.addPopularTitlesAsRatingsLoad(requestId, selectedType, popularTitles.slice(0, 20), targetList);
+            await this.addPopularTitlesAsRatingsLoad(
+                requestId,
+                selectedType,
+                popularTitles.slice(0, this.popularDisplayLimit),
+                targetList
+            );
         } catch (error) {
             console.error('Failed to fetch popular titles', error);
         } finally {
