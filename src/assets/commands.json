@@ -9,6 +9,6 @@
   },
   {
     "title": "Upgrade all Windows packages",
-    "command": "winget upgrade --all"
+    "command": "powershell -NoProfile -Command \"Start-Process powershell -Verb RunAs -ArgumentList '-NoProfile -NoExit -Command winget upgrade --all'\""
   }
 ]
