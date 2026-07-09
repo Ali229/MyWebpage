@@ -29,6 +29,7 @@ export class PopularComponent implements OnInit, OnDestroy {
     private readonly popularDisplayLimit = 20;
     private moviesDatabaseRatingsUnavailable = this.getMoviesDatabaseRatingsUnavailable();
     private popularFetchRequestId = 0;
+    private streamableSettingsReady = false;
 
     constructor(private http: HttpClient, public ts: TitleService, private auth: AuthService, public popService: PopularService) {
     }
@@ -38,9 +39,13 @@ export class PopularComponent implements OnInit, OnDestroy {
             if (!value) {
                 return;
             }
-            this.popService.popularMovies = [];
-            this.popService.popularTVShows = [];
-            this.popService.popularList = [];
+
+            // BehaviorSubject replays its current value whenever this route is recreated.
+            // Only invalidate the cached lists after a real settings update, not on route return.
+            if (this.streamableSettingsReady) {
+                this.clearPopularLists();
+            }
+            this.streamableSettingsReady = true;
             this.toggleMediaType(this.popService.selectedType);
         });
         this.genreChangedSub = this.popService.genreChanged$.subscribe(() => {
@@ -132,6 +137,7 @@ export class PopularComponent implements OnInit, OnDestroy {
     ) {
         this.popService.pruneRatingCache();
         this.popService.pruneProviderCache();
+
         for (const title of titles) {
             if (!this.isCurrentPopularFetch(requestId, selectedType)) {
                 return;
@@ -245,6 +251,8 @@ export class PopularComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        // Prevent a request started by a previous visit from changing shared list state.
+        this.popularFetchRequestId++;
         if (this.showStreamableCheckBoxSub) {
             this.showStreamableCheckBoxSub.unsubscribe();
         }
@@ -286,6 +294,12 @@ export class PopularComponent implements OnInit, OnDestroy {
 
         this.popService.cacheRating(cacheKey, snapshot);
         this.applyRatingSnapshot(title, snapshot, tmdbScore);
+    }
+
+    private clearPopularLists() {
+        this.popService.popularMovies = [];
+        this.popService.popularTVShows = [];
+        this.popService.popularList = [];
     }
 
     private applyRatingSnapshot(title: Title, snapshot: PopularRatingSnapshot, fallbackTmdbScore: number) {
