@@ -461,6 +461,8 @@ export class AuthService {
             return false;
         }
 
+        const titleIndex = this.watchlist.indexOf(title);
+
         const watchlistRef = doc(
             firestore,
             'users',
@@ -468,13 +470,24 @@ export class AuthService {
             'watchlist',
             title.watchlistDocId || this.getWatchlistDocId(title)
         );
-        const existing = await getDoc(watchlistRef);
-        await deleteDoc(watchlistRef);
-
         this.watchlist = this.watchlist.filter(item => item.id !== id);
         this.recalculateWatchlistMeta();
         this.emitWatchlistChanged();
-        return existing.exists();
+
+        try {
+            const existing = await getDoc(watchlistRef);
+            await deleteDoc(watchlistRef);
+            return existing.exists();
+        } catch (error) {
+            if (!this.watchlist.some(item => item.id === id)) {
+                const restoredWatchlist = [...this.watchlist];
+                restoredWatchlist.splice(Math.min(titleIndex, restoredWatchlist.length), 0, title);
+                this.watchlist = restoredWatchlist;
+                this.recalculateWatchlistMeta();
+                this.emitWatchlistChanged();
+            }
+            throw error;
+        }
     }
 
     private async addToLovelistQuiet(title: Title): Promise<boolean> {
@@ -501,6 +514,8 @@ export class AuthService {
             return false;
         }
 
+        const titleIndex = this.lovelist.indexOf(title);
+
         const lovelistRef = doc(
             firestore,
             'users',
@@ -508,12 +523,22 @@ export class AuthService {
             'lovelist',
             title.lovelistDocId || this.getSavedTitleDocId(title)
         );
-        const existing = await getDoc(lovelistRef);
-        await deleteDoc(lovelistRef);
-
         this.lovelist = this.lovelist.filter(item => item.id !== id);
         this.recalculateLovelistMeta();
-        return existing.exists();
+
+        try {
+            const existing = await getDoc(lovelistRef);
+            await deleteDoc(lovelistRef);
+            return existing.exists();
+        } catch (error) {
+            if (!this.lovelist.some(item => item.id === id)) {
+                const restoredLovelist = [...this.lovelist];
+                restoredLovelist.splice(Math.min(titleIndex, restoredLovelist.length), 0, title);
+                this.lovelist = restoredLovelist;
+                this.recalculateLovelistMeta();
+            }
+            throw error;
+        }
     }
 
     private getTitleName(title: Title): string {
