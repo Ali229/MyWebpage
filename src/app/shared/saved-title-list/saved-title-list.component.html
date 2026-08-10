@@ -214,7 +214,7 @@
                       </div>
                     }
                     <div class="row mt-lg-3 watchlist-actions-row">
-                      <div class="watchlist-action-buttons">
+                      <div class="watchlist-action-buttons" [class.has-download-action]="auth.canUseDownloadButton()">
                         <div>
                           <button
                             (click)="remove(title.id)"
@@ -230,6 +230,18 @@
                             <i [class]="getSecondaryIconClass(title)"></i>
                           </button>
                         </div>
+                        @if (auth.canUseDownloadButton()) {
+                          <div>
+                            <button
+                              (click)="openDownloadMenu(title)"
+                              [attr.aria-label]="isDownloadTracked(title) ? 'Already in download app' : 'Send to download app'"
+                              [attr.title]="isDownloadTracked(title) ? 'Already in download app' : 'Send to download app'"
+                              class="watchlist-icon-btn"
+                              type="button">
+                              <i class="fas fa-save fa-lg" [class.amber-text]="isDownloadTracked(title)"></i>
+                            </button>
+                          </div>
+                        }
                         <div>
                           <a [href]="title.trailer" aria-label="Play trailer" class="watchlist-icon-btn watchlist-icon-btn--link" rel="noopener noreferrer" target="_blank">
                             <i class="fas fa-play fa-lg"></i>
@@ -270,3 +282,9 @@
 } @else {
   <app-page-loader [minHeight]="'360px'" [spinnerSize]="'4.5rem'"></app-page-loader>
 }
+
+<app-download-request-dialog
+  [title]="selectedDownloadTitle"
+  [open]="downloadMenuOpen"
+  (openChange)="downloadMenuOpen = $event">
+</app-download-request-dialog>

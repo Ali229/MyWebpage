@@ -1,0 +1,81 @@
+@if (open && title) {
+  <div class="download-modal-backdrop" (click)="close()">
+    <div class="download-modal" role="dialog" aria-modal="true" [attr.aria-label]="getDialogTitle()" (click)="$event.stopPropagation()">
+      <div class="download-modal__header">
+        <div>
+          <div class="download-modal__eyebrow">{{ isMovie() ? 'Movie request' : 'TV request' }}</div>
+          <h3 class="download-modal__title">{{ getDialogTitle() }}</h3>
+        </div>
+        <button class="download-modal__close" type="button" title="Close" (click)="close()" [disabled]="requestActive">
+          <i class="fas fa-times"></i>
+          <span class="sr-only">Close</span>
+        </button>
+      </div>
+      <div class="download-modal__body">
+        <img class="download-modal__poster"
+          [src]="title.poster_path ? ('https://image.tmdb.org/t/p/w185/' + title.poster_path) : (title.omdbPoster || 'assets/404PosterNotFound.jpg')"
+          alt="Can't load image"
+          onerror="this.onerror=null;this.src='assets/404PosterNotFound.jpg'">
+        <div class="download-modal__content">
+          @if (title.overview) {
+            <p class="download-modal__overview">{{ title.overview }}</p>
+          }
+          <label class="download-field">
+            <span>Quality</span>
+            <select [(ngModel)]="selectedQuality">
+              @for (option of qualityOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </label>
+          @if (isMovie()) {
+            <label class="download-field">
+              <span>Monitor</span>
+              <select [(ngModel)]="selectedMovieMonitor">
+                @for (option of movieMonitorOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </label>
+          } @else {
+            <label class="download-field">
+              <span>Monitor</span>
+              <select [(ngModel)]="selectedTvMonitor">
+                @for (option of tvMonitorOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </label>
+            @if (isCustomEpisodeRangeSelected()) {
+              <div class="download-range-grid">
+                <label class="download-field">
+                  <span>Season</span>
+                  <input [(ngModel)]="selectedTvSeason" min="1" step="1" type="number">
+                </label>
+                <label class="download-field">
+                  <span>From episode</span>
+                  <input [(ngModel)]="selectedTvStartEpisode" min="1" step="1" type="number">
+                </label>
+                <label class="download-field">
+                  <span>To episode</span>
+                  <input [(ngModel)]="selectedTvEndEpisode" min="1" step="1" type="number">
+                </label>
+              </div>
+            }
+          }
+        </div>
+      </div>
+      <div class="download-modal__footer">
+        <button class="download-button download-button--ghost" type="button" (click)="close()" [disabled]="requestActive">Cancel</button>
+        <button class="download-button download-button--primary" type="button" (click)="submit()" [disabled]="requestActive">
+          @if (requestActive) {
+            <i class="fas fa-spinner fa-spin"></i>
+          } @else {
+            <i class="fas fa-save"></i>
+          }
+          <span>{{ isMovie() ? 'Add Movie' : 'Add Series' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}

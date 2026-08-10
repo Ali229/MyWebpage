@@ -641,6 +641,10 @@
     gap: 0;
   }
 
+  .watchlist-action-buttons.has-download-action {
+    grid-template-columns: repeat(4, minmax(2.2rem, 1fr));
+  }
+
   .watchlist-icon-btn {
     width: 2.15rem;
     height: 2rem;

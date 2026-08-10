@@ -7,6 +7,9 @@ import {StreamComponent} from '../../stream/stream.component';
 import {BackButtonComponent} from '../back-button/back-button.component';
 import {UserProfileComponent} from '../../user-profile/user-profile.component';
 import {PageLoaderComponent} from '../page-loader/page-loader.component';
+import {AuthService} from '../../services/auth.service';
+import {DownloadService} from '../../services/download.service';
+import {DownloadRequestDialogComponent} from '../download-request-dialog/download-request-dialog.component';
 
 type SavedTitleType = 'All' | 'movie' | 'tv';
 
@@ -28,7 +31,7 @@ interface SeasonGuideSeason {
     templateUrl: './saved-title-list.component.html',
     styleUrls: ['./saved-title-list.component.scss'],
     standalone: true,
-    imports: [CommonModule, RouterModule, StreamComponent, BackButtonComponent, UserProfileComponent, PageLoaderComponent]
+    imports: [CommonModule, RouterModule, StreamComponent, BackButtonComponent, UserProfileComponent, PageLoaderComponent, DownloadRequestDialogComponent]
 })
 export class SavedTitleListComponent implements OnChanges {
     @Input() title = 'Saved titles';
@@ -58,17 +61,24 @@ export class SavedTitleListComponent implements OnChanges {
     openEpisodeListKey = '';
     loadingEpisodeListKey = '';
     episodeListErrorKey = '';
+    downloadMenuOpen = false;
+    selectedDownloadTitle: Title;
     private readonly removeAnimationMs = 280;
     private readonly monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    constructor(public ts: TitleService) {}
+    constructor(
+        public ts: TitleService,
+        public auth: AuthService,
+        public downloadService: DownloadService
+    ) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.titles || changes.loaded) {
             this.updateDisplayedList();
+            void this.refreshDownloadTrackingStatus();
         }
     }
 
@@ -206,6 +216,18 @@ export class SavedTitleListComponent implements OnChanges {
                 this.closeEpisodeList();
             }
         }
+    }
+
+    openDownloadMenu(title: Title) {
+        if (!this.auth.canUseDownloadButton()) {
+            return;
+        }
+        this.selectedDownloadTitle = title;
+        this.downloadMenuOpen = true;
+    }
+
+    isDownloadTracked(title: Title): boolean {
+        return this.downloadService.isTracked(title);
     }
 
     @HostListener('document:keydown.escape')
@@ -354,6 +376,23 @@ export class SavedTitleListComponent implements OnChanges {
         }
 
         return `Next episode ${formattedDate}`;
+    }
+
+    private async refreshDownloadTrackingStatus() {
+        if (!this.loaded || !this.auth.canUseDownloadButton() || this.titles.length === 0) {
+            return;
+        }
+
+        const idToken = await this.auth.getCurrentUserIdToken();
+        if (!idToken) {
+            return;
+        }
+
+        try {
+            await this.downloadService.checkTrackingStatus(this.titles, idToken);
+        } catch {
+            // Passive status checks should not interrupt saved-list browsing.
+        }
     }
 
     private getPrimaryDateValue(title: Title): string {

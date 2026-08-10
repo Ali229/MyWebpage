@@ -1,6 +1,5 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {Title, TitleEpisode, TitleSeason} from '../models/title.model';
 import {SimilarTitle, TitleService} from '../services/title.service';
@@ -9,7 +8,7 @@ import {takeUntil} from 'rxjs/operators';
 import {StreamComponent} from '../stream/stream.component';
 import {PageLoaderComponent} from '../shared/page-loader/page-loader.component';
 import {DownloadService} from '../services/download.service';
-import {ToastrService} from 'ngx-toastr';
+import {DownloadRequestDialogComponent} from '../shared/download-request-dialog/download-request-dialog.component';
 
 interface TitleMetaSegment {
     kind: 'certification' | 'text';
@@ -30,7 +29,7 @@ interface SeasonGuideSeason {
     templateUrl: './title.component.html',
     styleUrls: ['./title.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule, StreamComponent, PageLoaderComponent]
+    imports: [CommonModule, StreamComponent, PageLoaderComponent, DownloadRequestDialogComponent]
 })
 export class TitleComponent implements OnInit, OnDestroy {
     @ViewChild('seasonGuideMenu') seasonGuideMenuRef?: ElementRef<HTMLDetailsElement>;
@@ -45,31 +44,7 @@ export class TitleComponent implements OnInit, OnDestroy {
     loadingEpisodeListKey = '';
     episodeListErrorKey = '';
     nextEpisodeText = '';
-    downloadRequestActive = false;
     downloadMenuOpen = false;
-    selectedDownloadQuality: '720p' | '1080p' | '4k' = '4k';
-    selectedMovieMonitor = 'movieOnly';
-    selectedTvMonitor = 'all';
-    selectedTvSeason = 1;
-    selectedTvStartEpisode = 1;
-    selectedTvEndEpisode = 1;
-    readonly downloadQualityOptions = [
-        {value: '4k', label: '4K'},
-        {value: '1080p', label: '1080p'},
-        {value: '720p', label: '720p'}
-    ];
-    readonly movieMonitorOptions = [
-        {value: 'movieOnly', label: 'Movie Only'},
-        {value: 'movieAndCollection', label: 'Movie & Collection'}
-    ];
-    readonly tvMonitorOptions = [
-        {value: 'all', label: 'All Episodes'},
-        {value: 'future', label: 'Future Episodes'},
-        {value: 'pilot', label: 'Pilot Episode'},
-        {value: 'firstSeason', label: 'First Season'},
-        {value: 'lastSeason', label: 'Last Season'},
-        {value: 'customRange', label: 'Custom Episode Range'}
-    ];
     private terminate$: Subject<Title> = new Subject();
     private currentTitleKey = '';
     private syncedDetailTitleKey = '';
@@ -81,8 +56,7 @@ export class TitleComponent implements OnInit, OnDestroy {
     constructor(
         public auth: AuthService,
         public ts: TitleService,
-        private downloadService: DownloadService,
-        private toastr: ToastrService
+        public downloadService: DownloadService
     ) {
     }
 
@@ -109,6 +83,14 @@ export class TitleComponent implements OnInit, OnDestroy {
             if (data?.id && this.ts.shouldScrollToTitleTarget()) {
                 requestAnimationFrame(() => this.ts.scrollToTitleTarget());
             }
+            if (titleChanged) {
+                void this.refreshDownloadTrackingStatus();
+            }
+        });
+        this.auth.authStateReady$.pipe(takeUntil(this.terminate$)).subscribe(ready => {
+            if (ready) {
+                void this.refreshDownloadTrackingStatus();
+            }
         });
     }
 
@@ -134,7 +116,6 @@ export class TitleComponent implements OnInit, OnDestroy {
 
     @HostListener('document:keydown.escape')
     onEscapeKey() {
-        this.closeDownloadMenu();
         this.closeEpisodeList();
     }
 
@@ -277,84 +258,11 @@ export class TitleComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.selectedDownloadQuality = '4k';
-        this.selectedMovieMonitor = 'movieOnly';
-        this.selectedTvMonitor = 'all';
-        this.selectedTvSeason = 1;
-        this.selectedTvStartEpisode = 1;
-        this.selectedTvEndEpisode = 1;
         this.downloadMenuOpen = true;
     }
 
-    closeDownloadMenu() {
-        if (this.downloadRequestActive) {
-            return;
-        }
-
-        this.downloadMenuOpen = false;
-    }
-
-    async onDownloadTitle() {
-        if (!this.canShowDownloadButton() || this.downloadRequestActive) {
-            return;
-        }
-
-        this.downloadRequestActive = true;
-        const titleName = this.title.title || this.title.name || 'Title';
-
-        try {
-            const idToken = await this.auth.getCurrentUserIdToken();
-            if (!idToken) {
-                this.toastr.info('Please login with the download-enabled account');
-                return;
-            }
-
-            const response = await this.downloadService.downloadTitle(this.title, idToken, {
-                quality: this.selectedDownloadQuality,
-                monitor: this.getSelectedDownloadMonitor(),
-                episodeRange: this.getSelectedEpisodeRange()
-            });
-            if (response.alreadyExists && !response.updated) {
-                this.toastr.info(`${response.title || titleName} is already in your download app`);
-                this.downloadMenuOpen = false;
-                return;
-            }
-
-            this.toastr.success(`${response.title || titleName} sent to download app`);
-            this.downloadMenuOpen = false;
-        } catch (error) {
-            this.toastr.error(this.resolveDownloadError(error), 'Download request failed');
-        } finally {
-            this.downloadRequestActive = false;
-        }
-    }
-
-    isMovieTitle(): boolean {
-        return this.title?.media_type === 'movie';
-    }
-
-    getDownloadDialogTitle(): string {
-        return this.title?.title || this.title?.name || 'Download request';
-    }
-
-    private getSelectedDownloadMonitor(): string {
-        return this.isMovieTitle() ? this.selectedMovieMonitor : this.selectedTvMonitor;
-    }
-
-    isCustomEpisodeRangeSelected(): boolean {
-        return !this.isMovieTitle() && this.selectedTvMonitor === 'customRange';
-    }
-
-    private getSelectedEpisodeRange() {
-        if (!this.isCustomEpisodeRangeSelected()) {
-            return undefined;
-        }
-
-        return {
-            seasonNumber: this.selectedTvSeason,
-            startEpisode: this.selectedTvStartEpisode,
-            endEpisode: this.selectedTvEndEpisode
-        };
+    isDownloadTracked(): boolean {
+        return this.downloadService.isTracked(this.title);
     }
 
     openMoreLikeThis(similarTitle: SimilarTitle) {
@@ -547,17 +455,21 @@ export class TitleComponent implements OnInit, OnDestroy {
         };
     }
 
-    private resolveDownloadError(error: any): string {
-        const serverError = error?.error?.error;
-        if (typeof serverError === 'string' && serverError.trim()) {
-            return serverError;
+    private async refreshDownloadTrackingStatus() {
+        if (!this.canShowDownloadButton()) {
+            return;
         }
 
-        if (typeof error?.message === 'string' && error.message.trim()) {
-            return error.message;
+        const idToken = await this.auth.getCurrentUserIdToken();
+        if (!idToken || !this.title?.id) {
+            return;
         }
 
-        return 'Could not reach the download server.';
+        try {
+            await this.downloadService.checkTrackingStatus([this.title], idToken);
+        } catch {
+            // Passive status checks should not interrupt the title page.
+        }
     }
 
     private mapSeasonEpisodes(episodes: TitleEpisode[] | undefined): TitleEpisode[] {

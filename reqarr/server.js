@@ -945,6 +945,80 @@ async function handleMovieDownload(req, res) {
   }
 }
 
+async function handleDownloadStatus(req, res) {
+  try {
+    const requestedTitles = Array.isArray(req.body.titles) ? req.body.titles : [];
+    const titles = requestedTitles
+      .map(title => ({
+        tmdbId: Number(title?.tmdbId),
+        mediaType: String(title?.mediaType || "").toLowerCase()
+      }))
+      .filter(title => title.tmdbId > 0 && (title.mediaType === "movie" || title.mediaType === "tv"));
+
+    if (titles.length === 0) {
+      return res.json({ok: true, statuses: []});
+    }
+
+    if (titles.length > 200) {
+      return res.status(400).json({
+        ok: false,
+        error: "A maximum of 200 titles can be checked at once."
+      });
+    }
+
+    const uniqueTitles = [...new Map(
+      titles.map(title => [`${title.mediaType}:${title.tmdbId}`, title])
+    ).values()];
+    const movieTitles = uniqueTitles.filter(title => title.mediaType === "movie");
+    const tvTitles = uniqueTitles.filter(title => title.mediaType === "tv");
+    const statuses = [];
+
+    if (movieTitles.length > 0) {
+      const existingMovies = await arrGet(RADARR_URL, RADARR_API_KEY, "/api/v3/movie");
+      const existingMovieIds = new Set(existingMovies.map(movie => Number(movie.tmdbId)));
+      statuses.push(...movieTitles.map(title => ({
+        ...title,
+        tracked: existingMovieIds.has(title.tmdbId)
+      })));
+    }
+
+    if (tvTitles.length > 0) {
+      const existingSeries = await arrGet(SONARR_URL, SONARR_API_KEY, "/api/v3/series");
+      const existingTmdbIds = new Set(existingSeries.map(series => Number(series.tmdbId)).filter(Boolean));
+      const existingTvdbIds = new Set(existingSeries.map(series => Number(series.tvdbId)).filter(Boolean));
+
+      const tvStatuses = await Promise.all(tvTitles.map(async title => {
+        if (existingTmdbIds.has(title.tmdbId)) {
+          return {...title, tracked: true};
+        }
+
+        try {
+          const lookupResults = await arrGet(
+            SONARR_URL,
+            SONARR_API_KEY,
+            `/api/v3/series/lookup?term=${encodeURIComponent(`tmdb:${title.tmdbId}`)}`
+          );
+          const lookupSeries = Array.isArray(lookupResults) ? lookupResults[0] : null;
+          return {
+            ...title,
+            tracked: !!lookupSeries && existingTvdbIds.has(Number(lookupSeries.tvdbId))
+          };
+        } catch {
+          return {...title, tracked: false};
+        }
+      }));
+      statuses.push(...tvStatuses);
+    }
+
+    return res.json({ok: true, statuses});
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      error: error.message
+    });
+  }
+}
+
 async function handleTvDownload(req, res) {
   try {
     const tmdbId = Number(req.body.tmdbId);
@@ -1180,6 +1254,8 @@ async function monitorAndSearchEpisodeRange(series, range) {
   };
 }
 
+app.post("/download/status", requireDownloadAdmin, handleDownloadStatus);
+app.post("/reqarr/download/status", requireDownloadAdmin, handleDownloadStatus);
 app.post("/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
 app.post("/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownload);
 app.post("/reqarr/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
