@@ -18,6 +18,7 @@
 - The live web root on `berry` is `/var/www/html`.
 - Copy the build to a temporary staging directory on `berry` first. Validate the resolved remote paths before any cleanup.
 - Remove all existing contents inside `/var/www/html` (not the directory itself), then copy the complete contents of `dist/MyWebpage` into it. This replacement is required so obsolete hashed bundles cannot remain live.
+- After copying, set directories under `/var/www/html` to mode `755` and files to mode `644` so nginx can traverse and read the deployed site.
 - Keep the staging and cleanup commands narrowly scoped to the validated staging directory and `/var/www/html`; never use a broad or unresolved recursive target.
 - Verify that `/var/www/html/index.html` exists and that the deployed asset filenames match the new production build.
 
