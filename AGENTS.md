@@ -2,6 +2,8 @@
 
 - Treat a requested code change as incomplete until it has been built, committed, pushed, deployed, and verified, unless the user explicitly says not to perform one of those steps.
 - Use the existing ordinary SSH alias `berry` for all remote work (`ssh berry` and `scp`). Do not use Codex's SSH Connections feature, install Codex on the Pi, or install additional deployment software unless the user explicitly requests it.
+- When calling SSH from PowerShell, do not place unescaped remote shell variables such as `$stage` inside a PowerShell double-quoted command string; PowerShell will expand them locally before SSH runs. Prefer explicit validated remote paths, or quote/escape remote variables so they reach the Pi unchanged.
+- Check `$LASTEXITCODE` after each `ssh` or `scp` command before starting the next transfer or deployment mutation. Stop immediately when remote staging setup or a copy fails; do not let a later command continue after an earlier failure.
 - Before releasing, inspect `git status` and the diff. Preserve unrelated user changes and stage only files that belong to the current task. Never force-push.
 
 ## Required release sequence
