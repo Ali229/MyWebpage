@@ -21,6 +21,7 @@
 - After copying, set directories under `/var/www/html` to mode `755` and files to mode `644` so nginx can traverse and read the deployed site.
 - Keep the staging and cleanup commands narrowly scoped to the validated staging directory and `/var/www/html`; never use a broad or unresolved recursive target.
 - Verify that `/var/www/html/index.html` exists and that the deployed asset filenames match the new production build.
+- Verify the deployed site through nginx and through its public URL. Both `https://alinaeem.com/` and `https://www.alinaeem.com/` must finish with HTTP `200`; redirects are acceptable only when the final response is `200`.
 
 ## Reqarr deployment
 
