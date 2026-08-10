@@ -24,7 +24,7 @@
 ## Reqarr deployment
 
 - Reqarr source lives in the repository's `reqarr` directory and on `berry` at `/opt/media-stack/reqarr`.
-- When any file under `reqarr` changes, copy the complete Reqarr source directory through a temporary staging directory, replace the deployed Reqarr source without leaving stale files, and run `cd /opt/media-stack && docker compose up -d --build reqarr`.
+- When any file under `reqarr` changes, copy all repository-owned Reqarr files through a temporary staging directory and replace their deployed counterparts. Preserve deployment-owned files that are not tracked in this repository, especially `/opt/media-stack/reqarr/Dockerfile`, then run `cd /opt/media-stack && docker compose up -d --build reqarr`.
 - Verify with `docker compose ps reqarr` and inspect recent Reqarr logs for startup errors. Do not report the deployment complete if the container is unhealthy or restarting.
 
 ## Failure handling
