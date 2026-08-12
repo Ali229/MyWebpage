@@ -10,6 +10,8 @@ export interface DownloadResponse {
     updated?: boolean;
     alreadyExists?: boolean;
     title?: string;
+    minimumAvailability?: 'released';
+    searchNow?: boolean;
     error?: string;
 }
 

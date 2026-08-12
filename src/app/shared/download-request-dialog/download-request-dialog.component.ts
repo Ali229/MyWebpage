@@ -101,6 +101,8 @@ export class DownloadRequestDialogComponent implements OnChanges {
 
             if (response.alreadyExists && !response.updated) {
                 this.toastr.info(`${response.title || titleName} is already in your download app`);
+            } else if (this.isMovie() && response.added && response.searchNow === false) {
+                this.toastr.success('Added and monitored. Automatic searching will begin when Radarr considers the movie released.');
             } else {
                 this.toastr.success(`${response.title || titleName} sent to download app`);
             }

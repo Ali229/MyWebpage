@@ -3,6 +3,7 @@ import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 import crypto from "node:crypto";
 import tls from "node:tls";
+import {buildExistingMovieResponse, buildRadarrMovieAddRequest} from "./movie-release.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -899,14 +900,7 @@ async function handleMovieDownload(req, res) {
     const existingMovie = existingMovies.find(movie => movie.tmdbId === tmdbId);
 
     if (existingMovie) {
-      return res.json({
-        ok: true,
-        alreadyExists: true,
-        type: "movie",
-        title: existingMovie.title,
-        tmdbId: existingMovie.tmdbId,
-        qualityProfileId: existingMovie.qualityProfileId
-      });
+      return res.json(buildExistingMovieResponse(existingMovie));
     }
 
     const movie = await arrGet(
@@ -914,17 +908,14 @@ async function handleMovieDownload(req, res) {
       RADARR_API_KEY,
       `/api/v3/movie/lookup/tmdb?tmdbId=${tmdbId}`
     );
-
-    const addedMovie = await arrPost(RADARR_URL, RADARR_API_KEY, "/api/v3/movie", {
-      ...movie,
+    const {request: movieAddRequest, searchNow} = buildRadarrMovieAddRequest(
+      movie,
       qualityProfileId,
-      rootFolderPath: RADARR_ROOT_FOLDER,
-      monitored: monitorType !== "none",
-      addOptions: {
-        monitor: monitorType,
-        searchForMovie: true
-      }
-    });
+      RADARR_ROOT_FOLDER,
+      monitorType
+    );
+
+    const addedMovie = await arrPost(RADARR_URL, RADARR_API_KEY, "/api/v3/movie", movieAddRequest);
 
     res.json({
       ok: true,
@@ -935,7 +926,8 @@ async function handleMovieDownload(req, res) {
       quality,
       qualityProfileId,
       monitor: monitorType,
-      searchNow: true
+      minimumAvailability: "released",
+      searchNow
     });
   } catch (error) {
     res.status(500).json({
