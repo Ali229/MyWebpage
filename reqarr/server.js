@@ -3,7 +3,7 @@ import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 import crypto from "node:crypto";
 import tls from "node:tls";
-import {buildExistingMovieResponse, buildRadarrMovieAddRequest} from "./movie-release.js";
+import {pathToFileURL} from "node:url";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -66,6 +66,49 @@ const TV_MONITOR_TYPES = {
   "none": "none",
   "customRange": "customRange"
 };
+
+export function isMovieReleased(movie, now = new Date()) {
+  if (String(movie?.status || "").toLowerCase() === "released") {
+    return true;
+  }
+
+  const digitalReleaseTime = Date.parse(movie?.digitalRelease);
+  return Number.isFinite(digitalReleaseTime) && digitalReleaseTime <= now.getTime();
+}
+
+export function shouldSearchForMovie(movie, monitorType, now = new Date()) {
+  return monitorType !== "none" && isMovieReleased(movie, now);
+}
+
+export function buildRadarrMovieAddRequest(movie, qualityProfileId, rootFolderPath, monitorType, now = new Date()) {
+  const searchNow = shouldSearchForMovie(movie, monitorType, now);
+
+  return {
+    request: {
+      ...movie,
+      qualityProfileId,
+      rootFolderPath,
+      minimumAvailability: "released",
+      monitored: monitorType !== "none",
+      addOptions: {
+        monitor: monitorType,
+        searchForMovie: searchNow
+      }
+    },
+    searchNow
+  };
+}
+
+export function buildExistingMovieResponse(movie) {
+  return {
+    ok: true,
+    alreadyExists: true,
+    type: "movie",
+    title: movie.title,
+    tmdbId: movie.tmdbId,
+    qualityProfileId: movie.qualityProfileId
+  };
+}
 
 app.use(express.json());
 
@@ -1253,6 +1296,8 @@ app.post("/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownlo
 app.post("/reqarr/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
 app.post("/reqarr/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownload);
 
-app.listen(port, () => {
-  console.log(`reqarr running on port ${port}`);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  app.listen(port, () => {
+    console.log(`reqarr running on port ${port}`);
+  });
+}
