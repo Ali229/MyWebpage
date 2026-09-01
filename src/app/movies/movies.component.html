@@ -90,7 +90,7 @@
                   <div class="search-result-card__score-wrap">
                     @if (getSearchResultScore(result) > 0) {
                       <span
-                        class="search-result-card__score badge badge-{{ts.getRatingColor(getSearchResultScore(result))}}">
+                        class="search-result-card__score rating-badge badge badge-{{ts.getRatingColor(getSearchResultScore(result))}}">
                         {{ getSearchResultScore(result) }}
                       </span>
                     } @else {

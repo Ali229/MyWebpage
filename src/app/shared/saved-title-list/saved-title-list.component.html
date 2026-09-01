@@ -256,13 +256,13 @@
                   <div class="col-2 pr-0">
                     @if (title.averageScore) {
                       <div
-                        class="badge badge-{{ts.getRatingColor(title.averageScore)}} d-flex align-content-center flex-wrap justify-content-center">
+                        class="rating-badge badge badge-{{ts.getRatingColor(title.averageScore)}} d-flex align-content-center flex-wrap justify-content-center">
                         {{ title.averageScore }}
                       </div>
                     }
                     @if (!title.averageScore && title.vote_average) {
                       <div
-                        class="badge badge-{{ts.getRatingColor(title.vote_average * 10)}} d-flex align-content-center flex-wrap justify-content-center">
+                        class="rating-badge badge badge-{{ts.getRatingColor(title.vote_average * 10)}} d-flex align-content-center flex-wrap justify-content-center">
                         {{ title.vote_average * 10 }}
                       </div>
                     }
