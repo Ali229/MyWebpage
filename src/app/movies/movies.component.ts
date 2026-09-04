@@ -62,6 +62,7 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
             }
 
             if (routeSearchQuery) {
+                this.currentTitleKey = '';
                 const searchRouteKey = `${routeSearchQuery}:${routeSearchType || 'auto'}`;
                 if (routeSearchType) {
                     this.ts.searchResultsType = routeSearchType;
@@ -89,9 +90,8 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
                 return;
             }
 
-            // Preserve search routes like ?q=... on refresh/back navigation.
-            const activeRouteQuery = (this.route.snapshot.queryParamMap.get('q') || '').trim();
-            if (activeRouteQuery || this.ts.searchResultsActive) {
+            // Keep the search URL only while the search results are actually open.
+            if (this.ts.searchResultsActive) {
                 return;
             }
 
@@ -153,7 +153,11 @@ export class MoviesComponent implements OnInit, AfterViewInit, OnDestroy  {
             return;
         }
 
-        this.ts.search(result.id, result.media_type);
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {id: result.id, type: result.media_type, q: null, searchType: null},
+            replaceUrl: true
+        });
     }
 
     get activeSearchResults(): SearchResultItem[] {
