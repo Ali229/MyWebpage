@@ -1054,6 +1054,116 @@ async function handleDownloadStatus(req, res) {
   }
 }
 
+export function buildSeriesUpgrade(existingSeries, monitorType, qualityProfileId) {
+  const source = existingSeries || {};
+  const seasons = Array.isArray(source.seasons)
+    ? source.seasons.map(season => ({...season}))
+    : [];
+  const seriesUpdate = {...source, seasons};
+  let seasonsChanged = false;
+
+  const setSeasonMonitored = (seasonNumber, monitored) => {
+    const season = seriesUpdate.seasons.find(item => Number(item.seasonNumber) === seasonNumber);
+    if (!season) {
+      return;
+    }
+    if (Boolean(season.monitored) !== monitored) {
+      season.monitored = monitored;
+      seasonsChanged = true;
+    }
+  };
+
+  const positiveSeasons = seriesUpdate.seasons.filter(item => Number(item.seasonNumber) > 0);
+  const maxSeason = positiveSeasons.reduce((max, item) => Math.max(max, Number(item.seasonNumber)), 0);
+
+  let searchPlan = {type: "none"};
+
+  switch (monitorType) {
+    case "all":
+    case "future":
+    case "missing":
+    case "existing":
+    case "recent":
+      if (source.monitored !== true) {
+        seriesUpdate.monitored = true;
+      }
+      for (const season of positiveSeasons) {
+        if (season.monitored !== true) {
+          season.monitored = true;
+          seasonsChanged = true;
+        }
+      }
+      searchPlan = {type: "series"};
+      break;
+    case "firstSeason":
+      seriesUpdate.monitored = true;
+      setSeasonMonitored(1, true);
+      searchPlan = {type: "season", seasonNumber: 1};
+      break;
+    case "lastSeason":
+      seriesUpdate.monitored = true;
+      if (maxSeason > 0) {
+        setSeasonMonitored(maxSeason, true);
+        searchPlan = {type: "season", seasonNumber: maxSeason};
+      }
+      break;
+    case "pilot":
+      seriesUpdate.monitored = true;
+      setSeasonMonitored(1, true);
+      searchPlan = {type: "episodes", seasonNumber: 1, startEpisode: 1, endEpisode: 1};
+      break;
+    case "monitorSpecials":
+      seriesUpdate.monitored = true;
+      setSeasonMonitored(0, true);
+      break;
+    case "unmonitorSpecials":
+      setSeasonMonitored(0, false);
+      break;
+    case "none":
+      seriesUpdate.monitored = false;
+      for (const season of seriesUpdate.seasons) {
+        if (season.monitored !== false) {
+          season.monitored = false;
+          seasonsChanged = true;
+        }
+      }
+      break;
+    default:
+      break;
+  }
+
+  const qualityChanged = qualityProfileId != null &&
+    Number(qualityProfileId) !== Number(source.qualityProfileId);
+  if (qualityChanged) {
+    seriesUpdate.qualityProfileId = qualityProfileId;
+  }
+
+  const monitoredChanged = Boolean(seriesUpdate.monitored) !== Boolean(source.monitored);
+  const needsUpdate = qualityChanged || seasonsChanged || monitoredChanged;
+
+  return {seriesUpdate, needsUpdate, qualityChanged, seasonsChanged, monitoredChanged, searchPlan};
+}
+
+async function triggerSonarrSearch(searchPlan, seriesId) {
+  if (!searchPlan || searchPlan.type === "none" || !seriesId) {
+    return null;
+  }
+  if (searchPlan.type === "series") {
+    return arrPost(SONARR_URL, SONARR_API_KEY, "/api/v3/command", {
+      name: "SeriesSearch",
+      seriesId
+    });
+  }
+  if (searchPlan.type === "season" && Number.isInteger(searchPlan.seasonNumber)) {
+    return arrPost(SONARR_URL, SONARR_API_KEY, "/api/v3/command", {
+      name: "SeasonSearch",
+      seriesId,
+      seasonNumber: searchPlan.seasonNumber
+    });
+  }
+  return null;
+}
+
 async function handleTvDownload(req, res) {
   try {
     const tmdbId = Number(req.body.tmdbId);
@@ -1108,28 +1218,79 @@ async function handleTvDownload(req, res) {
 
     if (existing) {
       if (isCustomEpisodeRange) {
-        const customResult = await monitorAndSearchEpisodeRange(existing, customRange);
+        let seriesForEpisodes = existing;
+        if (Number(qualityProfileId) !== Number(existing.qualityProfileId)) {
+          seriesForEpisodes = await arrPut(SONARR_URL, SONARR_API_KEY, `/api/v3/series/${existing.id}`, {
+            ...existing,
+            qualityProfileId
+          });
+        }
+        const customResult = await monitorAndSearchEpisodeRange(seriesForEpisodes, customRange);
         return res.json({
           ok: true,
           alreadyExists: true,
           updated: true,
           type: "tv",
-          title: existing.title,
+          title: seriesForEpisodes.title || existing.title,
           tvdbId: existing.tvdbId,
           tmdbId,
-          qualityProfileId: existing.qualityProfileId,
+          qualityProfileId,
           monitor: monitorType,
           ...customResult
         });
       }
 
+      if (monitorType === "pilot") {
+        const upgrade = buildSeriesUpgrade(existing, monitorType, qualityProfileId);
+        let seriesForEpisodes = existing;
+        if (upgrade.needsUpdate) {
+          seriesForEpisodes = await arrPut(SONARR_URL, SONARR_API_KEY, `/api/v3/series/${existing.id}`, upgrade.seriesUpdate);
+        }
+        const pilotResult = await monitorAndSearchEpisodeRange(seriesForEpisodes, {
+          seasonNumber: 1,
+          startEpisode: 1,
+          endEpisode: 1
+        });
+        return res.json({
+          ok: true,
+          alreadyExists: true,
+          updated: true,
+          type: "tv",
+          title: seriesForEpisodes.title || existing.title,
+          tvdbId: existing.tvdbId,
+          tmdbId,
+          qualityProfileId,
+          monitor: monitorType,
+          ...pilotResult
+        });
+      }
+
+      const upgrade = buildSeriesUpgrade(existing, monitorType, qualityProfileId);
+      if (!upgrade.needsUpdate) {
+        return res.json({
+          ok: true,
+          alreadyExists: true,
+          type: "tv",
+          title: existing.title,
+          tvdbId: existing.tvdbId,
+          qualityProfileId: existing.qualityProfileId
+        });
+      }
+
+      const updatedSeries = await arrPut(SONARR_URL, SONARR_API_KEY, `/api/v3/series/${existing.id}`, upgrade.seriesUpdate);
+      await triggerSonarrSearch(upgrade.searchPlan, existing.id);
+
       return res.json({
         ok: true,
         alreadyExists: true,
+        updated: true,
         type: "tv",
-        title: existing.title,
+        title: updatedSeries.title || existing.title,
         tvdbId: existing.tvdbId,
-        qualityProfileId: existing.qualityProfileId
+        tmdbId,
+        qualityProfileId,
+        monitor: monitorType,
+        searchNow: upgrade.searchPlan.type !== "none"
       });
     }
 
