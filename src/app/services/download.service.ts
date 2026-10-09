@@ -54,6 +54,8 @@ export class DownloadService {
             `${this.apiBaseUrl}/download/${endpoint}`,
             {
                 tmdbId: title.id,
+                tvdbId: title.external_ids?.tvdb_id,
+                title: title.name || title.title,
                 quality: options.quality,
                 monitor: options.monitor,
                 episodeRange: options.episodeRange
@@ -65,7 +67,12 @@ export class DownloadService {
     async checkTrackingStatus(titles: Title[], idToken: string): Promise<DownloadStatusResponse> {
         const statusTitles = titles
             .filter(title => !!title?.id && (title.media_type === 'movie' || title.media_type === 'tv'))
-            .map(title => ({tmdbId: title.id, mediaType: title.media_type}));
+            .map(title => ({
+                tmdbId: title.id,
+                mediaType: title.media_type,
+                tvdbId: title.external_ids?.tvdb_id,
+                title: title.name || title.title
+            }));
 
         if (statusTitles.length === 0) {
             return {ok: true, statuses: []};

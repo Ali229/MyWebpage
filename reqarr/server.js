@@ -986,6 +986,8 @@ async function handleDownloadStatus(req, res) {
     const titles = requestedTitles
       .map(title => ({
         tmdbId: Number(title?.tmdbId),
+        tvdbId: title?.tvdbId,
+        title: title?.title,
         mediaType: String(title?.mediaType || "").toLowerCase()
       }))
       .filter(title => title.tmdbId > 0 && (title.mediaType === "movie" || title.mediaType === "tv"));
@@ -1028,12 +1030,7 @@ async function handleDownloadStatus(req, res) {
         }
 
         try {
-          const lookupResults = await arrGet(
-            SONARR_URL,
-            SONARR_API_KEY,
-            `/api/v3/series/lookup?term=${encodeURIComponent(`tmdb:${title.tmdbId}`)}`
-          );
-          const lookupSeries = Array.isArray(lookupResults) ? lookupResults[0] : null;
+          const lookupSeries = await lookupSonarrSeries(title);
           return {
             ...title,
             tracked: !!lookupSeries && existingTvdbIds.has(Number(lookupSeries.tvdbId))
@@ -1164,6 +1161,40 @@ async function triggerSonarrSearch(searchPlan, seriesId) {
   return null;
 }
 
+export async function lookupSonarrSeries(title, lookup = term => arrGet(
+  SONARR_URL,
+  SONARR_API_KEY,
+  `/api/v3/series/lookup?term=${encodeURIComponent(term)}`
+)) {
+  const tmdbId = Number(title?.tmdbId);
+  if (!Number.isSafeInteger(tmdbId) || tmdbId <= 0) {
+    return null;
+  }
+
+  const tvdbId = Number(title?.tvdbId);
+  const name = typeof title?.title === "string" ? title.title.trim() : "";
+  const terms = [];
+  if (Number.isSafeInteger(tvdbId) && tvdbId > 0) {
+    terms.push(`tvdb:${tvdbId}`);
+  }
+  if (name) {
+    terms.push(name);
+  }
+
+  // Sonarr can interpret an unsupported tmdb: lookup as a TVDB ID.
+  // Search by TVDB ID or name, then require the requested TMDB identity.
+  for (const term of terms) {
+    const results = await lookup(term);
+    const series = Array.isArray(results) ? results.find(item =>
+      Number(item?.tmdbId) === tmdbId && Number.isSafeInteger(Number(item?.tvdbId)) && Number(item.tvdbId) > 0
+    ) : null;
+    if (series) {
+      return series;
+    }
+  }
+  return null;
+}
+
 async function handleTvDownload(req, res) {
   try {
     const tmdbId = Number(req.body.tmdbId);
@@ -1196,20 +1227,19 @@ async function handleTvDownload(req, res) {
       });
     }
 
-    const lookupResults = await arrGet(
-      SONARR_URL,
-      SONARR_API_KEY,
-      `/api/v3/series/lookup?term=${encodeURIComponent(`tmdb:${tmdbId}`)}`
-    );
+    const series = await lookupSonarrSeries({
+      tmdbId,
+      tvdbId: req.body.tvdbId,
+      title: req.body.title
+    });
 
-    if (!Array.isArray(lookupResults) || lookupResults.length === 0) {
+    if (!series) {
       return res.status(404).json({
         ok: false,
-        error: "TV series not found in Sonarr lookup by TMDB ID."
+        error: "Sonarr could not verify this TV series against its TMDB ID. Refresh the page and try again."
       });
     }
 
-    const series = lookupResults[0];
     const isCustomEpisodeRange = monitorType === "customRange";
     const customRange = isCustomEpisodeRange ? normalizeEpisodeRange(episodeRange) : null;
 
