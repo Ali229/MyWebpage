@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import tls from "node:tls";
 import {pathToFileURL} from "node:url";
 
-const app = express();
+export const app = express();
 app.set("trust proxy", 1);
 
 const port = process.env.PORT || 3001;
@@ -271,6 +271,17 @@ const downloadRateLimit = rateLimit({
   handler: (_req, res) => res.status(429).json({
     ok: false,
     error: "Too many download requests. Try again later."
+  })
+});
+
+const downloadStatusRateLimit = rateLimit({
+  windowMs: downloadRateLimitWindowMs,
+  limit: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) => res.status(429).json({
+    ok: false,
+    error: "Too many download status requests. Try again later."
   })
 });
 
@@ -1480,8 +1491,8 @@ async function monitorAndSearchEpisodeRange(series, range) {
   };
 }
 
-app.post("/download/status", requireDownloadAdmin, handleDownloadStatus);
-app.post("/reqarr/download/status", requireDownloadAdmin, handleDownloadStatus);
+app.post("/download/status", downloadStatusRateLimit, requireDownloadAdmin, handleDownloadStatus);
+app.post("/reqarr/download/status", downloadStatusRateLimit, requireDownloadAdmin, handleDownloadStatus);
 app.post("/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);
 app.post("/download/tv", downloadRateLimit, requireDownloadAdmin, handleTvDownload);
 app.post("/reqarr/download/movie", downloadRateLimit, requireDownloadAdmin, handleMovieDownload);

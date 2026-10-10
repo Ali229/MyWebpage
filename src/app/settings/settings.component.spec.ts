@@ -44,11 +44,10 @@ describe('SettingsComponent', () => {
     });
 
     it('detects unsaved selection changes after settings are loaded', () => {
-        component.ngDoCheck();
-
         expect(component.hasChanges).toBeFalse();
 
         authService.providers[1].selected = true;
+        component.onProviderSelectionChanged();
 
         expect(component.hasChanges).toBeTrue();
     });

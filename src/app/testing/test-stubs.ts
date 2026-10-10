@@ -42,6 +42,7 @@ export function createTitleServiceStub() {
         errorTitle: '',
         title$: title$.asObservable(),
         search: jasmine.createSpy('search'),
+        clearSearchResults: jasmine.createSpy('clearSearchResults'),
         multiSearch: jasmine.createSpy('multiSearch'),
         getRatingColor: jasmine.createSpy('getRatingColor').and.returnValue('secondary')
     };

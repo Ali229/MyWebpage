@@ -4,7 +4,8 @@ import {MoviesComponent} from './movies.component';
 import {AuthService} from '../services/auth.service';
 import {TitleService} from '../services/title.service';
 import {createAuthServiceStub, createTitleServiceStub} from '../testing/test-stubs';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, provideRouter, Router} from '@angular/router';
+import {SavedTitleRefreshService} from '../services/saved-title-refresh.service';
 
 describe('MoviesComponent', () => {
     let component: MoviesComponent;
@@ -14,6 +15,8 @@ describe('MoviesComponent', () => {
         await TestBed.configureTestingModule({
             imports: [MoviesComponent],
             providers: [
+                provideRouter([]),
+                {provide: SavedTitleRefreshService, useValue: {start: jasmine.createSpy(), stop: jasmine.createSpy()}},
                 {provide: AuthService, useValue: createAuthServiceStub()},
                 {provide: TitleService, useValue: createTitleServiceStub()}
             ]
